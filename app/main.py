@@ -65,6 +65,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Required for Authlib (Google OAuth state tracking)
+from starlette.middleware.sessions import SessionMiddleware
+app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET)
+
 # API Routers
 app.include_router(auth.router, tags=["Authentication"])
 app.include_router(upload.router, tags=["Upload Security"])
