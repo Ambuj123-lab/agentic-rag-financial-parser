@@ -1,0 +1,126 @@
+================================================================================
+  FULL QUALITY AUDIT — 3854 vectors
+================================================================================
+
+Scanning all vectors from Pinecone index 'financial-parser-idx'...
+Found 3854 vector IDs. Fetching metadata in batches of 100...
+  Checked 100/3854 vectors...
+  Checked 1100/3854 vectors...
+  Checked 2100/3854 vectors...
+  Checked 3100/3854 vectors...
+
+Total vectors checked: 3854
+
+================================================================================
+  PER-FILE BREAKDOWN
+================================================================================
+
+  Employees' Pension Scheme, 1995.pdf
+    Total Vectors:     122
+    Parent-Child:      0 vectors
+    Markdown-Header:   122 vectors
+    Text Length:       min=24, max=500, avg=338
+    Contains Tables:   20 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      0
+
+  Employees' Provident Funds Scheme.1952.pdf
+    Total Vectors:     797
+    Parent-Child:      797 vectors
+    Markdown-Header:   0 vectors
+    Text Length:       min=18, max=399, avg=323
+    Contains Tables:   0 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      0
+
+  Finance_Bill.pdf
+    Total Vectors:     83
+    Parent-Child:      0 vectors
+    Markdown-Header:   83 vectors
+    Text Length:       min=23, max=500, avg=416
+    Contains Tables:   25 chunks
+    Contains Formulas: 1 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      0
+
+  Key Features of Budget 2026-27.pdf
+    Total Vectors:     73
+    Parent-Child:      0 vectors
+    Markdown-Header:   73 vectors
+    Text Length:       min=15, max=500, avg=321
+    Contains Tables:   14 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    1 chunks
+    Issues Found:      0
+
+  RBI Master Direction KYC.pdf
+    Total Vectors:     489
+    Parent-Child:      0 vectors
+    Markdown-Header:   489 vectors
+    Text Length:       min=6, max=500, avg=319
+    Contains Tables:   18 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      1
+      ! EMPTY_CHUNK: text too short (6 chars)
+
+  budget_at_a_glance.pdf
+    Total Vectors:     90
+    Parent-Child:      0 vectors
+    Markdown-Header:   90 vectors
+    Text Length:       min=15, max=500, avg=400
+    Contains Tables:   46 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    36 chunks
+    Issues Found:      0
+
+  budget_speech_2026-2027.pdf
+    Total Vectors:     289
+    Parent-Child:      0 vectors
+    Markdown-Header:   289 vectors
+    Text Length:       min=9, max=500, avg=304
+    Contains Tables:   15 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      1
+      ! EMPTY_CHUNK: text too short (9 chars)
+
+  constitution of india.pdf
+    Total Vectors:     1701
+    Parent-Child:      0 vectors
+    Markdown-Header:   1701 vectors
+    Text Length:       min=7, max=500, avg=280
+    Contains Tables:   48 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      1
+      ! EMPTY_CHUNK: text too short (7 chars)
+
+  memorandum.pdf
+    Total Vectors:     210
+    Parent-Child:      0 vectors
+    Markdown-Header:   210 vectors
+    Text Length:       min=15, max=500, avg=412
+    Contains Tables:   57 chunks
+    Contains Formulas: 0 chunks
+    Contains Hindi:    0 chunks
+    Issues Found:      0
+
+================================================================================
+  AUDIT SUMMARY
+================================================================================
+  Total Vectors Audited:  3854
+  Total Issues Found:     3
+  Clean Vectors:          3851
+  Quality Score:          99.9%
+
+  ALL ISSUES:
+    [budget_speech_2026-2027.pdf] page=15.0 | EMPTY_CHUNK: text too short (9 chars)
+    [RBI Master Direction KYC.pdf] page=57.0 | EMPTY_CHUNK: text too short (6 chars)
+    [constitution of india.pdf] page=142.0 | EMPTY_CHUNK: text too short (7 chars)
+
+================================================================================
+  AUDIT COMPLETE
+================================================================================

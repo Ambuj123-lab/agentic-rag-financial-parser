@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env
+.env.*
+
+# Version Control
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Data (not needed in Docker — vectors are in Pinecone, PDFs in Supabase)
+data/
+*.pdf
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Temp files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.py
+verify_*.py
