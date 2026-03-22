@@ -23,8 +23,6 @@ class Settings(BaseSettings):
     PINECONE_API_KEY: str
     PINECONE_INDEX_NAME: str = "financial-parser-idx"
     
-    # Environment
-    ENVIRONMENT: str = "development"
     
     # Structured DB & Storage
     MONGODB_URI: str

@@ -1,0 +1,8 @@
+--- PDF ANALYSIS REPORT ---
+File: budget_at_a_glance.pdf | Pages: 25 | Images(First10p): 0
+File: Employees' Pension Scheme, 1995.pdf | Pages: 28 | Images(First10p): 0
+File: Employees' Provident Funds Scheme.1952.pdf | Pages: 99 | Images(First10p): 0
+File: Finance_Bill.pdf | Pages: 232 | Images(First10p): 0
+File: memorandum.pdf | Pages: 100 | Images(First10p): 0
+File: RBI Master Direction KYC.pdf | Pages: 107 | Images(First10p): 1
+TOTAL PAGES: 591

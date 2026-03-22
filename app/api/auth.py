@@ -49,31 +49,46 @@ async def get_me(user_info: dict = Depends(get_current_user)):
         return {"email": user["email"], "name": user.get("name", "User")}
     return {"email": email, "name": "User"}
 
-@router.post("/auth/google")
-async def google_auth(request: Request):
-    """
-    Endpoint for frontend to send Google Auth Code or Token.
-    Validates user, tracks in Redis (if needed), and returns JWT.
-    """
-    body = await request.json()
-    email = body.get("email")
-    name = body.get("name")
-    
-    if not email:
-        raise HTTPException(status_code=400, detail="Email is required")
+@router.get("/auth/login")
+async def login_redirect(request: Request):
+    """Redirect to Google OAuth consent screen"""
+    redirect_uri = settings.GOOGLE_REDIRECT_URI
+    from app.api.oauth import oauth
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+@router.get("/auth/callback")
+async def auth_callback(request: Request):
+    """Handle Google OAuth callback — issue JWT and redirect to frontend"""
+    from authlib.integrations.starlette_client import OAuthError
+    from fastapi.responses import RedirectResponse
+    try:
+        from app.api.oauth import oauth
+        token = await oauth.google.authorize_access_token(request)
+        user_info = token.get('userinfo')
+        if not user_info:
+            raise HTTPException(status_code=400, detail="Could not get user info from Google")
+            
+        access_token = create_access_token({
+            "sub": user_info.get("email"),
+            "name": user_info.get("name"),
+            "picture": user_info.get("picture"),
+            "is_admin": user_info.get("email") == settings.ADMIN_EMAIL
+        })
         
-    # Generate our app's JWT token
-    token = create_access_token({"sub": email, "name": name})
-    
-    # Store user locally in MongoDB for tracking history
-    db = get_database()
-    await db.users.update_one(
-        {"email": email},
-        {"$set": {"name": name, "last_login": datetime.utcnow()}},
-        upsert=True
-    )
-    
-    return {"access_token": token, "token_type": "bearer", "user": {"email": email, "name": name}}
+        # Store user locally in MongoDB for tracking history
+        db = get_database()
+        await db.users.update_one(
+            {"email": user_info.get("email")},
+            {"$set": {"name": user_info.get("name"), "picture": user_info.get("picture"), "last_login": datetime.utcnow()}},
+            upsert=True
+        )
+        
+        return RedirectResponse(url=f"{settings.FRONTEND_URL}/auth-callback?token={access_token}")
+        
+    except OAuthError as error:
+        return RedirectResponse(url=f"{settings.FRONTEND_URL}/?error={error}")
+    except Exception as e:
+        return RedirectResponse(url=f"{settings.FRONTEND_URL}/?error={str(e)}")
 
 @router.post("/auth/logout")
 async def logout(request: Request):

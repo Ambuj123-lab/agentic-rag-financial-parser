@@ -56,29 +56,31 @@ export default function Landing() {
           }}>
             Sign In
           </a>
-          <button
-            className="btn-ghost"
-            style={{
-              padding: '8px 18px', fontSize: '0.84rem',
-              background: 'var(--accent)', color: '#000',
-              border: 'none', borderRadius: '8px', cursor: 'pointer',
-              fontWeight: 600,
-            }}
-            onClick={async () => {
-              try {
-                const res = await fetch('http://localhost:8000/auth/dev-login', { method: 'POST' })
-                const data = await res.json()
-                if (data.access_token) {
-                  login(data.access_token, data.user)
-                  navigate('/chat')
+          {import.meta.env.DEV && (
+            <button
+              className="btn-ghost"
+              style={{
+                padding: '8px 18px', fontSize: '0.84rem',
+                background: 'var(--accent)', color: '#000',
+                border: 'none', borderRadius: '8px', cursor: 'pointer',
+                fontWeight: 600,
+              }}
+              onClick={async () => {
+                try {
+                  const res = await fetch('http://localhost:8000/auth/dev-login', { method: 'POST' })
+                  const data = await res.json()
+                  if (data.access_token) {
+                    login(data.access_token, data.user)
+                    navigate('/chat')
+                  }
+                } catch (e) {
+                  alert('Backend not running! Start: uvicorn app.main:app --port 8000')
                 }
-              } catch (e) {
-                alert('Backend not running! Start: uvicorn app.main:app --port 8000')
-              }
-            }}
-          >
-            Dev Login
-          </button>
+              }}
+            >
+              Dev Login
+            </button>
+          )}
         </div>
       </nav>
 
