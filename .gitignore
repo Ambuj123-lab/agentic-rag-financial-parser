@@ -39,3 +39,17 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Test Scripts & Logs
+*.txt
+!requirements.txt
+analyze_pdfs.py
+check_const.py
+full_audit.py
+run_sync.py
+scan_const.py
+test_dry_run.py
+test_query.py
+test_stream.py
+verify_parse.py
+verify_quality.py
