@@ -319,9 +319,16 @@ def classifier_node(state: AgentState) -> dict:
         return {"query_type": "greeting", "search_scope": "system_only"}
 
     # Combined: vagueness check + search scope classification (1 LLM call)
+    # Combined: vagueness check + search scope classification (1 LLM call)
     try:
+        history = state.get("chat_history", [])
+        context_prefix = ""
+        if history:
+            recent = history[-2:]
+            context_prefix = "Recent Conversation Context:\n" + "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in recent]) + "\n\n"
+            
         system_prompt = """You are an expert AI Router for a Financial and Legal Knowledge Base.
-Analyze the user's query and respond in strict JSON:
+Analyze the user's query (and any provided Recent Conversation Context) and respond in strict JSON:
 
 {
   "is_vague": true/false,
@@ -335,9 +342,12 @@ search_scope rules:
 - "hybrid": Query compares user's uploaded data against official laws/rules.
 
 Note: Almost all factual questions about rules, laws, or financial structures are valid (is_vague: false). 
+CRITICAL: If the user's query is answering a previous clarifying question shown in the context, treat it as NOT vague (is_vague: false).
 Ask clarifying questions ONLY if the query is so fragmented that the specific domain/topic cannot be guessed.
 Default to "system_only" if unsure."""
-        response = call_llm(system_prompt, query, temperature=0.1)
+        
+        augmented_query = f"{context_prefix}Current User Query: {query}"
+        response = call_llm(system_prompt, augmented_query, temperature=0.1)
         result = json.loads(response.strip().strip("```json").strip("```"))
 
         search_scope = result.get("search_scope", "system_only")
