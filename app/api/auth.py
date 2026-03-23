@@ -46,8 +46,8 @@ async def get_me(user_info: dict = Depends(get_current_user)):
     email = user_info["email"]
     user = await db.users.find_one({"email": email})
     if user:
-        return {"email": user["email"], "name": user.get("name", "User")}
-    return {"email": email, "name": "User"}
+        return {"email": user["email"], "name": user.get("name", "User"), "is_admin": user["email"].lower() == settings.ADMIN_EMAIL.lower()}
+    return {"email": email, "name": "User", "is_admin": email.lower() == settings.ADMIN_EMAIL.lower()}
 
 @router.get("/auth/login")
 async def login_redirect(request: Request):

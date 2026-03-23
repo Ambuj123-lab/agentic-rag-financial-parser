@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import api from '../api/client'
 import {
   FiSend, FiMenu, FiLogOut, FiUploadCloud, FiTrash2,
@@ -11,6 +12,7 @@ import {
 
 export default function Dashboard() {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -318,7 +320,7 @@ export default function Dashboard() {
           <FileUploader />
 
           {user?.is_admin && (
-            <SidebarBtn icon={FiSettings} label="Admin Panel" onClick={() => window.location.href = '/admin'} />
+            <SidebarBtn icon={FiSettings} label="Admin Panel" onClick={() => navigate('/admin')} />
           )}
 
           <SidebarBtn icon={FiBookOpen} label="Architecture Docs" onClick={() => setDocsOpen(true)} />
@@ -584,7 +586,7 @@ function FileUploader() {
         : `✅ Uploaded: ${file.name} — ${res.data.chunk_count} chunks for review`
       )
     } catch (err) {
-      alert(`❌ Upload failed: ${err.response?.data?.detail || err.message}`)
+      alert(`❌ Upload failed: ${err.response?.data?.detail || err.message || 'Unknown error'}`)
     }
   }
 
