@@ -314,6 +314,13 @@ export default function Dashboard() {
           </div>
 
 
+          <SidebarBtn icon={FiUploadCloud} label="Upload PDF" onClick={() => document.getElementById('file-upload').click()} />
+          <FileUploader />
+
+          {user?.is_admin && (
+            <SidebarBtn icon={FiSettings} label="Admin Panel" onClick={() => window.location.href = '/admin'} />
+          )}
+
           <SidebarBtn icon={FiBookOpen} label="Architecture Docs" onClick={() => setDocsOpen(true)} />
 
           <SidebarBtn icon={FiTrash2} label="Clear History" onClick={clearHistory} />
