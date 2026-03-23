@@ -663,23 +663,40 @@ a:hover {
 .tag-approved { background: rgba(74, 222, 128, 0.12); color: var(--green); }
 .tag-rejected { background: rgba(248, 113, 113, 0.12); color: var(--red); }
 
+.hide-desktop {
+  display: none !important;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
-    z-index: 100;
+    z-index: 1000;
     left: -280px;
-    height: 100vh;
-    transition: left 0.3s;
+    height: 100dvh;
+    transition: left 0.3s ease-in-out;
+    box-shadow: none;
   }
-  .sidebar.open {
+  .sidebar:not(.collapsed) {
     left: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
   }
   .msg-user, .msg-bot {
     max-width: 95%;
   }
   .hide-mobile {
     display: none !important;
+  }
+  .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
   }
 }
 

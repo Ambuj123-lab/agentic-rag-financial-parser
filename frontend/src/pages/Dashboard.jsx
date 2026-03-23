@@ -245,6 +245,9 @@ export default function Dashboard() {
   return (
     <div className="app-layout">
       {/* ===== SIDEBAR ===== */}
+      {!sidebarOpen && (
+        <div className="mobile-overlay hide-desktop" onClick={() => setSidebarOpen(true)} />
+      )}
       <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
         {/* Logo */}
         <div style={{

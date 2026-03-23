@@ -50,7 +50,7 @@ export default function Landing() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <button onClick={() => setDocsOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '0.88rem', cursor: 'pointer' }}>Documentation</button>
+          <a href="#hero-docs" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Documentation</a>
           <a href="#architecture" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Architecture</a>
           <a href="#depth" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Engineering</a>
           <a href="#engineer" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>About</a>
@@ -148,7 +148,7 @@ export default function Landing() {
           }}>
             <GoogleLogo size={20} /> Get Started with Google
           </a>
-          <button onClick={() => setDocsOpen(true)} className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
+          <button id="hero-docs" onClick={() => setDocsOpen(true)} className="btn-ghost hero-docs-btn" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
             View Architecture Docs
           </button>
           <a href="#architecture" className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
@@ -459,7 +459,13 @@ export default function Landing() {
         }
         @media (max-width: 480px) {
           div[style*='repeat(auto-fit'] { grid-template-columns: 1fr !important; }
-          div[style*='gap: "24px"'] { gap: 12px !important; }
+        }
+        .hero-docs-btn:target {
+          animation: highlightBlink 2s ease-in-out;
+        }
+        @keyframes highlightBlink {
+          0%, 100% { box-shadow: 0 0 0 0 transparent; }
+          20%, 60% { box-shadow: 0 0 0 8px rgba(212, 165, 116, 0.4); border-color: var(--accent); }
         }
       `}</style>
       {/* ===== DOCS MODAL ===== */}
