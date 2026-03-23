@@ -50,10 +50,13 @@ export default function Landing() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <a href="#hero-docs" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Documentation</a>
-          <a href="#architecture" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Architecture</a>
-          <a href="#depth" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Engineering</a>
-          <a href="#engineer" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>About</a>
+          <button onClick={() => setDocsOpen(true)} className="nav-link nav-docs-btn">
+            <span className="hide-mobile">Documentation</span>
+            <span className="show-mobile" style={{ display: 'none' }}>Docs</span>
+          </button>
+          <a href="#architecture" className="nav-link">Architecture</a>
+          <a href="#depth" className="nav-link">Engineering</a>
+          <a href="#engineer" className="nav-link">About</a>
           <a href={GOOGLE_AUTH_URL} className="btn-ghost" style={{
             padding: '8px 18px', fontSize: '0.84rem',
           }}>
@@ -449,6 +452,14 @@ export default function Landing() {
 
       {/* Responsive overrides */}
       <style>{`
+        .nav-link {
+          background: none; border: none; padding: 0;
+          color: var(--text-secondary); font-size: 0.88rem;
+          cursor: pointer; font-family: inherit;
+          text-decoration: none;
+        }
+        .nav-link:hover { color: var(--text-primary); }
+        
         @media (max-width: 768px) {
           nav { padding: 12px 16px !important; }
           nav > div:last-child a:not(.btn-ghost) { display: none; }
@@ -456,6 +467,8 @@ export default function Landing() {
           h1 { font-size: 1.8rem !important; }
           div[style*='grid-template-columns: 1fr 1fr'] { grid-template-columns: 1fr !important; }
           div[style*='repeat(auto-fit'] { grid-template-columns: 1fr 1fr !important; }
+          .hide-mobile { display: none !important; }
+          .show-mobile { display: inline !important; }
         }
         @media (max-width: 480px) {
           div[style*='repeat(auto-fit'] { grid-template-columns: 1fr !important; }
