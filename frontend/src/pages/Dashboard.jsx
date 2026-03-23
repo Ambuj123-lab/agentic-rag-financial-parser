@@ -251,7 +251,7 @@ export default function Dashboard() {
     <div className="app-layout">
       {/* ===== SIDEBAR ===== */}
       {sidebarOpen && (
-        <div className="mobile-overlay hide-desktop" onClick={() => setSidebarOpen(false)} />
+        <div className="mobile-overlay" onClick={() => setSidebarOpen(false)} />
       )}
       <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
         {/* Logo */}
@@ -594,7 +594,21 @@ function FileUploader() {
         : `✅ Uploaded: ${file.name} — ${res.data.chunk_count} chunks for review`
       )
     } catch (err) {
-      alert(`❌ Upload failed: ${err.response?.data?.detail || err.message || 'Unknown error'}`)
+      console.error("Upload error:", err)
+      const errorDetail = err.response?.data?.detail
+      let errorMessage = 'Something went wrong.'
+
+      if (typeof errorDetail === 'string') {
+        errorMessage = errorDetail
+      } else if (Array.isArray(errorDetail)) {
+        errorMessage = errorDetail[0]?.msg || JSON.stringify(errorDetail)
+      } else if (errorDetail && typeof errorDetail === 'object') {
+        errorMessage = errorDetail.msg || errorDetail.message || JSON.stringify(errorDetail)
+      } else {
+        errorMessage = err.message || 'Unknown error'
+      }
+
+      alert(`❌ Upload failed: ${errorMessage}`)
     }
   }
 

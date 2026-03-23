@@ -76,6 +76,17 @@ def sync_core_brain() -> Dict[str, any]:
     
     local_pdfs = scan_local_pdfs()
     
+    # --- SAFETY FAILSAFE ---
+    # If the folder is empty, it's likely a deployment/sync issue. 
+    # Abort to prevent accidental mass deletion of the Pinecone index.
+    if not local_pdfs:
+        error_msg = "🛑 ABORTED: data/raw_pdf is empty. Add files before syncing to prevent mass deletion."
+        logger.error(error_msg)
+        return {
+            "added": [], "updated": [], "unchanged": [], "deleted": [], 
+            "errors": [error_msg]
+        }
+    
     # --- Process each local PDF ---
     for filename in local_pdfs:
         file_path = os.path.join(RAW_PDF_DIR, filename)
@@ -88,9 +99,10 @@ def sync_core_brain() -> Dict[str, any]:
             # Check registry
             registry_entry = get_registry_entry(filename)
             
-            if registry_entry is None:
-                # NEW FILE — full pipeline
-                logger.info(f"🆕 New file detected: {filename}")
+            # If the file is not in registry OR was marked 'inactive' by a previous deletion
+            if registry_entry is None or registry_entry.get("status") == "inactive":
+                # NEW (or RECOVERED) FILE — full pipeline
+                logger.info(f"🆕 New/Recovered file detected: {filename}")
                 _process_new_file(filename, file_path, current_hash, file_size, summary)
                 
             elif registry_entry.get("file_hash") != current_hash:

@@ -243,8 +243,8 @@ async def upload_temp_pdf(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Upload failed: {e}")
+        logger.error(f"Upload failed: {str(e)}")
         if os.path.exists(temp_filepath):
             os.remove(temp_filepath)
         gc.collect()
-        raise HTTPException(status_code=500, detail="Secure file processing failed")
+        raise HTTPException(status_code=500, detail=f"Secure file processing failed: {str(e)}")

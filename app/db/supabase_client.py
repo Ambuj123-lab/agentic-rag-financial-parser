@@ -34,7 +34,7 @@ def upload_file_to_storage(file_path: str, object_name: str) -> bool:
             supabase.storage.from_(bucket).upload(
                 path=object_name, 
                 file=f,
-                file_options={"cache-control": "3600", "upsert": "true"}
+                file_options={"cache-control": "3600", "upsert": "true", "content-type": "application/pdf"}
             )
         logger.info(f"✅ Uploaded `{object_name}` to Supabase bucket `{bucket}`")
         return True

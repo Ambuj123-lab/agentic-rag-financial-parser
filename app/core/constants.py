@@ -47,6 +47,9 @@ LLAMA_TIER_MAPPING = {
 
     # Plain Text -> PyMuPDF (0 credits, 100% free, runs locally)
     "Employees' Provident Funds Scheme.1952.pdf": "PyMuPDF",
+
+    # Complex Diagrams & Flowcharts -> Agentic Plus (Sonnet 3.5 VLM)
+    "Building_Real_AI_Systems_Complete (1).pdf": "Agentic Plus",
 }
 
 # 5. Page Filtering (for large docs — parse only the useful pages)

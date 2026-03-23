@@ -667,6 +667,10 @@ a:hover {
   display: none !important;
 }
 
+.mobile-overlay {
+  display: none;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .sidebar {
@@ -688,15 +692,23 @@ a:hover {
     display: none !important;
   }
   .mobile-overlay {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100dvh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
-    z-index: 999;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    cursor: pointer;
+    pointer-events: auto;
     animation: fadeIn 0.3s ease;
+  }
+  .sidebar:not(.collapsed) {
+    left: 0;
+    z-index: 10000;
+    box-shadow: 10px 0 50px rgba(0, 0, 0, 0.8);
   }
 }
 
