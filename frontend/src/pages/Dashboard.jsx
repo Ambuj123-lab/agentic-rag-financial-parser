@@ -24,6 +24,11 @@ export default function Dashboard() {
   const [statsExpanded, setStatsExpanded] = useState(false)
   const chatEndRef = useRef(null)
 
+  // Auto-close sidebar on mobile load
+  useEffect(() => {
+    if (window.innerWidth <= 768) setSidebarOpen(false)
+  }, [])
+
   // Fetch stats and history on load
   useEffect(() => {
     api.get('/common/stats')
@@ -245,8 +250,8 @@ export default function Dashboard() {
   return (
     <div className="app-layout">
       {/* ===== SIDEBAR ===== */}
-      {!sidebarOpen && (
-        <div className="mobile-overlay hide-desktop" onClick={() => setSidebarOpen(true)} />
+      {sidebarOpen && (
+        <div className="mobile-overlay hide-desktop" onClick={() => setSidebarOpen(false)} />
       )}
       <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
         {/* Logo */}
