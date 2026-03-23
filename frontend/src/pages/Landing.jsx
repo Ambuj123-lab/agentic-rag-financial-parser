@@ -134,9 +134,9 @@ export default function Landing() {
           cross-questioning, hallucination guard, and human-in-the-loop chunk review.
         </p>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14 }}>
           <a href={GOOGLE_AUTH_URL} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 10,
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             padding: '14px 32px', borderRadius: 'var(--radius-sm)',
             background: '#fff', color: '#333', fontWeight: 500, fontSize: '1rem',
             border: '1px solid rgba(0,0,0,0.1)',

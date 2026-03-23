@@ -592,7 +592,7 @@ a:hover {
 /* --- Layout --- */
 .app-layout {
   display: flex;
-  height: 100vh;
+  height: 100dvh; /* Fix for mobile browser navigation bar obscuring the bottom input */
 }
 .sidebar {
   width: 260px;
@@ -677,5 +677,8 @@ a:hover {
   }
   .msg-user, .msg-bot {
     max-width: 95%;
+  }
+  .hide-mobile {
+    display: none !important;
   }
 }

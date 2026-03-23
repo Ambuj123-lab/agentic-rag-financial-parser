@@ -344,7 +344,7 @@ export default function Dashboard() {
             <FiMenu size={20} />
           </button>
           <span style={{ fontWeight: 600, fontSize: '0.92rem' }}>Agentic Financial Parser</span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--primary)', marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontWeight: 600, letterSpacing: '0.3px', background: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '4px', border: '1px solid var(--border)' }}>
+          <span className="hide-mobile" style={{ fontSize: '0.75rem', color: 'var(--primary)', marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontWeight: 600, letterSpacing: '0.3px', background: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '4px', border: '1px solid var(--border)' }}>
             Agentic 8-Node RAG StateGraph | Engineered by Ambuj Kumar Tripathi
           </span>
         </div>
