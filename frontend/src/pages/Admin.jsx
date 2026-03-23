@@ -110,49 +110,7 @@ export default function Admin() {
               <StatCard icon={FiThumbsUp} label="Helpful Feedback" value={stats?.helpful_feedback ?? '—'} color="var(--purple)" />
             </div>
 
-            {/* Sync Engine */}
-            <div className="glass-card" style={{ padding: 24, marginBottom: 24 }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <FiRefreshCw size={18} color="var(--accent)" />
-                SHA-256 Sync Engine
-              </h3>
-              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
-                Scans <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)', background: 'var(--accent-glow)', padding: '2px 6px', borderRadius: 4 }}>data/raw_pdf/</code> →
-                compares SHA-256 hashes → auto-handles new/changed/deleted PDFs.
-              </p>
-
-              <button
-                className="btn-primary"
-                onClick={runSync}
-                disabled={syncing}
-                style={{ display: 'flex', alignItems: 'center', gap: 8 }}
-              >
-                <FiRefreshCw size={16} className={syncing ? 'spin' : ''} />
-                {syncing ? 'Syncing...' : 'Run Sync Engine'}
-              </button>
-
-              {/* Sync Result */}
-              {syncResult && (
-                <div style={{
-                  marginTop: 16, padding: 16,
-                  background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--border)',
-                  fontFamily: 'var(--font-mono)', fontSize: '0.8rem',
-                }}>
-                  {syncResult.errors?.length > 0 ? (
-                    <p style={{ color: 'var(--red)' }}>❌ Errors: {syncResult.errors.join(', ')}</p>
-                  ) : (
-                    <>
-                      <p style={{ color: 'var(--green)' }}>✅ Sync Complete</p>
-                      <p>Added: {syncResult.added?.length || 0}</p>
-                      <p>Updated: {syncResult.updated?.length || 0}</p>
-                      <p>Unchanged: {syncResult.unchanged?.length || 0}</p>
-                      <p>Deleted: {syncResult.deleted?.length || 0}</p>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+            {/* Sync Engine UI has been removed to prevent user confusion. Syncing will be handled strictly locally via run_sync.py */}
           </>
         )}
 
