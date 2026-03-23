@@ -24,6 +24,7 @@ function GoogleLogo({ size = 18 }) {
 export default function Landing() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
+  const [docsOpen, setDocsOpen] = useState(false)
 
   if (user) {
     navigate('/chat', { replace: true })
@@ -48,6 +49,7 @@ export default function Landing() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <button onClick={() => setDocsOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '0.88rem', cursor: 'pointer' }}>Documentation</button>
           <a href="#architecture" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Architecture</a>
           <a href="#depth" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Engineering</a>
           <a href="#engineer" style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>About</a>
@@ -145,8 +147,11 @@ export default function Landing() {
           }}>
             <GoogleLogo size={20} /> Get Started with Google
           </a>
+          <button onClick={() => setDocsOpen(true)} className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
+            View Architecture Docs
+          </button>
           <a href="#architecture" className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
-            View Architecture
+            Inside System
           </a>
         </div>
       </section>
@@ -456,6 +461,24 @@ export default function Landing() {
           div[style*='gap: "24px"'] { gap: 12px !important; }
         }
       `}</style>
+      {/* ===== DOCS MODAL ===== */}
+      {docsOpen && (
+        <div className="docs-modal-overlay" onClick={() => setDocsOpen(false)}>
+          <div className="docs-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="docs-modal-header">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FiBookOpen size={18} color="var(--accent)" /> System Architecture Documentation
+              </span>
+              <button className="docs-modal-close" onClick={() => setDocsOpen(false)}>×</button>
+            </div>
+            <iframe 
+              src="https://ambuj-rag-docs.netlify.app/docs/domain-applications/financial-parser" 
+              title="Architecture Documentation"
+              className="docs-iframe"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
