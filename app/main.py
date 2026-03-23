@@ -69,10 +69,13 @@ app.add_middleware(
 from starlette.middleware.sessions import SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET)
 
-# API Routers
-app.include_router(auth.router, tags=["Authentication"])
-app.include_router(upload.router, tags=["Upload Security"])
-app.include_router(rag_routes.router, tags=["RAG & Chat"])
+# Auth routes at root level (for direct browser navigation: /auth/login, /auth/callback)
+app.include_router(auth.router, tags=["Authentication (root)"])
+
+# All API routes under /api prefix (for frontend axios/fetch calls in production)
+app.include_router(auth.router, prefix="/api", tags=["Authentication"])
+app.include_router(upload.router, prefix="/api", tags=["Upload Security"])
+app.include_router(rag_routes.router, prefix="/api", tags=["RAG & Chat"])
 
 # --- Health Check + Supabase Keep-Alive ---
 @app.api_route("/health", methods=["GET", "HEAD"], tags=["System"])
@@ -132,7 +135,7 @@ if os.path.exists(frontend_dist):
     # Serve index.html for all other routes (SPA React Router)
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
-        if full_path.startswith("api") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+        if full_path.startswith("api") or full_path.startswith("auth") or full_path.startswith("health") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
             return Response(status_code=404)
         with open(os.path.join(frontend_dist, "index.html"), "rb") as f:
             return Response(content=f.read(), media_type="text/html")
