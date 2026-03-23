@@ -586,9 +586,7 @@ function FileUploader() {
     formData.append('file', file)
 
     try {
-      const res = await api.post('/upload/temp', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
+      const res = await api.post('/upload/temp', formData)
       alert(res.data.is_duplicate
         ? `⚡ Already indexed: ${file.name}`
         : `✅ Uploaded: ${file.name} — ${res.data.chunk_count} chunks for review`
