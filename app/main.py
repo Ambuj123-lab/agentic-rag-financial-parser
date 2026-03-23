@@ -135,7 +135,7 @@ if os.path.exists(frontend_dist):
     # Serve index.html for all other routes (SPA React Router)
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
-        if full_path.startswith("api") or full_path.startswith("auth") or full_path.startswith("health") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+        if full_path.startswith("api/") or full_path.startswith("auth/") or full_path.startswith("health") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
             return Response(status_code=404)
         with open(os.path.join(frontend_dist, "index.html"), "rb") as f:
             return Response(content=f.read(), media_type="text/html")
