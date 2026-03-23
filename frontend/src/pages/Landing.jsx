@@ -50,10 +50,10 @@ export default function Landing() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <button onClick={() => setDocsOpen(true)} className="nav-link nav-docs-btn">
+          <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" className="nav-link nav-docs-btn">
             <span className="hide-mobile">Documentation</span>
             <span className="show-mobile" style={{ display: 'none' }}>Docs</span>
-          </button>
+          </a>
           <a href="#architecture" className="nav-link">Architecture</a>
           <a href="#depth" className="nav-link">Engineering</a>
           <a href="#engineer" className="nav-link">About</a>
