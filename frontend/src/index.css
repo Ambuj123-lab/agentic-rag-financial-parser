@@ -682,3 +682,74 @@ a:hover {
     display: none !important;
   }
 }
+
+/* --- Docs Modal --- */
+.docs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: fadeIn 0.3s ease;
+}
+
+.docs-modal-content {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.docs-modal-header {
+  padding: 16px 24px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.docs-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.docs-modal-close:hover {
+  color: var(--red);
+}
+
+.docs-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: #fff; /* Docusaurus default white matches perfectly */
+}
+
+@media (max-width: 768px) {
+  .docs-modal-overlay {
+    padding: 0;
+  }
+  .docs-modal-content {
+    border-radius: 0;
+  }
+}

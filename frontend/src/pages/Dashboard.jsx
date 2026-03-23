@@ -6,7 +6,7 @@ import api from '../api/client'
 import {
   FiSend, FiMenu, FiLogOut, FiUploadCloud, FiTrash2,
   FiThumbsUp, FiThumbsDown, FiCpu, FiSettings, FiFile,
-  FiChevronRight, FiDatabase
+  FiChevronRight, FiDatabase, FiBookOpen
 } from 'react-icons/fi'
 
 export default function Dashboard() {
@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [docsOpen, setDocsOpen] = useState(false)
   const [nodeSteps, setNodeSteps] = useState([])
   const [sourcesExpanded, setSourcesExpanded] = useState({})
   const [stats, setStats] = useState(null)
@@ -312,12 +313,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          <SidebarBtn icon={FiUploadCloud} label="Upload PDF" onClick={() => document.getElementById('file-upload').click()} />
-          <FileUploader />
 
-          {user?.is_admin && (
-            <SidebarBtn icon={FiSettings} label="Admin Panel" onClick={() => window.location.href = '/admin'} />
-          )}
+          <SidebarBtn icon={FiBookOpen} label="Architecture Docs" onClick={() => setDocsOpen(true)} />
 
           <SidebarBtn icon={FiTrash2} label="Clear History" onClick={clearHistory} />
         </div>
@@ -519,6 +516,25 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
+
+      {/* ===== DOCS MODAL ===== */}
+      {docsOpen && (
+        <div className="docs-modal-overlay" onClick={() => setDocsOpen(false)}>
+          <div className="docs-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="docs-modal-header">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FiBookOpen size={18} color="var(--accent)" /> System Architecture Documentation
+              </span>
+              <button className="docs-modal-close" onClick={() => setDocsOpen(false)}>×</button>
+            </div>
+            <iframe 
+              src="https://ambuj-rag-docs.netlify.app/docs/domain-applications/financial-parser" 
+              title="Architecture Documentation"
+              className="docs-iframe"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
