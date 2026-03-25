@@ -84,6 +84,11 @@ def is_greeting(text: str) -> bool:
         "what can you do", "help"
     ]
     normalized = text.strip().lower().rstrip("?!.")
+    
+    # NEVER treat queries about the creator or 'Ambuj' as simple greetings
+    if any(keyword in normalized for keyword in ["ambuj", "creator", "made you", "built you"]):
+        return False
+        
     return normalized in greetings or len(normalized) < 4
 
 
@@ -680,7 +685,7 @@ Include a Pro Tip ONLY when sharing a non-obvious insight. Skip for greetings or
 Always end with — on a new line after main content:
 
 **Follow-up suggestion** (before disclaimer):
-Would you like to know more about [relevant next topic]?
+(Suggest exactly one highly relevant follow-up topic or question here, e.g., "Would you like to know more about [Topic]?")
 
 **Disclaimer** (absolute last line):
 > *⚠️ Disclaimer: I am an AI assistant. For critical financial or legal matters,
