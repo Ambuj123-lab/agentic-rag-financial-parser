@@ -545,8 +545,8 @@ def generator_node(state: AgentState) -> dict:
     confidence = state.get("confidence", 0)
     user_name = state.get("user_name", "User")
 
-    # If low confidence or no chunks, use General Knowledge mode
-    if confidence < 40 or not chunks:
+    # If no chunks, use General Knowledge mode (Threshold removed for legal docs)
+    if not chunks or confidence < 0:
         context = "NO OFFICIAL CONTEXT FOUND."
         sources = set()
     else:
