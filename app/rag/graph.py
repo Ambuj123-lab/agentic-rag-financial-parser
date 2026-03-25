@@ -45,21 +45,22 @@ llm_circuit = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, name="LLM_C
 embed_circuit = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, name="Embed_CB")
 
 # ========== LANGFUSE CALLBACK ==========
-_langfuse_handler = None
+_langfuse_client = None
 
-def get_langfuse_handler():
-    """Get Langfuse callback handler (safe mode — identical to prev project)."""
-    global _langfuse_handler
-    try:
-        os.environ["LANGFUSE_SECRET_KEY"] = settings.LANGFUSE_SECRET_KEY
-        os.environ["LANGFUSE_PUBLIC_KEY"] = settings.LANGFUSE_PUBLIC_KEY
-        os.environ["LANGFUSE_HOST"] = settings.LANGFUSE_HOST
-        from langfuse.callback import CallbackHandler as LangfuseHandler
-        _langfuse_handler = LangfuseHandler()
-        return _langfuse_handler
-    except Exception as e:
-        logger.warning(f"Langfuse init skipped: {e}")
-        return None
+def get_langfuse_client():
+    """Get native Langfuse client (safe mode — fixes missing traces)."""
+    global _langfuse_client
+    if _langfuse_client is None:
+        try:
+            from langfuse import Langfuse
+            _langfuse_client = Langfuse(
+                secret_key=settings.LANGFUSE_SECRET_KEY,
+                public_key=settings.LANGFUSE_PUBLIC_KEY,
+                host=settings.LANGFUSE_HOST, debug=True
+            )
+        except Exception as e:
+            logger.warning(f"Langfuse init skipped: {e}")
+    return _langfuse_client
 
 
 # ========== SECURITY HELPERS (from prev project) ==========
@@ -148,12 +149,12 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     langfuse_trace = None
     langfuse_gen = None
     try:
-        handler = get_langfuse_handler()
-        if handler and hasattr(handler, 'langfuse'):
-            langfuse_trace = handler.langfuse.trace(
-                name="call_llm",
+        lf = get_langfuse_client()
+        if lf:
+            langfuse_trace = lf.trace(
+                name="RunnableSequence",
                 input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": "gemini-2.0-flash", "temperature": temperature},
+                metadata={"model": "qwen/qwen-2.5-72b-instruct", "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
                 name="openrouter-completion",
@@ -191,7 +192,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         # Log to Langfuse
         try:
             if langfuse_gen:
-                usage = data.get("usage", {})
+                usage = data.get("usage") or {}
                 langfuse_gen.end(
                     output=answer[:500],
                     usage={
@@ -203,7 +204,14 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
             if langfuse_trace:
                 langfuse_trace.update(output=answer[:200])
         except Exception as e:
-            logger.debug(f"Langfuse log skipped: {e}")
+            logger.error(f"Langfuse log error: {e}")
+        finally:
+            try:
+                lf = get_langfuse_client()
+                if lf:
+                    lf.flush()
+            except Exception:
+                pass
 
         return answer
     raise Exception(f"LLM call failed: {resp.status_code} — {resp.text}")
