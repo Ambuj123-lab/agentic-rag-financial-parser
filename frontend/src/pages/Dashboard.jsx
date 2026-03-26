@@ -33,7 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     api.get('/common/stats')
       .then(res => setStats(res.data))
-      .catch(() => { })
+      .catch(() => {})
 
     api.get('/chat/history')
       .then(res => {
@@ -49,7 +49,7 @@ export default function Dashboard() {
           })))
         }
       })
-      .catch(() => { })
+      .catch(() => {})
   }, [])
 
   // Auto-scroll
@@ -295,7 +295,7 @@ export default function Dashboard() {
         <div style={{ padding: '12px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
           {/* Knowledge Base Health Accordion */}
           <div style={{ marginBottom: 12, borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
-            <button
+            <button 
               onClick={() => setStatsExpanded(!statsExpanded)}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -414,8 +414,8 @@ export default function Dashboard() {
                     <div style={{ marginTop: 12 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4 }}>
                         <span>Confidence Score</span>
-                        <span style={{
-                          fontWeight: 600,
+                        <span style={{ 
+                          fontWeight: 600, 
                           color: msg.confidence >= 70 ? 'var(--green)' : msg.confidence >= 40 ? 'var(--amber)' : 'var(--red)'
                         }}>
                           {Math.round(msg.confidence)}%
@@ -544,8 +544,8 @@ export default function Dashboard() {
               </span>
               <button className="docs-modal-close" onClick={() => setDocsOpen(false)}>×</button>
             </div>
-            <iframe
-              src="https://ambuj-rag-docs.netlify.app/docs/domain-applications/financial-parser"
+            <iframe 
+              src="https://ambuj-rag-docs.netlify.app/docs/domain-applications/financial-parser" 
               title="Architecture Documentation"
               className="docs-iframe"
             />
