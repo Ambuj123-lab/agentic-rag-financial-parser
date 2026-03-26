@@ -710,6 +710,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
 | Large embedding batches | Keep `EMBED_BATCH_SIZE = 5` |
 | PDF preview generation | Would load entire PDF in memory |
 | WebSocket connections | SSE is already memory-efficient |
+Impressive set up. Thanks for sharing. How do you deal with prompt injection attack from their upload pdf files?
 
 ---
 
