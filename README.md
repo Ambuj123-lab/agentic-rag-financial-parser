@@ -34,85 +34,9 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 <!-- Animated SVG Architecture Diagram -->
 <div align="center">
-
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                          AGENTIC FINANCIAL PARSER                               │
-│                     Production Architecture Overview                            │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌──────────┐    ┌──────────────────────────────────────────────────────────┐   │
-│  │  React   │    │              FastAPI Backend (Uvicorn)                   │   │
-│  │  SPA     │───▶│                                                          │   │
-│  │  Vite    │    │   ┌─────────────────────────────────────────────────┐    │   │
-│  │  Build   │◀──▶│   │        8-NODE LANGGRAPH STATEGRAPH              │    │   │
-│  └──────────┘    │   │                                                 │    │   │
-│       │          │   │  ┌───────────┐    ┌──────────────┐             │    │   │
-│       │          │   │  │ 1.CLASSIFY│───▶│ 2.REJECT     │──▶ END     │    │   │
-│  Google OAuth    │   │  │  Intent   │    │  Abusive     │             │    │   │
-│  (Authlib)       │   │  └─────┬─────┘    └──────────────┘             │    │   │
-│                  │   │        │                                        │    │   │
-│                  │   │        ├──greeting──▶┌────────────┐             │    │   │
-│                  │   │        │             │ 3.GREET    │──▶ END     │    │   │
-│                  │   │        │             │ No VectorDB│             │    │   │
-│                  │   │        │             └────────────┘             │    │   │
-│                  │   │        │                                        │    │   │
-│                  │   │        ├──vague──▶┌────────────────┐            │    │   │
-│                  │   │        │          │ 4.CROSS-QUESTION│           │    │   │
-│                  │   │        │          │  Max 2 Rounds   │──┐       │    │   │
-│                  │   │        │          └────────────────┘  │       │    │   │
-│                  │   │        │                               │       │    │   │
-│                  │   │        ▼──rag_query──┐     ◀──────────┘       │    │   │
-│                  │   │              ┌───────▼───────┐                 │    │   │
-│                  │   │              │ 5.RETRIEVER    │                 │    │   │
-│                  │   │              │ Pinecone Dual  │                 │    │   │
-│                  │   │              │ Core + Temp    │                 │    │   │
-│                  │   │              └───────┬────────┘                 │    │   │
-│                  │   │                      ▼                         │    │   │
-│                  │   │              ┌───────────────┐                 │    │   │
-│                  │   │              │ 6.GENERATOR   │                 │    │   │
-│                  │   │              │ OpenRouter LLM│                 │    │   │
-│                  │   │              │ + Langfuse    │                 │    │   │
-│                  │   │              └───────┬───────┘                 │    │   │
-│                  │   │                      ▼                         │    │   │
-│                  │   │              ┌──────────────────┐              │    │   │
-│                  │   │              │ 7.HALLUCINATION  │              │    │   │
-│                  │   │              │    GUARD         │              │    │   │
-│                  │   │              │ Context Grounding│              │    │   │
-│                  │   │              └───────┬──────────┘              │    │   │
-│                  │   │                      ▼                         │    │   │
-│                  │   │              ┌──────────────┐                  │    │   │
-│                  │   │              │ 8.POSTPROCESS │                  │    │   │
-│                  │   │              │ MongoDB Save  │                  │    │   │
-│                  │   │              │ Langfuse Log  │                  │    │   │
-│                  │   │              └──────────────┘                  │    │   │
-│                  │   └─────────────────────────────────────────────────┘    │   │
-│                  └──────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-│  ┌──────────────────────────────────────────────────────────────────────────┐   │
-│  │                         DATA & INFRASTRUCTURE LAYER                      │   │
-│  │                                                                          │   │
-│  │  ┌────────────┐ ┌────────────┐ ┌──────────┐ ┌─────────┐ ┌───────────┐  │   │
-│  │  │ Pinecone   │ │ Supabase   │ │ MongoDB  │ │ Upstash │ │ Langfuse  │  │   │
-│  │  │ Serverless │ │ PostgreSQL │ │ (Motor)  │ │ Redis   │ │ Tracing   │  │   │
-│  │  │            │ │            │ │          │ │         │ │           │  │   │
-│  │  │ 3,854      │ │ Parent     │ │ Chat     │ │ Semantic│ │ LLM Cost  │  │   │
-│  │  │ Vectors    │ │ Chunks     │ │ History  │ │ Cache   │ │ Tracking  │  │   │
-│  │  │ (MRL/Jina) │ │ Registry   │ │ Sessions │ │ <100ms  │ │ Latency   │  │   │
-│  │  └────────────┘ └────────────┘ └──────────┘ └─────────┘ └───────────┘  │   │
-│  └──────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-│  ┌──────────────────────────────────────────────────────────────────────────┐   │
-│  │                         RESILIENCE & SECURITY                            │   │
-│  │                                                                          │   │
-│  │  🔒 Google OAuth 2.0        🛡️ Circuit Breaker (Pybreaker)              │   │
-│  │  🔑 JWT Session Mgmt        📊 Rate Limiting (10/min/user)              │   │
-│  │  🧬 SHA-256 Dedup           🏥 /health GET+HEAD (UptimeRobot)           │   │
-│  │  📄 Magic Byte Verify       🔄 TTL Auto-Cleanup (24h)                   │   │
-│  └──────────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
-
+<br/>
+<img src="assets/architecture.svg" width="100%" alt="Agentic Financial Parser Architecture"/>
+<br/>
 </div>
 
 ---
