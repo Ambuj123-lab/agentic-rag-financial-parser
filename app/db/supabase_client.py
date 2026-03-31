@@ -42,11 +42,14 @@ def upload_file_to_storage(file_path: str, object_name: str) -> bool:
         logger.error(f"❌ Failed to upload `{object_name}` to Supabase: {e}")
         return False
 
+# We are using v2 table for testing the Blue/Green deployment to keep the live app registry strictly isolated.
+REGISTRY_TABLE = "fp_file_registry_v2"
+
 def get_registry_entry(file_name: str) -> Optional[Dict[str, Any]]:
-    """Retrieve file metadata from the fp_file_registry table."""
+    """Retrieve file metadata from the registry table."""
     supabase = get_supabase()
     try:
-        result = supabase.table("fp_file_registry").select("*").eq("file_name", file_name).execute()
+        result = supabase.table(REGISTRY_TABLE).select("*").eq("file_name", file_name).execute()
         if result.data and len(result.data) > 0:
             return result.data[0]
         return None
@@ -55,10 +58,10 @@ def get_registry_entry(file_name: str) -> Optional[Dict[str, Any]]:
         return None
 
 def upsert_registry_entry(data: Dict[str, Any]) -> bool:
-    """Insert or update a record in the fp_file_registry table."""
+    """Insert or update a record in the registry table."""
     supabase = get_supabase()
     try:
-        supabase.table("fp_file_registry").upsert(data).execute()
+        supabase.table(REGISTRY_TABLE).upsert(data).execute()
         logger.info(f"✅ Upserted registry entry for `{data.get('file_name')}`")
         return True
     except Exception as e:
@@ -69,7 +72,7 @@ def get_all_active_files() -> List[Dict[str, Any]]:
     """Get a list of all active files tracked in the registry."""
     supabase = get_supabase()
     try:
-        result = supabase.table("fp_file_registry").select("*").eq("status", "active").execute()
+        result = supabase.table(REGISTRY_TABLE).select("*").eq("status", "active").execute()
         return result.data
     except Exception as e:
         logger.error(f"❌ Supabase GET all registry error: {e}")
@@ -79,7 +82,7 @@ def mark_file_inactive(file_name: str) -> bool:
     """Soft delete a file from the registry."""
     supabase = get_supabase()
     try:
-        supabase.table("fp_file_registry").update({"status": "inactive"}).eq("file_name", file_name).execute()
+        supabase.table(REGISTRY_TABLE).update({"status": "inactive"}).eq("file_name", file_name).execute()
         logger.info(f"🗑️ Marked `{file_name}` as inactive in Supabase")
         return True
     except Exception as e:

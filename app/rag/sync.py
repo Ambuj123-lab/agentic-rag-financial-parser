@@ -20,7 +20,8 @@ enhanced with LlamaParse tier selection and HITL chunk review.
 import os
 import logging
 import gc
-from typing import List, Dict, Tuple
+import argparse
+from typing import List, Dict, Tuple, Any
 
 from app.rag.parser import parse_document, get_file_hash
 from app.rag.chunker import chunk_documents
@@ -53,19 +54,15 @@ def scan_local_pdfs() -> List[str]:
     return pdfs
 
 
-def sync_core_brain() -> Dict[str, any]:
+def sync_core_brain(target_filename: str = None) -> Dict[str, Any]:
     """
     Main sync function — compares local PDFs against Supabase registry.
     
-    Returns a summary dict:
-    {
-        "added": ["file1.pdf", ...],
-        "updated": ["file2.pdf", ...],
-        "unchanged": ["file3.pdf", ...],
-        "deleted": ["file4.pdf", ...],
-        "errors": ["file5.pdf: error message", ...]
-    }
+    Args:
+        target_filename: If provided, only process this single file.
+                        If None, process all files (original behavior).
     """
+    
     summary = {
         "added": [],
         "updated": [],
@@ -76,9 +73,16 @@ def sync_core_brain() -> Dict[str, any]:
     
     local_pdfs = scan_local_pdfs()
     
+    # TARGETED MODE: Only process the specified file
+    if target_filename:
+        if target_filename not in local_pdfs:
+            logger.error(f"🛑 Error: '{target_filename}' not found in data/raw_pdf/")
+            summary["errors"].append(f"{target_filename}: File not found")
+            return summary
+        logger.info(f"🎯 TARGETED MODE: Processing only '{target_filename}'")
+        local_pdfs = [target_filename]
+    
     # --- SAFETY FAILSAFE ---
-    # If the folder is empty, it's likely a deployment/sync issue. 
-    # Abort to prevent accidental mass deletion of the Pinecone index.
     if not local_pdfs:
         error_msg = "🛑 ABORTED: data/raw_pdf is empty. Add files before syncing to prevent mass deletion."
         logger.error(error_msg)
@@ -124,14 +128,16 @@ def sync_core_brain() -> Dict[str, any]:
         gc.collect()
     
     # --- Detect DELETED files (in registry but not on disk) ---
-    active_files = get_all_active_files()
-    for entry in active_files:
-        reg_name = entry.get("file_name", "")
-        if reg_name not in local_pdfs:
-            logger.info(f"🗑️ Deleted from disk: {reg_name}")
-            delete_vectors_by_filter({"source_file": {"$eq": reg_name}})
-            mark_file_inactive(reg_name)
-            summary["deleted"].append(reg_name)
+    # SKIP deletion sweep in targeted mode to prevent accidental mass deletion
+    if not target_filename:
+        active_files = get_all_active_files()
+        for entry in active_files:
+            reg_name = entry.get("file_name", "")
+            if reg_name not in local_pdfs:
+                logger.info(f"🗑️ Deleted from disk: {reg_name}")
+                delete_vectors_by_filter({"source_file": {"$eq": reg_name}})
+                mark_file_inactive(reg_name)
+                summary["deleted"].append(reg_name)
     
     # --- Print Summary ---
     logger.info("=" * 50)
@@ -192,3 +198,25 @@ def _process_changed_file(filename, file_path, file_hash, file_size, summary):
     if filename in summary["added"]:
         summary["added"].remove(filename)
         summary["updated"].append(filename)
+
+
+# ========== CLI ENTRY POINT ==========
+if __name__ == "__main__":
+    import sys
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+    
+    parser = argparse.ArgumentParser(description="Sync PDFs to Vector DB")
+    parser.add_argument("--file", type=str, default=None,
+                        help="Process a single specific PDF file (e.g. 'Finance_Bill.pdf')")
+    args = parser.parse_args()
+    
+    result = sync_core_brain(target_filename=args.file)
+    
+    print("\n" + "=" * 50)
+    print(f"✅ Added:     {len(result['added'])} — {result['added']}")
+    print(f"🔄 Updated:   {len(result['updated'])} — {result['updated']}")
+    print(f"⏭️  Unchanged: {len(result['unchanged'])} — {result['unchanged']}")
+    print(f"🗑️  Deleted:   {len(result['deleted'])} — {result['deleted']}")
+    print(f"❌ Errors:    {len(result['errors'])} — {result['errors']}")
+    print("=" * 50)
+

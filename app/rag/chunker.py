@@ -22,6 +22,7 @@ Why not Parent-Child for everything?
 
 import logging
 import hashlib
+import re
 from typing import List, Dict, Any
 from datetime import datetime
 
@@ -85,6 +86,13 @@ def chunk_with_markdown_headers(docs: List[Dict[str, Any]]) -> List[Dict[str, An
             chunk_text = md_chunk.page_content
             chunk_metadata = dict(md_chunk.metadata) if md_chunk.metadata else {}
             
+            # Context Injection: Stamp every chunk with its source document name
+            # This makes Jina embeddings mathematically aware of WHICH document this text belongs to
+            context_prefix = f"[Source Document: {source}]\n"
+            
+            # Regex: Auto-detect [Omitted] / [Repealed] sections (Zero API Cost metadata)
+            is_omitted = bool(re.search(r"\[Omitted|\[Repealed|omitted by", chunk_text, re.IGNORECASE))
+            
             # If chunk is too large, split further by size
             if len(chunk_text) > MAX_MARKDOWN_CHUNK_SIZE:
                 sub_chunks = size_splitter.split_text(chunk_text)
@@ -93,7 +101,7 @@ def chunk_with_markdown_headers(docs: List[Dict[str, Any]]) -> List[Dict[str, An
                     chunk_id = hashlib.md5(f"{source}_{page}_{chunk_metadata}_{j}".encode()).hexdigest()
                     all_chunks.append({
                         "chunk_id": chunk_id,
-                        "text": sub,
+                        "text": context_prefix + sub,
                         "metadata": {
                             **chunk_metadata,
                             "source_file": source,
@@ -101,8 +109,9 @@ def chunk_with_markdown_headers(docs: List[Dict[str, Any]]) -> List[Dict[str, An
                             "page": page,
                             "chunk_type": "markdown_header",
                             "sub_chunk_index": j,
-                            "parent_text": chunk_text,  # Full header section for LLM context
+                            "parent_text": context_prefix + chunk_text,
                             "text_preview": sub[:500],
+                            "is_omitted": is_omitted,
                             "is_temporary": False,
                             "uploaded_by": "system",
                             "indexed_at": datetime.now().isoformat(),
@@ -112,15 +121,16 @@ def chunk_with_markdown_headers(docs: List[Dict[str, Any]]) -> List[Dict[str, An
                 chunk_id = hashlib.md5(f"{source}_{page}_{chunk_metadata}".encode()).hexdigest()
                 all_chunks.append({
                     "chunk_id": chunk_id,
-                    "text": chunk_text,
+                    "text": context_prefix + chunk_text,
                     "metadata": {
                         **chunk_metadata,
                         "source_file": source,
                         "loader": loader,
                         "page": page,
                         "chunk_type": "markdown_header",
-                        "parent_text": chunk_text,  # Same text — it's the full header section
+                        "parent_text": context_prefix + chunk_text,
                         "text_preview": chunk_text[:500],
+                        "is_omitted": is_omitted,
                         "is_temporary": False,
                         "uploaded_by": "system",
                         "indexed_at": datetime.now().isoformat(),
@@ -178,6 +188,10 @@ def chunk_with_parent_child(docs: List[Dict[str, Any]], is_temporary: bool = Fal
             parent_id = f"{source}_{page}_{parent_idx}"
             parent_count += 1
             
+            # Context Injection & Omitted check (same as Markdown strategy)
+            context_prefix = f"[Source Document: {source}]\n"
+            is_omitted = bool(re.search(r"\[Omitted|\[Repealed|omitted by", parent_text, re.IGNORECASE))
+            
             child_texts = child_splitter.split_text(parent_text)
             
             for child_idx, child_text in enumerate(child_texts):
@@ -187,10 +201,10 @@ def chunk_with_parent_child(docs: List[Dict[str, Any]], is_temporary: bool = Fal
                 
                 all_chunks.append({
                     "chunk_id": child_id,
-                    "text": child_text,  # This gets embedded as vector
+                    "text": context_prefix + child_text,
                     "metadata": {
                         "parent_id": parent_id,
-                        "parent_text": parent_text,  # Full parent for LLM context
+                        "parent_text": context_prefix + parent_text,
                         "text_preview": child_text[:500],
                         "source_file": source,
                         "loader": loader,
@@ -198,6 +212,7 @@ def chunk_with_parent_child(docs: List[Dict[str, Any]], is_temporary: bool = Fal
                         "chunk_type": "parent_child",
                         "child_index": child_idx,
                         "parent_chunk_index": parent_idx,
+                        "is_omitted": is_omitted,
                         "is_temporary": is_temporary,
                         "uploaded_by": uploaded_by if is_temporary else "system",
                         "indexed_at": datetime.now().isoformat(),
