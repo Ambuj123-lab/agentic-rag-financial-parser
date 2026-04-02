@@ -211,7 +211,7 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
                 cached_data = json.loads(cached)
                 # Return cached response as single SSE event
                 async def cached_stream():
-                    yield f"data: {json.dumps({'type': 'cached', 'answer': cached_data.get('answer', ''), 'sources': cached_data.get('sources', []), 'confidence': cached_data.get('confidence', 0), 'pii_detected': cached_data.get('pii_detected', False), 'pii_entities': cached_data.get('pii_entities', [])})}\n\n"
+                    yield f"data: {json.dumps({'type': 'cached', 'answer': cached_data.get('answer', ''), 'sources': cached_data.get('sources', []), 'confidence': cached_data.get('confidence', 0), 'pii_detected': cached_data.get('pii_detected', False), 'pii_entities': cached_data.get('pii_entities', []), 'chunks': cached_data.get('retrieved_chunks', [])})}\n\n"
                     yield "data: [DONE]\n\n"
                 return StreamingResponse(cached_stream(), media_type="text/event-stream")
         except Exception:
@@ -251,7 +251,7 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
                 await asyncio.sleep(0.5)
                 yield f"data: {json.dumps({'type': 'node', 'id': node['id'], 'status': 'done'})}\n\n"
             
-            yield f"data: {json.dumps({'type': 'complete', 'answer': result.get('answer', ''), 'sources': result.get('sources', []), 'confidence': result.get('confidence', 0), 'pii_detected': result.get('pii_detected', False), 'pii_entities': result.get('pii_entities', [])})}\n\n"
+            yield f"data: {json.dumps({'type': 'complete', 'answer': result.get('answer', ''), 'sources': result.get('sources', []), 'confidence': result.get('confidence', 0), 'pii_detected': result.get('pii_detected', False), 'pii_entities': result.get('pii_entities', []), 'chunks': result.get('retrieved_chunks', [])})}\n\n"
             yield "data: [DONE]\n\n"
 
         await save_message(email, "user", question)
@@ -276,8 +276,8 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
             await asyncio.sleep(0.6)  # Premium visual pause for UX
             yield f"data: {json.dumps({'type': 'node', 'id': node['id'], 'status': 'done'})}\n\n"
 
-        # Metadata (sources, confidence, PII)
-        yield f"data: {json.dumps({'type': 'meta', 'sources': result.get('sources', []), 'confidence': result.get('confidence', 0), 'pii_detected': result.get('pii_detected', False), 'pii_entities': result.get('pii_entities', [])})}\n\n"
+        # Metadata (sources, confidence, PII, chunks)
+        yield f"data: {json.dumps({'type': 'meta', 'sources': result.get('sources', []), 'confidence': result.get('confidence', 0), 'pii_detected': result.get('pii_detected', False), 'pii_entities': result.get('pii_entities', []), 'chunks': result.get('retrieved_chunks', [])})}\n\n"
 
         # Stream the answer word-by-word
         full_answer = result.get("answer", "") or ""

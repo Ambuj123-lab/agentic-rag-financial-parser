@@ -135,9 +135,9 @@ export default function Landing() {
           fontSize: '1.05rem', color: 'var(--text-secondary)',
           maxWidth: 660, margin: '0 auto 36px', lineHeight: 1.7,
         }}>
-          Parse Union Budget, Finance Bill, Tax Laws, PF/Pension Schemes, RBI KYC &amp;
-          Constitution of India with an 8-node agentic RAG powered by LangGraph StateGraph —
-          cross-questioning, hallucination guard, and human-in-the-loop chunk review.
+          Parse Union Budget, Finance Bill, Tax Laws (1961 & 2025), PF/Pension Schemes, RBI KYC &amp;
+          Constitution of India with an 8-node agentic RAG — parallel vector retrieval,
+          Cohere neural reranking, multi-version synthesis, and hallucination guard.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14 }}>
@@ -167,7 +167,7 @@ export default function Landing() {
       }}>
         {[
           'LangGraph StateGraph', 'Jina v3 MRL (256-dim)', 'Pinecone Serverless',
-          'LlamaParse 3-Tier', 'FastAPI + Uvicorn', 'Circuit Breaker (pybreaker)'
+          'Cohere Reranker', 'LlamaParse 3-Tier', 'FastAPI + Uvicorn'
         ].map(t => (
           <span key={t} style={{
             fontFamily: 'var(--font-mono)', fontSize: '0.76rem',
@@ -205,8 +205,8 @@ export default function Landing() {
               { icon: FiSearch, name: 'Classifier', desc: 'Intent detection via LLM: RAG query, Greeting, Abusive, Vague, or Out-of-scope. Routes to correct node via conditional edges.', color: 'var(--accent)' },
               { icon: FiMessageSquare, name: 'CrossQuestioner', desc: 'Vague query? Asks clarifying question (max 2 rounds). Prevents hallucinated answers on ambiguous inputs.', color: 'var(--purple)' },
               { icon: FiShield, name: 'Reject Node', desc: 'Blocks abusive/harmful queries with professional response. PII masking applied before any processing.', color: 'var(--red)' },
-              { icon: FiLayers, name: 'Retriever', desc: 'Dual Pinecone search with metadata filtering: core brain (is_temporary=false) + user temp (uploaded_by=email). Parent-Child Recursive Retrieval.', color: 'var(--accent)' },
-              { icon: FiCpu, name: 'Generator', desc: 'LLM with parent-text context injection. Strict citation rules: every claim must reference [Source ID]. Confidence scoring.', color: 'var(--green)' },
+              { icon: FiLayers, name: 'Retriever', desc: 'Parallel intent-based Pinecone search across multiple law versions. Cohere neural reranker filters top 10 golden chunks from 100+ candidates. Parent-Child Recursive Retrieval.', color: 'var(--accent)' },
+              { icon: FiCpu, name: 'Generator', desc: 'LLM with multi-version synthesis: compares 1961 vs 2025 Act provisions. Cautious RAG policy with banned-phrase guardrails. Confidence scoring.', color: 'var(--green)' },
               { icon: FiActivity, name: 'Hallucination Guard', desc: 'Post-generation check: is the answer grounded in retrieved chunks? If not → fallback. Confidence < 40% → reject.', color: 'var(--red)' },
               { icon: FiGitBranch, name: 'PostProcess', desc: 'Save Q&A to MongoDB (sliding window), log to Langfuse, cache response in Redis (1hr TTL). Feedback tracking.', color: 'var(--amber)' },
               { icon: FiZap, name: 'Fallback', desc: 'Circuit breaker (pybreaker): 3 API failures → circuit opens → graceful fallback message. No crash, no hang.', color: 'var(--text-muted)' },

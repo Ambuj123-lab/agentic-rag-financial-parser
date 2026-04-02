@@ -12,6 +12,7 @@ aiofiles>=24.1.0
 langchain-core>=0.2.33
 langchain-text-splitters>=0.2.0   # Used in chunker.py (MarkdownHeader + Recursive)
 langgraph>=0.2.9
+cohere                            # Used for semantic chunk reranking
 
 # Document Parsers
 llama-parse>=0.5.2

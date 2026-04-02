@@ -149,10 +149,23 @@ def parse_with_llamaparse(file_path: str, tier: str) -> list[dict]:
     try:
         logger.info(f"☁️ LlamaParse [{tier}]: Parsing '{filename}'...")
 
+        parser_kwargs["max_timeout"] = 1800  # 30 min timeout (large Agentic files need more time)
+        parser_kwargs["num_workers"] = 1     # Single worker to avoid connection overload
+
         parser = LlamaParse(**parser_kwargs)
 
-        # LlamaParse returns a list of Document objects
-        documents = parser.load_data(file_path)
+        # Retry loop: network drops = retry download (LlamaParse caches parsed result)
+        documents = None
+        for attempt in range(1, 4):
+            try:
+                documents = parser.load_data(file_path)
+                break  # Success
+            except Exception as retry_err:
+                logger.warning(f"⚠️ Attempt {attempt}/3 failed: {retry_err}")
+                if attempt == 3:
+                    raise  # Give up after 3 tries
+                import time
+                time.sleep(10)  # Wait 10s before retry
 
         docs = []
         for i, doc in enumerate(documents):
