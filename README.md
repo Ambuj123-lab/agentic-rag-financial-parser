@@ -35,7 +35,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 | Branch | Description |
 |--------|-------------|
 | `main` | Production — live on Render |
-| `v2-local-heavy` | V2 pipeline — architecture below |
+| `v2-local-heavy` | V2 pipeline — see [V2_ARCHITECTURE.md](V2_ARCHITECTURE.md) |
 
 ---
 
