@@ -141,7 +141,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "model": "qwen/qwen3.6-plus-preview:free",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
@@ -159,11 +159,11 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
             langfuse_trace = lf.trace(
                 name="RunnableSequence",
                 input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": "qwen/qwen3-next-80b-a3b-instruct:free", "temperature": temperature},
+                metadata={"model": "qwen/qwen3.6-plus-preview:free", "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
                 name="openrouter-completion",
-                model="qwen/qwen3-next-80b-a3b-instruct:free",
+                model="qwen/qwen3.6-plus-preview:free",
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
                 model_parameters={"temperature": temperature, "max_tokens": 4096},
@@ -234,7 +234,7 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "model": "qwen/qwen3.6-plus-preview:free",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
