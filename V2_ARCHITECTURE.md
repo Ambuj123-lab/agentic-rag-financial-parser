@@ -38,7 +38,7 @@ flowchart TD
         Intent -- "Ambiguous" --> CrossQ["❓ CrossQuestioner\n(2-Round HITL)"]
         Intent -- "Legal/RAG" --> Retrieve["🔍 Parallel Retrieval Node"]
         
-        Retrieve -->|Fetch 25+ Broad Vectors| VectorDB[("Pinecone Serverless\n(Jina MRL Vectors)")দ্ধ]:::db
+        Retrieve -->|Fetch 25+ Broad Vectors| VectorDB[("Pinecone Serverless\n(Jina MRL Vectors)")]:::db
         
         VectorDB --> Rerank{"🛡️ Cohere Neural Reranker\n(cohere-rerank-v3)"}:::rerank
         
@@ -53,7 +53,7 @@ flowchart TD
     end
     
     Final -->|"Save Chat & Metadata"| MongoDB[("🍃 MongoDB Atlas")]:::db
-    Final -->|"Cache Output"| Redis[("🔴 Upstash Redis\n(Semantic SHA-256)")দ্ধ]:::db
+    Final -->|"Cache Output"| Redis[("🔴 Upstash Redis\n(Semantic SHA-256)")]:::db
     Final -->|Stream Payload| Client
     
     %% Ingestion Engine (Background)
