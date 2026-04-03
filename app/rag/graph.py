@@ -544,10 +544,7 @@ def retriever_node(state: AgentState) -> dict:
             
         from app.core.constants import FILE_METADATA_REGISTRY
         logger.info(f"  📋 Processing {len(intents)} search intent(s)")
-        
-        # Scale k_per_intent dynamically based on expanded year searches
-        total_searches = sum(len(get_income_tax_years(str(i.get("year", "any")).lower())) for i in intents)
-        k_per_intent = max(5, 20 // max(total_searches, 1))
+        k_per_intent = max(8, 25 // len(intents))
         
         for intent in intents:
             target_doc_type = str(intent.get("doc_type", "any")).lower()
