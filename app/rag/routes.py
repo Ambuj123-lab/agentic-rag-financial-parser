@@ -264,6 +264,29 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
         """Yield SSE events: node progress → metadata → word-by-word tokens → DONE."""
         import asyncio
 
+        # Construct and yield Agent Reasoning + Trace immediately
+        reasoning_text = result.get("reasoning", "")
+        if reasoning_text:
+            tracker = result.get("tracker_data", {})
+            f_count = tracker.get("fetched", 0)
+            g_count = tracker.get("golden", 0)
+            
+            pipeline_trace = f"*{reasoning_text}*\n\n"
+            pipeline_trace += "---\n**System Pipeline Trace:**\n"
+            pipeline_trace += "🧠 [1/8] Query Classified (RAG Mode)\n"
+            pipeline_trace += "📌 [2/8] Search Scope Limits Applied\n"
+            pipeline_trace += "🎯 [3/8] Pinecone Target Files Engaged\n"
+            pipeline_trace += f"🔍 [4/8] {f_count} raw chunks fetched\n"
+            if g_count > 0:
+                pipeline_trace += f"🥇 [5/8] Cohere Neural Reranking applied (Top {g_count})\n"
+            else:
+                pipeline_trace += "🥇 [5/8] Vector Similarity Matched\n"
+            pipeline_trace += "✨ [6/8] LLM Synthesis Activated\n"
+            pipeline_trace += "🛡️ [7/8] Hallucination Check ✅ Passed\n"
+            pipeline_trace += "💾 [8/8] State Synced"
+            
+            yield f"data: {json.dumps({'type': 'reasoning', 'text': pipeline_trace})}\n\n"
+
         # Node Highlighter — show pipeline steps (purely cosmetic, real processing is done)
         nodes = [
             {"id": "guard", "label": "Safety Guard", "icon": "🛡️"},

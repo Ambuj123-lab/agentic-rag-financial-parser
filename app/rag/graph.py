@@ -309,6 +309,10 @@ class AgentState(TypedDict):
     pii_detected: bool
     pii_entities: list
 
+    # AI Metadata
+    reasoning: str
+    tracker_data: dict
+
 
 # ========== NODE 1: CLASSIFIER ==========
 
@@ -420,17 +424,19 @@ Default to "system_only" if unsure."""
                 "clarifying_question": result.get("clarifying_question"),
                 "needs_cross_question": True,
                 "search_scope": search_scope,
-                "search_intents": search_intents
+                "search_intents": search_intents,
+                "reasoning": routing_reason
             }
     except pybreaker.CircuitBreakerError:
         logger.warning("⚡ LLM circuit breaker OPEN — skipping classification")
-        return {"query_type": "rag", "is_vague": False, "needs_cross_question": False, "search_scope": "hybrid", "search_intents": [{"search_query": query, "doc_type": "any", "year": "any"}]}
+        return {"query_type": "rag", "is_vague": False, "needs_cross_question": False, "search_scope": "hybrid", "search_intents": [{"search_query": query, "doc_type": "any", "year": "any"}], "reasoning": "Circuit Breaker Open"}
     except Exception:
         search_scope = "hybrid"  # Fallback: search both if parsing fails
         search_intents = [{"search_query": query, "doc_type": "any", "year": "any"}]
+        routing_reason = "Classification failed, fallback to hybrid."
 
     logger.info(f"📌 Search scope: {search_scope} | Intents: {len(search_intents)}")
-    return {"query_type": "rag", "is_vague": False, "needs_cross_question": False, "search_scope": search_scope, "search_intents": search_intents}
+    return {"query_type": "rag", "is_vague": False, "needs_cross_question": False, "search_scope": search_scope, "search_intents": search_intents, "reasoning": routing_reason}
 
 
 # ========== NODE 2: REJECT ==========
@@ -671,7 +677,8 @@ def retriever_node(state: AgentState) -> dict:
         "retrieved_chunks": final_chunks,
         "confidence": round(top_confidence, 1),
         "is_fallback": False,
-        "latency": round(time.time() - start, 2)
+        "latency": round(time.time() - start, 2),
+        "tracker_data": {"fetched": len(all_matches), "golden": len(final_chunks)}
     }
 
 
@@ -782,6 +789,11 @@ OLD REGIME DEDUCTION WARNING (MANDATORY):
 If the user asks about Section 80C, 80D, or any other tax deductions/exemptions:
 → You MUST include this professional clarification at the end of your response:
   "Please note: Section 80C and similar deductions are only applicable under the Old Tax Regime. The default New Tax Regime does not allow these deductions. Kindly specify whether you are opting for the Old or New Tax Regime for more tailored guidance."
+
+PENALTY QUERIES (MANDATORY STRUCTURE):
+If the user asks about consequences, late filing, or penalties:
+→ ALWAYS explain the monetary penalty (e.g., Section 234F) FIRST.
+→ ONLY AFTER explaining the monetary penalty should you mention prosecution/imprisonment (e.g., Section 479). Most users mean monetary penalties, not jail!
 
 **MODE B — No Context** (context IS "NO OFFICIAL CONTEXT FOUND."):
 - MANDATORY opening: *"Hi {user_name}, I couldn't find specific details about this in my official documents, but based on my general knowledge..."*
@@ -1127,6 +1139,8 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "error": None,
         "pii_detected": pii_detected,
         "pii_entities": pii_detections,
+        "reasoning": "",
+        "tracker_data": {},
     }
 
     result = graph.invoke(initial_state)
@@ -1141,4 +1155,6 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "is_fallback": result.get("is_fallback", False),
         "pii_detected": result.get("pii_detected", False),
         "pii_entities": result.get("pii_entities", []),
+        "reasoning": result.get("reasoning", ""),
+        "tracker_data": result.get("tracker_data", {}),
     }
