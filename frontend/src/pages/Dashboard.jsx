@@ -151,7 +151,16 @@ export default function Dashboard() {
           try {
             const event = JSON.parse(dataStr)
 
-            if (event.type === 'node') {
+            if (event.type === 'reasoning') {
+              setMessages(prev => {
+                const updated = [...prev]
+                const last = updated[updated.length - 1]
+                if (last?.role === 'assistant') {
+                  updated[updated.length - 1] = { ...last, reasoning: event.text }
+                }
+                return updated
+              })
+            } else if (event.type === 'node') {
               // Node Highlighter — show pipeline step progress
               setNodeSteps(prev => {
                 const existing = prev.find(n => n.id === event.id)
@@ -418,6 +427,19 @@ export default function Dashboard() {
                 <div className="msg-user">{msg.content}</div>
               ) : (
                 <div className={`msg-bot${msg._streaming ? ' streaming' : ''}`}>
+                  {/* Reasoning Dropdown */}
+                  {msg.reasoning && (
+                    <details className="reasoning-details" style={{ marginBottom: '14px', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
+                      <summary style={{ padding: '8px 12px', background: 'var(--bg-tertiary)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer', listStyle: 'none', display: 'flex', alignItems: 'center' }}>
+                        🧠 Ambuj's Agentic Logic 
+                        <span style={{ fontSize: '0.7rem', fontWeight: 'normal', opacity: 0.7, marginLeft: 'auto' }}>Click to view system trace</span>
+                      </summary>
+                      <div className="reasoning-markdown" style={{ padding: '12px', background: 'var(--bg-secondary)', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.reasoning}</ReactMarkdown>
+                      </div>
+                    </details>
+                  )}
+
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
 
                   {/* Source Citations (Expandable) */}
