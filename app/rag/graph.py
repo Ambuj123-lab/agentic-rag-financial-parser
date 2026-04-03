@@ -29,7 +29,7 @@ import json
 import logging
 import time
 from typing import TypedDict, Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, date
 
 from langgraph.graph import StateGraph, START, END
 import pybreaker
@@ -495,6 +495,19 @@ def cross_question_node(state: AgentState) -> dict:
 
 # ========== NODE 5: RETRIEVER ==========
 
+def get_income_tax_years(target_year: str) -> list:
+    """
+    After April 1, 2026 — ALWAYS search both 1961 + 2025
+    for ANY income tax query. No manual mapping needed.
+    """
+    today = date.today()
+    cutoff = date(2026, 4, 1)
+    
+    if today >= cutoff and target_year in ("any", "1961", "2025"):
+        return ["1961", "2025"]  # Always both!
+    
+    return [target_year]  # Pre-2026: respect original intent
+
 def retriever_node(state: AgentState) -> dict:
     """
     Pinecone search with scope-based metadata filtering.
@@ -531,44 +544,51 @@ def retriever_node(state: AgentState) -> dict:
             
         from app.core.constants import FILE_METADATA_REGISTRY
         logger.info(f"  📋 Processing {len(intents)} search intent(s)")
-        k_per_intent = max(8, 25 // len(intents))
+        
+        # Scale k_per_intent dynamically based on expanded year searches
+        total_searches = sum(len(get_income_tax_years(str(i.get("year", "any")).lower())) for i in intents)
+        k_per_intent = max(5, 20 // max(total_searches, 1))
         
         for intent in intents:
-            target_files = []
             target_doc_type = str(intent.get("doc_type", "any")).lower()
-            target_year = str(intent.get("year", "any")).lower()
+            raw_target_year = str(intent.get("year", "any")).lower()
             
-            for file_name, meta in FILE_METADATA_REGISTRY.items():
-                meta_doc = str(meta.get("doc_type", "any")).lower()
-                meta_year = str(meta.get("year", "any")).lower()
-                
-                doc_match = (target_doc_type == "any" or target_doc_type == meta_doc)
-                year_match = (target_year == "any" or meta_year == "any" or target_year in meta_year or meta_year in target_year)
-                
-                if doc_match and year_match:
-                    target_files.append(file_name)
+            # ✅ SCALABLE FIX — expand years automatically
+            years_to_search = get_income_tax_years(raw_target_year)
+            
+            for year in years_to_search:  # 1 loop → 2 searches auto
+                target_files = []
+                for file_name, meta in FILE_METADATA_REGISTRY.items():
+                    meta_doc = str(meta.get("doc_type", "any")).lower()
+                    meta_year = str(meta.get("year", "any")).lower()
                     
-            pinecone_filter = {"is_temporary": {"$eq": False}}
-            if target_files:
-                pinecone_filter = {
-                    "$and": [
-                        {"is_temporary": {"$eq": False}},
-                        {"source_file": {"$in": target_files}}
-                    ]
-                }
-                logger.info(f"  🎯 Intent scope [{target_doc_type} | {target_year}]: {len(target_files)} target files → {target_files}")
-            else:
-                logger.info(f"  🎯 Intent scope [{target_doc_type} | {target_year}]: No registry match, fallback to global search")
-            
-            try:
-                core_results = index.query(
-                    vector=query_vector, top_k=k_per_intent, include_metadata=True,
-                    filter=pinecone_filter
-                )
-                all_matches.extend(core_results.matches)
-                logger.info(f"  📚 Retrieved {len(core_results.matches)} hits for intent")
-            except Exception as e:
-                logger.error(f"Pinecone core retrieval failed for intent: {e}")
+                    doc_match = (target_doc_type == "any" or target_doc_type == meta_doc)
+                    year_match = (year == "any" or meta_year == "any" or year in meta_year or meta_year in year)
+                    
+                    if doc_match and year_match:
+                        target_files.append(file_name)
+                        
+                pinecone_filter = {"is_temporary": {"$eq": False}}
+                if target_files:
+                    pinecone_filter = {
+                        "$and": [
+                            {"is_temporary": {"$eq": False}},
+                            {"source_file": {"$in": target_files}}
+                        ]
+                    }
+                    logger.info(f"  🎯 Intent scope [{target_doc_type} | {year}]: {len(target_files)} target files → {target_files}")
+                else:
+                    logger.info(f"  🎯 Intent scope [{target_doc_type} | {year}]: No registry match, fallback to global search")
+                
+                try:
+                    core_results = index.query(
+                        vector=query_vector, top_k=k_per_intent, include_metadata=True,
+                        filter=pinecone_filter
+                    )
+                    all_matches.extend(core_results.matches)
+                    logger.info(f"  📚 Retrieved {len(core_results.matches)} hits for intent year {year}")
+                except Exception as e:
+                    logger.error(f"Pinecone core retrieval failed for intent: {e}")
 
     # 2. Search user's temp uploads
     if scope in ("user_only", "hybrid"):
@@ -747,6 +767,11 @@ You are a highly cautious Indian tax RAG assistant. Follow these rules STRICTLY:
 - ALWAYS state which FY you are assuming in your response.
 - For FY 2026-27: Use ITA 2025 slabs (Section 202).
 - For FY 2025-26: Use ITA 1961 Section 115BAC slabs.
+
+If context contains BOTH ITA 1961 and ITA 2025 chunks:
+- Primary answer: ITA 2025 (current law)
+- Mention old section for reference only
+- Never contradict yourself on applicable FY
 
 **MODE B — No Context** (context IS "NO OFFICIAL CONTEXT FOUND."):
 - MANDATORY opening: *"Hi {user_name}, I couldn't find specific details about this in my official documents, but based on my general knowledge..."*
