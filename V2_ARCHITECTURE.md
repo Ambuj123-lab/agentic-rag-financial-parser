@@ -10,7 +10,7 @@ Unlike the lightweight production `main` branch deployed on Render (optimized fo
 
 ---
 
-## 🏗️ FAANG-Grade V2 Architecture Flow
+## 🏗️ Enterprise-Grade V2 Architecture Flow
 
 The following sequence details the full autonomous LangGraph execution, from secure ingestion to LLM-as-a-judge validation.
 

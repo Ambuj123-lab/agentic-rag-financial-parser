@@ -35,7 +35,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 | Branch | Description |
 |--------|-------------|
 | `main` | Production — stable, lean version live on Render (512MB RAM constraints) |
-| `v2-local-heavy` | **Advanced Architecture:** Parallel Vector Retrieval + **Cohere Neural Reranking**. 👉 **[View FAANG V2 Architecture](V2_ARCHITECTURE.md)** |
+| `v2-local-heavy` | **Advanced Architecture:** Parallel Vector Retrieval + **Cohere Neural Reranking**. 👉 **[View V2 Architecture Diagram](V2_ARCHITECTURE.md)** |
 
 ---
 
