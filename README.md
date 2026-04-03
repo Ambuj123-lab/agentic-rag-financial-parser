@@ -34,8 +34,8 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 | Branch | Description |
 |--------|-------------|
-| `main` | Production — live on Render |
-| `v2-local-heavy` | V2 pipeline — see [V2_ARCHITECTURE.md](V2_ARCHITECTURE.md) |
+| `main` | Production — stable, lean version live on Render (512MB RAM constraints) |
+| `v2-local-heavy` | **Advanced Architecture:** Parallel Vector Retrieval + **Cohere Neural Reranking** for high-precision filtering |
 
 ---
 
@@ -58,8 +58,8 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 | **2. Reject** | Safety guard | Blocks abusive queries with firm, non-engaging response |
 | **3. Greet** | Efficiency bypass | Handles greetings **without** hitting vector DB (zero cost) |
 | **4. CrossQuestioner** | HITL clarification | Asks clarifying questions for vague queries (max 2 rounds) |
-| **5. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads** in Pinecone with parent-chunk deduplication |
-| **6. Generator** | LLM synthesis | OpenRouter (DeepSeek/Gemini) with Langfuse tracing + circuit breaker |
+| **5. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads**. *V2 adds Parallel Retrieval & Cohere Neural Reranking.* |
+| **6. Generator** | LLM synthesis | Dynamic OpenRouter fallback ensemble (Qwen/DeepSeek/Llama) with circuit breakers |
 | **7. HallucinationGuard** | Answer verification | Validates answer is **grounded** in retrieved context chunks |
 | **8. PostProcess** | Persistence | Saves to MongoDB chat history + Langfuse observability logging |
 
@@ -74,13 +74,17 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 <td><b>Purpose</b></td>
 </tr>
 <tr>
-<td rowspan="3"><b>RAG Engine</b></td>
+<td rowspan="4"><b>RAG Engine</b></td>
 <td>LangGraph StateGraph</td>
 <td>8-node autonomous state machine orchestration</td>
 </tr>
 <tr>
 <td>Jina v3 (MRL)</td>
 <td>Matryoshka Representation Learning embeddings</td>
+</tr>
+<tr>
+<td>Cohere Neural Reranker</td>
+<td>Advanced Stage-2 semantic filtering (V2)</td>
 </tr>
 <tr>
 <td>LlamaParse</td>
@@ -143,8 +147,8 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 | Metric | Value |
 |--------|-------|
-| **Total Chunks** | 3,854 (Financial Parser) |
-| **Live Vectors** | 3,854 in Pinecone Serverless |
+| **Total Chunks** | 15,408 (Financial Parser Portfolio) |
+| **Live Vectors** | 13,453 high-dimensional vectors in Pinecone |
 | **Documents Indexed** | 20+ Indian Government Acts & Financial Frameworks |
 | **Parent Chunks** | Stored in Supabase for full-context retrieval |
 | **Cache Latency** | <100ms (Upstash Redis semantic cache) |
