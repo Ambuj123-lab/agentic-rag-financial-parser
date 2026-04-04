@@ -133,15 +133,15 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via OpenRouter with circuit breaker + Langfuse tracing."""
+    """Call LLM via Groq API with circuit breaker + Langfuse tracing."""
     import httpx
 
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "nvidia/nemotron-3-nano-30b-a3b:free",
+        "model": "llama-3.3-70b-versatile",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
@@ -159,11 +159,11 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
             langfuse_trace = lf.trace(
                 name="RunnableSequence",
                 input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": "nvidia/nemotron-3-nano-30b-a3b:free", "temperature": temperature},
+                metadata={"model": "llama-3.3-70b-versatile", "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
-                name="openrouter-completion",
-                model="nvidia/nemotron-3-nano-30b-a3b:free",
+                name="groq-completion",
+                model="llama-3.3-70b-versatile",
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
                 model_parameters={"temperature": temperature, "max_tokens": 4096},
@@ -174,7 +174,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     start = time.time()
 
     with httpx.Client(timeout=60.0) as client:
-        resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
+        resp = client.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers)
 
     latency = round(time.time() - start, 2)
 
@@ -225,16 +225,16 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Uses OpenRouter's streaming API (SSE) for word-by-word delivery.
+    Uses Groq's streaming API (SSE) for word-by-word delivery.
     """
     import httpx
 
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "nvidia/nemotron-3-nano-30b-a3b:free",
+        "model": "llama-3.3-70b-versatile",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
@@ -247,7 +247,7 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
     with httpx.Client(timeout=120.0) as client:
         with client.stream(
             "POST",
-            "https://openrouter.ai/api/v1/chat/completions",
+            "https://api.groq.com/openai/v1/chat/completions",
             json=payload,
             headers=headers,
         ) as resp:

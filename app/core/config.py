@@ -16,7 +16,8 @@ class Settings(BaseSettings):
     # External APIs
     LLAMA_CLOUD_API_KEY: str
     JINA_API_KEY: str
-    OPENROUTER_API_KEY: str
+    OPENROUTER_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
     COHERE_API_KEY: Optional[str] = None
     
     # Vector DB (Pinecone)
