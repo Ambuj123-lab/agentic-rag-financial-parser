@@ -136,7 +136,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     """Call LLM via Gemini with circuit breaker + Langfuse tracing."""
     import httpx
 
-    model_name = "gemma-2-27b-it"
+    model_name = "gemini-3.1-flash-lite-preview"
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
     
@@ -226,7 +226,7 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
     """
     import httpx
 
-    model_name = "gemma-2-27b-it"
+    model_name = "gemini-3.1-flash-lite-preview"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
 
     headers = {
