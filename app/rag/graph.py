@@ -190,6 +190,9 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         except (KeyError, IndexError):
             raw_content = ""
 
+        # 0. Initialize answer
+        answer = (raw_content or "").strip()
+
         # 1. Strip <think>...</think> blocks if model outputs reasoning tokens
         if "<think>" in answer:
             import re as _re
