@@ -133,21 +133,26 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via OpenRouter with circuit breaker + Langfuse tracing."""
+    """Call LLM via Gemini with circuit breaker + Langfuse tracing."""
     import httpx
 
+    model_name = "gemma-4-31b"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
+    
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "nvidia/nemotron-3-nano-30b-a3b:free",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ],
-        "temperature": temperature,
-        "max_tokens": 4096,
+        "systemInstruction": {
+            "parts": [{"text": system_prompt}]
+        },
+        "contents": [{
+            "parts": [{"text": user_message}]
+        }],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": 4096,
+        }
     }
 
     # --- Langfuse Trace ---
@@ -159,11 +164,11 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
             langfuse_trace = lf.trace(
                 name="RunnableSequence",
                 input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": "nvidia/nemotron-3-nano-30b-a3b:free", "temperature": temperature},
+                metadata={"model": model_name, "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
-                name="openrouter-completion",
-                model="nvidia/nemotron-3-nano-30b-a3b:free",
+                name="gemini-completion",
+                model=model_name,
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
                 model_parameters={"temperature": temperature, "max_tokens": 4096},
@@ -174,15 +179,18 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     start = time.time()
 
     with httpx.Client(timeout=60.0) as client:
-        resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
+        resp = client.post(url, json=payload, headers=headers)
 
     latency = round(time.time() - start, 2)
 
     if resp.status_code == 200:
         data = resp.json()
-        raw_content = data.get("choices", [{}])[0].get("message", {}).get("content")
+        try:
+            raw_content = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+        except (KeyError, IndexError):
+            raw_content = ""
 
-        # CRITICAL: Some models return content: null — guard against None
+        # CRITICAL: guard against None or empty
         answer = (raw_content or "").strip()
 
         # Strip <think>...</think> blocks if model outputs reasoning tokens
@@ -197,12 +205,12 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         # Log to Langfuse
         try:
             if langfuse_gen:
-                usage = data.get("usage") or {}
+                usage = data.get("usageMetadata", {})
                 langfuse_gen.end(
                     output=answer[:500],
                     usage={
-                        "input": usage.get("prompt_tokens", 0),
-                        "output": usage.get("completion_tokens", 0),
+                        "input": usage.get("promptTokenCount", 0),
+                        "output": usage.get("candidatesTokenCount", 0),
                     },
                     metadata={"latency_sec": latency},
                 )
@@ -225,32 +233,31 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Uses OpenRouter's streaming API (SSE) for word-by-word delivery.
+    Uses Gemini's streaming API (SSE) for word-by-word delivery.
     """
     import httpx
 
+    model_name = "gemma-4-31b"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "nvidia/nemotron-3-nano-30b-a3b:free",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ],
-        "temperature": temperature,
-        "max_tokens": 4096,
-        "stream": True,
+        "systemInstruction": {
+            "parts": [{"text": system_prompt}]
+        },
+        "contents": [{
+            "parts": [{"text": user_message}]
+        }],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": 4096,
+        }
     }
 
     with httpx.Client(timeout=120.0) as client:
-        with client.stream(
-            "POST",
-            "https://openrouter.ai/api/v1/chat/completions",
-            json=payload,
-            headers=headers,
-        ) as resp:
+        with client.stream("POST", url, json=payload, headers=headers) as resp:
             if resp.status_code != 200:
                 raise Exception(f"LLM stream failed: {resp.status_code}")
 
@@ -262,10 +269,13 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
                     break
                 try:
                     chunk = json.loads(data_str)
-                    delta = chunk.get("choices", [{}])[0].get("delta", {})
-                    content = delta.get("content", "")
-                    if content:
-                        yield content
+                    candidates = chunk.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts:
+                            content = parts[0].get("text", "")
+                            if content:
+                                yield content
                 except (json.JSONDecodeError, IndexError, KeyError):
                     continue
 

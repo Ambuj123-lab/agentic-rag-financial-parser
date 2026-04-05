@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     JINA_API_KEY: str
     OPENROUTER_API_KEY: str
     COHERE_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: str = ""
     
     # Vector DB (Pinecone)
     PINECONE_API_KEY: str
