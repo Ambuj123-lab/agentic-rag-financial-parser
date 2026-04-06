@@ -396,6 +396,7 @@ export default function Dashboard() {
           borderBottom: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', gap: 12,
           background: 'var(--bg-secondary)',
+          position: 'sticky', top: 0, zIndex: 100,
         }}>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{
             background: 'none', border: 'none', color: 'var(--text-secondary)',
