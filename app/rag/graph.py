@@ -317,6 +317,7 @@ class AgentState(TypedDict):
 
     # Classification
     query_type: str  # "abusive" | "greeting" | "vague" | "rag"
+    is_out_of_scope: bool
     search_scope: str  # "system_only" | "user_only" | "hybrid"
     search_intents: list[dict]  # Will hold {"search_query": "...", "doc_type": "...", "year": "..."}
 
@@ -386,6 +387,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 {
   "reasoning": "Brief explanation of WHY you chose these doc_types and years",
   "is_vague": true/false,
+  "is_out_of_scope": true/false,
   "clarifying_question": "ask if vague, else null",
   "search_scope": "system_only" | "user_only" | "hybrid",
   "search_intents": [
@@ -398,6 +400,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 }
 
 Intent Rules:
+- If query is about unrelated topics like cooking, sports, entertainment, general world news, or non-Indian legal/financial systems -> set is_out_of_scope: true.
 - If about Income Tax Act sections, deductions, limits, slabs -> doc_type: "act".
 - If about Finance Act amendments, surcharges, new tax changes -> doc_type: "finance_act".
 - If procedural ("how to file", "form format", "steps") -> doc_type: "rules".
@@ -410,6 +413,7 @@ Intent Rules:
 - If about constitutional rights/civic law -> doc_type: "constitution".
 - If comparative ("old vs new 80C", "compare tax rates") or if year is ambiguous in a generic finance query -> output MULTIPLE intents (e.g. one for "1961" and one for "2025"). For tax rate comparisons, also add an intent with doc_type: "reference".
 - Default to "any" if unspecified.
+- is_out_of_scope should be false for any query related to Indian Tax, Law, Finance, Budget, or EPF.
 
 Few-Shot Examples:
 
@@ -442,6 +446,7 @@ Default to "system_only" if unsure."""
         response = call_llm(system_prompt, augmented_query, temperature=0.1)
         result = json.loads(response.strip().strip("```json").strip("```"))
 
+        is_out_of_scope = result.get("is_out_of_scope", False)
         search_scope = result.get("search_scope", "system_only")
         if search_scope not in ("system_only", "user_only", "hybrid"):
             search_scope = "system_only"
@@ -450,12 +455,24 @@ Default to "system_only" if unsure."""
         
         # Log the Router's reasoning for Explainable AI (visible in terminal + Langfuse)
         routing_reason = result.get("reasoning", "No reasoning provided")
-        logger.info(f"🧠 Router Reasoning: {routing_reason}")
+        logger.info(f"🧠 Router Reasoning: {routing_reason} | Out of Scope: {is_out_of_scope}")
+
+        if is_out_of_scope:
+            return {
+                "query_type": "rag",
+                "is_vague": False,
+                "is_out_of_scope": True,
+                "needs_cross_question": False,
+                "search_scope": "system_only",
+                "search_intents": [],
+                "reasoning": routing_reason
+            }
 
         if result.get("is_vague", False) and state.get("cross_question_count", 0) < 2:
             return {
                 "query_type": "vague",
                 "is_vague": True,
+                "is_out_of_scope": False,
                 "clarifying_question": result.get("clarifying_question"),
                 "needs_cross_question": True,
                 "search_scope": search_scope,
@@ -464,14 +481,15 @@ Default to "system_only" if unsure."""
             }
     except pybreaker.CircuitBreakerError:
         logger.warning("⚡ LLM circuit breaker OPEN — skipping classification")
-        return {"query_type": "rag", "is_vague": False, "needs_cross_question": False, "search_scope": "hybrid", "search_intents": [{"search_query": query, "doc_type": "any", "year": "any"}], "reasoning": "Circuit breaker triggered during routing."}
+        return {"query_type": "rag", "is_vague": False, "is_out_of_scope": False, "needs_cross_question": False, "search_scope": "hybrid", "search_intents": [{"search_query": query, "doc_type": "any", "year": "any"}], "reasoning": "Circuit breaker triggered during routing."}
     except Exception:
         search_scope = "hybrid"  # Fallback: search both if parsing fails
         search_intents = [{"search_query": query, "doc_type": "any", "year": "any"}]
         routing_reason = "Fallback: Used hybrid search due to routing classification failure."
+        is_out_of_scope = False
 
     logger.info(f"📌 Search scope: {search_scope} | Intents: {len(search_intents)}")
-    return {"query_type": "rag", "is_vague": False, "needs_cross_question": False, "search_scope": search_scope, "search_intents": search_intents, "reasoning": routing_reason}
+    return {"query_type": "rag", "is_vague": False, "is_out_of_scope": is_out_of_scope, "needs_cross_question": False, "search_scope": search_scope, "search_intents": search_intents, "reasoning": routing_reason}
 
 
 # ========== NODE 2: REJECT ==========
@@ -707,12 +725,28 @@ def generator_node(state: AgentState) -> dict:
     logger.info(f"✨ [6/8] Generator")
     start = time.time()
 
+    query = state["user_query"]
+    user_name = state.get("user_name", "User")
+    
+    # Check 1: Out of scope (Flagged by Classifier)
+    if state.get("is_out_of_scope"):
+        return {
+            "final_answer": graceful_degradation_response(query, "out_of_scope"),
+            "confidence": 0, "sources": [], "latency": 0
+        }
+
+    # Check 2: Low confidence (Retrieval score < 30%)
     chunks = state.get("retrieved_chunks", [])
     confidence = state.get("confidence", 0)
-    user_name = state.get("user_name", "User")
+    
+    if confidence < 30:
+        return {
+            "final_answer": graceful_degradation_response(query, "low_confidence"),
+            "confidence": confidence, "sources": [], "latency": 0
+        }
 
-    # If no chunks, use General Knowledge mode (Threshold removed for legal docs)
-    if not chunks or confidence < 0:
+    # If no chunks but confidence is somehow high (shouldn't happen with <30 check, but safe)
+    if not chunks:
         context = "NO OFFICIAL CONTEXT FOUND."
         sources = set()
     else:
@@ -790,20 +824,47 @@ You are a highly cautious Indian tax RAG assistant. Follow these rules STRICTLY:
 - For FY 2026-27: Use ITA 2025 slabs (Section 202).
 - For FY 2025-26: Use ITA 1961 Section 115BAC slabs.
 
-**CRITICAL INSTRUCTION — CHANGES vs CONTINUITY:**
-- If user asks "what CHANGES were made" and retrieved 
-  context says NO changes were made — clearly state:
-  "No changes were made to [topic] in Budget/Finance Bill 2026-27.
-  [Current rates] have been in effect since [date]."
-- NEVER present existing rates as "new changes".
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## STRICT SCOPE & HONESTY RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. NEVER answer from general knowledge
+2. NEVER say "based on my general knowledge"
+3. NEVER fabricate section numbers, tax rates,
+   monetary figures, or legal provisions
+4. If retrieved context is insufficient → say:
+   "I found limited information in my documents.
+    Please verify with official sources or a CA."
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## HARDCODED CRITICAL DATA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Use ONLY when retrieval fails. Never mix regimes.
 
-**MODE B — No Context (STRICT):**
-- NEVER say "based on my general knowledge" for financial/legal facts.
-- MANDATORY opening: "I couldn't find this in my verified documents.
-  Please refer to official sources or a qualified CA for accurate figures."
-- ONLY use hardcoded critical data below if retrieval fails.
-- NEVER fabricate section numbers, tax rates, or monetary figures.
+NEW REGIME FY 2026-27 (Default):
+₹0-4L→Nil | ₹4-8L→5% | ₹8-12L→10%
+₹12-16L→15% | ₹16-20L→20%
+₹20-24L→25% | Above ₹24L→30%
+87A Rebate: Income ≤ ₹12L → Tax = ZERO
+Salaried zero-tax limit: ₹12.75L (₹75K std deduction)
+Cess: 4% on tax
+
+OLD REGIME FY 2026-27 (Only if user explicitly asks):
+₹0-2.5L→Nil | ₹2.5-5L→5%
+₹5-10L→20% | Above ₹10L→30%
+87A Rebate: Income ≤ ₹5L → Tax = ZERO
+Std Deduction: ₹50,000
+
+Fiscal Deficit FY 2026-27: 4.3% of GDP = ₹16,95,768 crore
+LTCG Rate: 12.5% (unchanged from Budget 2024, NO change in 2026)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## CHANGE vs CONTINUITY RULE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+If user asks "what CHANGES were made" and 
+documents show NO change → clearly state:
+"No changes were made to [topic] in Budget 2026-27.
+[Current rate] has been in effect since [date]."
+NEVER present existing rates as new changes.
 
 **HALLUCINATION GUARD INSTRUCTION:**
 - If HallucinationGuard flags response:
@@ -926,21 +987,17 @@ Always end with — on a new line after main content:
 """
 
     try:
-        answer = call_llm(system_prompt, f"Question: {state['user_query']}\n\nContext:\n{context}", 0.2)
-    except pybreaker.CircuitBreakerError:
-        return {
-            "final_answer": "⚠️ The AI service is temporarily unavailable. Please try again in 30 seconds.",
-            "sources": [], "is_fallback": True, "latency": 0
-        }
+        answer = call_llm(system_prompt, f"Question: {query}\n\nContext:\n{context}", 0.2)
     except Exception as e:
         logger.error(f"Generation failed: {e}")
         return {
-            "final_answer": "⚠️ Something went wrong. Please try again.",
-            "sources": [], "is_fallback": True, "latency": 0
+            "final_answer": graceful_degradation_response(query, "api_error"),
+            "confidence": confidence, "sources": [], "is_fallback": True, "latency": 0
         }
 
     return {
         "final_answer": answer,
+        "confidence": confidence,
         "sources": list(sources),
         "needs_cross_question": False,
         "is_fallback": False,
@@ -1042,14 +1099,9 @@ def route_after_hallu_guard(state: AgentState) -> str:
 def fallback_node(state: AgentState) -> dict:
     """Graceful degradation when everything fails."""
     logger.warning("🆘 FALLBACK activated")
+    query = state.get("user_query", "")
     return {
-        "final_answer": (
-            "I'm currently unable to process your request due to a temporary service issue. "
-            "Please try:\n"
-            "1. **Rephrase** with more specific details\n"
-            "2. **Wait 30 seconds** and try again\n"
-            "3. **Upload the specific document** if it's not in our core knowledge base"
-        ),
+        "final_answer": graceful_degradation_response(query, "api_error"),
         "sources": [], "needs_cross_question": False, "is_fallback": True
     }
 
@@ -1142,6 +1194,7 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "user_name": user_name,
         "chat_history": chat_history or [],
         "query_type": "",
+        "is_out_of_scope": False,
         "search_scope": "hybrid",  # Default: search both, Classifier will override
         "search_intents": [],
         "is_vague": False,
