@@ -361,9 +361,6 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>Total Vectors:</span> <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{stats.total_chunks.toLocaleString()}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>System Status:</span> <span style={{ color: 'var(--success, #34A853)', fontWeight: 600 }}>● Active</span>
-                </div>
               </div>
             )}
           </div>
@@ -407,6 +404,12 @@ export default function Dashboard() {
             <FiMenu size={20} />
           </button>
           <span style={{ fontWeight: 600, fontSize: '0.92rem' }}>Agentic Financial Parser</span>
+          
+          <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noopener noreferrer" className="status-pill">
+            <span className="status-dot"></span>
+            System: Active
+          </a>
+
           <span className="hide-mobile" style={{ fontSize: '0.75rem', color: 'var(--primary)', marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontWeight: 600, letterSpacing: '0.3px', background: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '4px', border: '1px solid var(--border)' }}>
             8-Node Agentic RAG × Parallel Vector Search · Built by Ambuj
           </span>
