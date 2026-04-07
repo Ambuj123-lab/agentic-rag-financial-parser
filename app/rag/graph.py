@@ -169,140 +169,172 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via Gemini with circuit breaker + Langfuse tracing."""
+    """Call LLM via Gemini with Fallback + circuit breaker + Langfuse tracing."""
     import httpx
 
-    model_name = "gemini-3.1-flash-lite-preview"
+    models_to_try = [
+        "gemma-4-31b-it",                 # Primary Model
+        "gemini-3.1-flash-lite-preview"   # Fallback Model
+    ]
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
-    
-    headers = {
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "systemInstruction": {
-            "parts": [{"text": system_prompt}]
-        },
-        "contents": [{
-            "parts": [{"text": user_message}]
-        }],
-        "generationConfig": {
-            "temperature": temperature,
-            "maxOutputTokens": 4096,
+    last_error = None
+
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
+        
+        headers = {
+            "Content-Type": "application/json",
         }
-    }
+        payload = {
+            "systemInstruction": {
+                "parts": [{"text": system_prompt}]
+            },
+            "contents": [{
+                "parts": [{"text": user_message}]
+            }],
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": 4096,
+            }
+        }
 
-    # --- Langfuse Trace ---
-    langfuse_trace = None
-    langfuse_gen = None
-    try:
-        lf = get_langfuse_client()
-        if lf:
-            langfuse_trace = lf.trace(
-                name="RunnableSequence",
-                input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": model_name, "temperature": temperature},
-            )
-            langfuse_gen = langfuse_trace.generation(
-                name="gemini-completion",
-                model=model_name,
-                input=[{"role": "system", "content": system_prompt[:200]},
-                       {"role": "user", "content": user_message[:500]}],
-                model_parameters={"temperature": temperature, "max_tokens": 4096},
-            )
-    except Exception as e:
-        logger.debug(f"Langfuse trace init skipped: {e}")
-
-    start = time.time()
-
-    with httpx.Client(timeout=60.0) as client:
-        resp = client.post(url, json=payload, headers=headers)
-
-    latency = round(time.time() - start, 2)
-
-    if resp.status_code == 200:
-        data = resp.json()
+        # --- Langfuse Trace ---
+        langfuse_trace = None
+        langfuse_gen = None
         try:
-            answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-        except (KeyError, IndexError):
-            answer = ""
-
-        # Log to Langfuse
-        try:
-            if langfuse_gen:
-                usage = data.get("usageMetadata", {})
-                langfuse_gen.end(
-                    output=answer[:500],
-                    usage={
-                        "input": usage.get("promptTokenCount", 0),
-                        "output": usage.get("candidatesTokenCount", 0),
-                    },
-                    metadata={"latency_sec": latency},
+            lf = get_langfuse_client()
+            if lf:
+                langfuse_trace = lf.trace(
+                    name="RunnableSequence",
+                    input={"system": system_prompt[:200], "user": user_message[:500]},
+                    metadata={"model": model_name, "temperature": temperature},
                 )
-            if langfuse_trace:
-                langfuse_trace.update(output=answer[:200])
+                langfuse_gen = langfuse_trace.generation(
+                    name="gemini-completion",
+                    model=model_name,
+                    input=[{"role": "system", "content": system_prompt[:200]},
+                           {"role": "user", "content": user_message[:500]}],
+                    model_parameters={"temperature": temperature, "max_tokens": 4096},
+                )
         except Exception as e:
-            logger.error(f"Langfuse log error: {e}")
-        finally:
-            try:
-                lf = get_langfuse_client()
-                if lf:
-                    lf.flush()
-            except Exception:
-                pass
+            logger.debug(f"Langfuse trace init skipped: {e}")
 
-        return answer
-    raise Exception(f"LLM call failed: {resp.status_code} — {resp.text}")
+        start = time.time()
+
+        try:
+            with httpx.Client(timeout=60.0) as client:
+                resp = client.post(url, json=payload, headers=headers)
+
+            latency = round(time.time() - start, 2)
+
+            if resp.status_code == 200:
+                data = resp.json()
+                try:
+                    answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                except (KeyError, IndexError):
+                    answer = ""
+
+                # Log to Langfuse
+                try:
+                    if langfuse_gen:
+                        usage = data.get("usageMetadata", {})
+                        langfuse_gen.end(
+                            output=answer[:500],
+                            usage={
+                                "input": usage.get("promptTokenCount", 0),
+                                "output": usage.get("candidatesTokenCount", 0),
+                            },
+                            metadata={"latency_sec": latency},
+                        )
+                    if langfuse_trace:
+                        langfuse_trace.update(output=answer[:200])
+                except Exception as e:
+                    logger.error(f"Langfuse log error: {e}")
+                finally:
+                    try:
+                        lf = get_langfuse_client()
+                        if lf:
+                            lf.flush()
+                    except Exception:
+                        pass
+
+                return answer
+            else:
+                last_error = f"{model_name} failed: {resp.status_code} — {resp.text}"
+                logger.warning(f"⏩ {last_error}. Switching to fallback...")
+        except Exception as e:
+            last_error = str(e)
+            logger.warning(f"⏩ {model_name} raised exception: {e}. Switching to fallback...")
+
+    raise Exception(f"All LLMs failed. Last error: {last_error}")
 
 
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
-    Streaming version of call_llm — yields text chunks as they arrive.
+    Streaming version of call_llm with Fallback.
     Uses Gemini's streaming API (SSE) for word-by-word delivery.
     """
     import httpx
 
-    model_name = "gemini-3.1-flash-lite-preview"
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+    models_to_try = [
+        "gemma-4-31b-it",                 # Primary Model
+        "gemini-3.1-flash-lite-preview"   # Fallback Model
+    ]
 
-    headers = {
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "systemInstruction": {
-            "parts": [{"text": system_prompt}]
-        },
-        "contents": [{
-            "parts": [{"text": user_message}]
-        }],
-        "generationConfig": {
-            "temperature": temperature,
-            "maxOutputTokens": 4096,
+    last_error = None
+
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+
+        headers = {
+            "Content-Type": "application/json",
         }
-    }
+        payload = {
+            "systemInstruction": {
+                "parts": [{"text": system_prompt}]
+            },
+            "contents": [{
+                "parts": [{"text": user_message}]
+            }],
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": 4096,
+            }
+        }
 
-    with httpx.Client(timeout=120.0) as client:
-        with client.stream("POST", url, json=payload, headers=headers) as resp:
-            if resp.status_code != 200:
-                raise Exception(f"LLM stream failed: {resp.status_code}")
+        try:
+            with httpx.Client(timeout=120.0) as client:
+                with client.stream("POST", url, json=payload, headers=headers) as resp:
+                    if resp.status_code != 200:
+                        last_error = f"{model_name} stream failed: {resp.status_code}"
+                        logger.warning(f"⏩ {last_error}. Switching to fallback...")
+                        continue
 
-            for line in resp.iter_lines():
-                if not line or not line.startswith("data: "):
-                    continue
-                data_str = line[6:]  # Remove "data: " prefix
-                if data_str.strip() == "[DONE]":
-                    break
-                try:
-                    chunk = json.loads(data_str)
-                    candidates = chunk.get("candidates", [])
-                    if candidates:
-                        parts = candidates[0].get("content", {}).get("parts", [])
-                        if parts:
-                            content = parts[0].get("text", "")
-                            if content:
-                                yield content
-                except (json.JSONDecodeError, IndexError, KeyError):
-                    continue
+                    # If successful, yield chunks and return
+                    for line in resp.iter_lines():
+                        if not line or not line.startswith("data: "):
+                            continue
+                        data_str = line[6:]  # Remove "data: " prefix
+                        if data_str.strip() == "[DONE]":
+                            break
+                        try:
+                            chunk = json.loads(data_str)
+                            candidates = chunk.get("candidates", [])
+                            if candidates:
+                                parts = candidates[0].get("content", {}).get("parts", [])
+                                if parts:
+                                    content = parts[0].get("text", "")
+                                    if content:
+                                        yield content
+                        except (json.JSONDecodeError, IndexError, KeyError):
+                            continue
+                    
+                    return # Exit function completely after successful stream!
+        except Exception as e:
+            last_error = str(e)
+            logger.warning(f"⏩ {model_name} stream exception: {e}. Switching to fallback...")
+
+    raise Exception(f"All stream LLMs failed. Last error: {last_error}")
 
 
 # ========== STATE DEFINITION ==========
