@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -20,6 +20,48 @@ function GoogleLogo({ size = 18 }) {
       <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
     </svg>
   )
+}
+
+function TypewriterCodeBlock() {
+  const [displayText, setDisplayText] = useState('');
+  const codeText = `from unsloth import FastLanguageModel
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = "invincibleambuj/llama-3.2-1b-legal-india-qlora",
+    load_in_4bit = True,
+)
+
+inputs = tokenizer(
+    "### Instruction:\\nWhat is IPC Section 302?\\n\\n### Response:\\n",
+    return_tensors="pt"
+)
+
+outputs = model.generate(**inputs, max_new_tokens=200, repetition_penalty=1.3)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))`;
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setDisplayText(codeText.slice(0, index));
+      index++;
+      if (index > codeText.length) clearInterval(interval);
+    }, 12);
+    return () => clearInterval(interval);
+  }, [codeText]);
+
+  const highlightCode = (code) => {
+    return code
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/(".*?")/g, '<span style="color: #a5d6ff">$1</span>')
+      .replace(/\b(from|import|True|return_tensors|max_new_tokens|repetition_penalty|skip_special_tokens)\b/g, '<span style="color: #ff7b72">$1</span>')
+      .replace(/\b(FastLanguageModel|model|tokenizer|inputs|outputs)\b/g, '<span style="color: #79c0ff">$1</span>')
+      .replace(/\b(print)\b/g, '<span style="color: #d2a8ff">$1</span>');
+  };
+
+  return (
+    <pre style={{ margin: '0', padding: '24px', fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', lineHeight: '1.8', color: '#888', overflowX: 'auto', minHeight: '340px' }} dangerouslySetInnerHTML={{ __html: highlightCode(displayText) }}></pre>
+  );
 }
 
 export default function Landing() {
@@ -56,6 +98,10 @@ export default function Landing() {
           </a>
           <a href="#architecture" className="nav-link">Architecture</a>
           <a href="#depth" className="nav-link">Engineering</a>
+          <a href="#opensource" className="nav-link" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: '1.2', gap: '2px' }}>
+            <span>qLoRA Fine-Tuned</span>
+            <span style={{ fontSize: '0.65rem', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.5px' }}>By Ambuj Kumar Tripathi</span>
+          </a>
           <a href="#engineer" className="nav-link">About</a>
           <a href={GOOGLE_AUTH_URL} className="btn-ghost" style={{
             padding: '8px 18px', fontSize: '0.84rem',
@@ -350,6 +396,70 @@ export default function Landing() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ===== OPEN SOURCE MODEL ===== */}
+      <section id="opensource" style={{ padding: '80px 40px', background: '#0a0a0a', borderTop: '1px solid #2a2a2a' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          
+          <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px' }}>qLoRA Fine-Tuned By Ambuj Kumar Tripathi</p>
+          <h2 style={{ color: '#ffffff', fontSize: '36px', fontWeight: '700', marginBottom: '8px' }}>Indian Legal LLM</h2>
+          <p style={{ color: '#444', fontSize: '13px', marginBottom: '16px', letterSpacing: '1px' }}>Designed & Fine-tuned by <span style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</span> · invincibleambuj</p>
+          <p style={{ color: '#666', fontSize: '15px', marginBottom: '48px', lineHeight: '1.6', maxWidth: '600px' }}>Fine-tuned Llama 3.2 1B on 14,543 Indian Legal examples — IPC, CrPC & Constitution of India. Free to use, run locally or via Python.</p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+            
+            <a href="https://huggingface.co/invincibleambuj/llama-3.2-1b-legal-india-qlora" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '16px' }}>🤗</span>
+                  <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>Hugging Face</span>
+                </div>
+                <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>qLoRA Adapter</h3>
+                <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Use via Python with Unsloth. GPU recommended.</p>
+                <span style={{ color: '#c9a84c', fontSize: '12px' }}>View Model →</span>
+              </div>
+            </a>
+
+            <a href="https://huggingface.co/invincibleambuj/Ambuj-Tripathi-Indian-Legal-Llama-GGUF" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '16px' }}>📦</span>
+                  <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>GGUF</span>
+                </div>
+                <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Run Locally</h3>
+                <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Download & run on CPU. No GPU needed. 807 MB.</p>
+                <span style={{ color: '#c9a84c', fontSize: '12px' }}>Download GGUF →</span>
+              </div>
+            </a>
+
+            <a href="https://lmstudio.ai" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '16px' }}>🖥️</span>
+                  <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>LM Studio</span>
+                </div>
+                <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Desktop App</h3>
+                <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Search & chat locally. No code required.</p>
+                <span style={{ color: '#c9a84c', fontSize: '12px' }}>Open in LM Studio →</span>
+              </div>
+            </a>
+
+          </div>
+
+          <div style={{ background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: '12px', overflow: 'hidden' }}>
+            <div style={{ background: '#111', padding: '10px 20px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f56' }}></div>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ffbd2e' }}></div>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#27c93f' }}></div>
+              <span style={{ color: '#444', fontSize: '11px', marginLeft: '8px', fontFamily: 'monospace' }}>quick_start.py</span>
+            </div>
+            <TypewriterCodeBlock />
+          </div>
+
+          <p style={{ color: '#aaa', fontSize: '12px', marginTop: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>Built with Llama 3.2 · Fine-tuned by <strong style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</strong> · Llama 3.2 Community License</p>
+
         </div>
       </section>
 
