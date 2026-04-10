@@ -763,6 +763,20 @@ a:hover {
     font-size: 0.65rem;
     gap: 5px;
   }
+
+  /* Open Source Section Mobile */
+  .opensource-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .opensource-section {
+    padding: 48px 16px !important;
+  }
+  .opensource-section h2 {
+    font-size: 26px !important;
+  }
+  .opensource-nav-link {
+    font-size: 0.72rem !important;
+  }
 }
 
 /* --- Docs Modal --- */

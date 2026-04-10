@@ -400,7 +400,7 @@ export default function Landing() {
       </section>
 
       {/* ===== OPEN SOURCE MODEL ===== */}
-      <section id="opensource" style={{ padding: '80px 40px', background: '#0a0a0a', borderTop: '1px solid #2a2a2a' }}>
+      <section id="opensource" className="opensource-section" style={{ padding: '80px 40px', background: '#0a0a0a', borderTop: '1px solid #2a2a2a' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           
           <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px' }}>qLoRA Fine-Tuned By Ambuj Kumar Tripathi</p>
@@ -408,7 +408,7 @@ export default function Landing() {
           <p style={{ color: '#444', fontSize: '13px', marginBottom: '16px', letterSpacing: '1px' }}>Designed & Fine-tuned by <span style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</span> · invincibleambuj</p>
           <p style={{ color: '#666', fontSize: '15px', marginBottom: '48px', lineHeight: '1.6', maxWidth: '600px' }}>Fine-tuned Llama 3.2 1B on 14,543 Indian Legal examples — IPC, CrPC & Constitution of India. Free to use, run locally or via Python.</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+          <div className="opensource-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '32px' }}>
             
             <a href="https://huggingface.co/invincibleambuj/llama-3.2-1b-legal-india-qlora" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
               <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
