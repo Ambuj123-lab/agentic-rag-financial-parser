@@ -204,6 +204,39 @@ export default function Landing() {
             Inside System
           </a>
         </div>
+
+        {/* Model Badges */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '28px', flexWrap: 'wrap' }}>
+          <a href="https://huggingface.co/invincibleambuj/Ambuj-Tripathi-Indian-Legal-Llama-GGUF" target="_blank" rel="noreferrer" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+            textDecoration: 'none', transition: 'transform 0.2s',
+          }} onMouseOver={(e) => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}>
+            <div style={{
+              width: '52px', height: '52px', borderRadius: '14px',
+              background: '#111', border: '1px solid #2a2a2a',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '24px', transition: 'border-color 0.2s',
+            }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#2a2a2a'}>
+              🤗
+            </div>
+            <span style={{ color: '#888', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>Hugging Face ›</span>
+          </a>
+
+          <a href="https://lmstudio.ai" target="_blank" rel="noreferrer" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+            textDecoration: 'none', transition: 'transform 0.2s',
+          }} onMouseOver={(e) => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}>
+            <div style={{
+              width: '52px', height: '52px', borderRadius: '14px',
+              background: '#111', border: '1px solid #2a2a2a',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '24px', transition: 'border-color 0.2s',
+            }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#2a2a2a'}>
+              🖥️
+            </div>
+            <span style={{ color: '#888', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>LM Studio ›</span>
+          </a>
+        </div>
       </section>
 
       {/* ===== TECH STRIP ===== */}
