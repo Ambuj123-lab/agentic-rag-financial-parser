@@ -7,12 +7,12 @@
 
 /* --- CSS Variables (Design Tokens) --- */
 :root {
-  /* Core Colors — Deep charcoal with warm undertones */
-  --bg-primary: #0c0c14;
-  --bg-secondary: #111119;
-  --bg-tertiary: #1a1a24;
-  --bg-card: rgba(18, 18, 26, 0.75);
-  --bg-glass: rgba(18, 18, 26, 0.55);
+  /* Core Colors — Pure Pitch Black (Matched to Indian Legal LLM) */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #0d0d0d;
+  --bg-tertiary: #141414;
+  --bg-card: rgba(10, 10, 10, 0.75);
+  --bg-glass: rgba(10, 10, 10, 0.55);
 
   /* Accent — Warm Gold (premium, authoritative) */
   --accent: #d4a574;
@@ -25,9 +25,9 @@
   --purple: #a78bfa;
 
   /* Text */
-  --text-primary: #e8e4df;
-  --text-secondary: #9a9490;
-  --text-muted: #5e5954;
+  --text-primary: #f8f9fa;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
 
   /* Borders */
   --border: rgba(154, 148, 144, 0.1);
@@ -131,7 +131,7 @@ a:hover {
   cursor: default;
 }
 .glass-card:hover {
-  animation: card-jiggle 0.4s ease forwards;
+  animation: card-jiggle 0.4s ease forwards, border-pulse-fintech 2s infinite alternate;
   border-color: var(--border-active);
   box-shadow: 0 16px 48px var(--accent-glow), 0 0 0 1px var(--border-active);
 }
@@ -143,6 +143,12 @@ a:hover {
   60%  { transform: translateY(-6px) rotate(-0.8deg); }
   80%  { transform: translateY(-7px) rotate(0.4deg); }
   100% { transform: translateY(-7px) rotate(0deg); }
+}
+
+@keyframes border-pulse-fintech {
+  0% { border-color: rgba(220, 38, 38, 0.7); box-shadow: 0 0 20px rgba(220, 38, 38, 0.25), inset 0 0 15px rgba(220, 38, 38, 0.1); } /* Deep Red */
+  50% { border-color: rgba(167, 139, 250, 0.7); box-shadow: 0 0 20px rgba(167, 139, 250, 0.25), inset 0 0 15px rgba(167, 139, 250, 0.1); } /* Deep Purple */
+  100% { border-color: rgba(220, 38, 38, 0.7); box-shadow: 0 0 20px rgba(220, 38, 38, 0.25), inset 0 0 15px rgba(220, 38, 38, 0.1); } /* Deep Red */
 }
 
 /* --- Buttons --- */

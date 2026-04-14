@@ -144,13 +144,8 @@ export default function Landing() {
         margin: '0 auto',
         position: 'relative',
       }}>
-        {/* Warm glow */}
-        <div style={{
-          position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-50%)',
-          width: 500, height: 500,
-          background: 'radial-gradient(circle, rgba(212,165,116,0.05) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
+        {/* Deep Red Black Spotlight Background */}
+        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', background: 'radial-gradient(circle at center, rgba(220, 38, 38, 0.15) 0%, transparent 60%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
 
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -290,10 +285,23 @@ export default function Landing() {
               { icon: FiGitBranch, name: 'PostProcess', desc: 'Save Q&A to MongoDB (sliding window), log to Langfuse, cache response in Redis (1hr TTL). Feedback tracking.', color: 'var(--amber)' },
               { icon: FiZap, name: 'Fallback', desc: 'Circuit breaker (pybreaker): 3 API failures → circuit opens → graceful fallback message. No crash, no hang.', color: 'var(--text-muted)' },
             ].map(node => (
-              <div key={node.name} className="glass-card" style={{ padding: '22px 20px' }}>
-                <node.icon size={22} color={node.color} style={{ marginBottom: 10 }} />
-                <h4 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: 6 }}>{node.name}</h4>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{node.desc}</p>
+              <div key={node.name} className="glass-card" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{
+                    position: 'relative', width: '48px', height: '48px', borderRadius: '50%', marginBottom: '20px'
+                }}>
+                    <div style={{
+                        position: 'absolute', inset: 0, borderRadius: '50%',
+                        background: node.color, opacity: 0.9, filter: 'blur(6px)'
+                    }} />
+                    <div style={{
+                        position: 'relative', width: '100%', height: '100%', borderRadius: '50%',
+                        background: '#05070A', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1
+                    }}>
+                        <node.icon size={20} color="#fff" />
+                    </div>
+                </div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 8 }}>{node.name}</h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{node.desc}</p>
               </div>
             ))}
           </div>
@@ -438,20 +446,20 @@ export default function Landing() {
           
           <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px' }}>qLoRA Fine-Tuned By Ambuj Kumar Tripathi</p>
           <h2 style={{ color: '#ffffff', fontSize: '36px', fontWeight: '700', marginBottom: '8px' }}>Indian Legal LLM</h2>
-          <p style={{ color: '#444', fontSize: '13px', marginBottom: '16px', letterSpacing: '1px' }}>Designed & Fine-tuned by <span style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</span> · invincibleambuj</p>
-          <p style={{ color: '#666', fontSize: '15px', marginBottom: '48px', lineHeight: '1.6', maxWidth: '600px' }}>Fine-tuned Llama 3.2 1B on 14,543 Indian Legal examples — IPC, CrPC & Constitution of India. Free to use, run locally or via Python.</p>
+          <p style={{ color: '#a3a3a3', fontSize: '13px', marginBottom: '16px', letterSpacing: '1px' }}>Designed & Fine-tuned by <span style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</span> · invincibleambuj</p>
+          <p style={{ color: '#f3f4f6', fontSize: '15px', marginBottom: '48px', lineHeight: '1.6', maxWidth: '680px' }}>Fine-tuned a family of Llama 3 models (1B, 3B, and 8B) on 14,543 Indian Legal examples — IPC, CrPC & Constitution of India using 2x NVIDIA T4 GPUs. Open-source and highly optimized for consumer hardware.</p>
 
           <div className="opensource-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '32px' }}>
             
-            <a href="https://huggingface.co/invincibleambuj/llama-3.2-1b-legal-india-qlora" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+            <a href="https://huggingface.co/invincibleambuj" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
               <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span style={{ fontSize: '16px' }}>🤗</span>
                   <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>Hugging Face</span>
                 </div>
-                <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>qLoRA Adapter</h3>
-                <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Use via Python with Unsloth. GPU recommended.</p>
-                <span style={{ color: '#c9a84c', fontSize: '12px' }}>View Model →</span>
+                <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Model Collection</h3>
+                <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Access all 1B, 3B, and 8B fine-tuned legal models directly.</p>
+                <span style={{ color: '#c9a84c', fontSize: '12px' }}>View on Hugging Face →</span>
               </div>
             </a>
 
@@ -499,10 +507,16 @@ export default function Landing() {
       {/* ===== ENGINEER ===== */}
       <section id="engineer" style={{
         padding: '80px 40px',
-        borderTop: '1px solid var(--border)',
+        borderTop: '1px solid rgba(212, 165, 116, 0.1)',
         textAlign: 'center',
+        position: 'relative',
+        background: '#0a0a0a',
+        overflow: 'hidden',
       }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        {/* Accent Gradients (Matched to Hero Deep Red) */}
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '120vw', height: '100%', background: 'radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.15) 0%, transparent 60%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        
+        <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{
             display: 'inline-block', padding: '6px 16px', borderRadius: 20,
             background: 'var(--accent-glow)', border: '1px solid rgba(212,165,116,0.2)',
@@ -580,10 +594,15 @@ export default function Landing() {
 
       {/* ===== FOOTER ===== */}
       <footer style={{
-        padding: '24px 40px',
-        borderTop: '1px solid var(--border)',
+        padding: '40px 40px',
+        background: '#0a0a0a',
         textAlign: 'center',
+        position: 'relative',
+        borderTop: '1px solid rgba(255,255,255,0.02)'
       }}>
+        {/* Glowing Gradient Top Border */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.5), transparent)' }} />
+        
         <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
           © 2026 Agentic Financial Parser — Engineered by{' '}
           <a href="https://ambuj-portfolio-v2.netlify.app" target="_blank" rel="noreferrer">
