@@ -215,44 +215,65 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 
     start = time.time()
 
-    with httpx.Client(timeout=60.0) as client:
-        resp = client.post(url, json=payload, headers=headers)
-
-    latency = round(time.time() - start, 2)
-
-    if resp.status_code == 200:
+    try:
+        with httpx.Client(timeout=60.0) as client:
+            resp = client.post(url, json=payload, headers=headers)
+            resp.raise_for_status()
+            
         data = resp.json()
         try:
             answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
         except (KeyError, IndexError):
             answer = ""
-
-        # Log to Langfuse
+            
+    except Exception as primary_e:
+        logger.warning(f"Primary model {model_name} failed ({primary_e}). Switching to FALLBACK gemma-4-31b-it")
+        fallback_model = "gemma-4-31b-it"
+        fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        
+        with httpx.Client(timeout=60.0) as client:
+            fallback_resp = client.post(fallback_url, json=payload, headers=headers)
+            if fallback_resp.status_code != 200:
+                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} — {fallback_resp.text}")
+            
+        data = fallback_resp.json()
         try:
-            if langfuse_gen:
-                usage = data.get("usageMetadata", {})
-                langfuse_gen.end(
-                    output=answer[:500],
-                    usage={
-                        "input": usage.get("promptTokenCount", 0),
-                        "output": usage.get("candidatesTokenCount", 0),
-                    },
-                    metadata={"latency_sec": latency},
-                )
-            if langfuse_trace:
-                langfuse_trace.update(output=answer[:200])
-        except Exception as e:
-            logger.error(f"Langfuse log error: {e}")
-        finally:
-            try:
-                lf = get_langfuse_client()
-                if lf:
-                    lf.flush()
-            except Exception:
-                pass
+            answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+        except (KeyError, IndexError):
+            answer = ""
+            
+    # --- REGEX CENSORING FOR GEMMA FALLBACK ---
+    if "<think>" in answer:
+        import re as _re
+        answer = _re.sub(r"<think>[\s\S]*?</think>", "", answer).strip()
 
-        return answer
-    raise Exception(f"LLM call failed: {resp.status_code} — {resp.text}")
+    latency = round(time.time() - start, 2)
+
+    # Log to Langfuse
+    try:
+        if langfuse_gen:
+            usage = data.get("usageMetadata", {})
+            langfuse_gen.end(
+                output=answer[:500],
+                usage={
+                    "input": usage.get("promptTokenCount", 0),
+                    "output": usage.get("candidatesTokenCount", 0),
+                },
+                metadata={"latency_sec": latency},
+            )
+        if langfuse_trace:
+            langfuse_trace.update(output=answer[:200])
+    except Exception as e:
+        logger.error(f"Langfuse log error: {e}")
+    finally:
+        try:
+            lf = get_langfuse_client()
+            if lf:
+                lf.flush()
+        except Exception:
+            pass
+
+    return answer
 
 
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
