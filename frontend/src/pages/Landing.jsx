@@ -303,6 +303,44 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ===== ANIMATED STATS STRIP ===== */}
+      <section style={{
+        padding: '60px 40px',
+        borderTop: '1px solid rgba(212, 165, 116, 0.1)',
+        borderBottom: '1px solid rgba(212, 165, 116, 0.1)',
+        background: 'linear-gradient(90deg, rgba(22,27,38,0.3) 0%, rgba(212,165,116,0.03) 50%, rgba(22,27,38,0.3) 100%)',
+      }}>
+        <div style={{
+          maxWidth: 1040, margin: '0 auto', display: 'flex', flexWrap: 'wrap',
+          justifyContent: 'space-around', gap: '30px', textAlign: 'center'
+        }}>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={31528} suffix="+" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Chunks</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={28352} suffix="+" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Child Vectors</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={3176} suffix="+" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Parent Nodes</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={256} suffix="-dim" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>MRL Embedding</div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== TECH STRIP ===== */}
       <section style={{
         display: 'flex', justifyContent: 'center', flexWrap: 'wrap',
@@ -395,43 +433,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ===== ANIMATED STATS STRIP ===== */}
-      <section style={{
-        padding: '60px 40px',
-        borderTop: '1px solid rgba(212, 165, 116, 0.1)',
-        borderBottom: '1px solid rgba(212, 165, 116, 0.1)',
-        background: 'linear-gradient(90deg, rgba(22,27,38,0.3) 0%, rgba(212,165,116,0.03) 50%, rgba(22,27,38,0.3) 100%)',
-      }}>
-        <div style={{
-          maxWidth: 1040, margin: '0 auto', display: 'flex', flexWrap: 'wrap',
-          justifyContent: 'space-around', gap: '30px', textAlign: 'center'
-        }}>
-          <div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
-              <AnimatedNumber end={31528} suffix="+" />
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Chunks</div>
-          </div>
-          <div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
-              <AnimatedNumber end={28352} suffix="+" />
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Child Vectors</div>
-          </div>
-          <div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
-              <AnimatedNumber end={3176} suffix="+" />
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Parent Nodes</div>
-          </div>
-          <div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
-              <AnimatedNumber end={256} suffix="-dim" />
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>MRL Embedding</div>
-          </div>
-        </div>
-      </section>
+
       
       {/* ===== ENGINEERING DEPTH ===== */}
       <section id="depth" style={{
