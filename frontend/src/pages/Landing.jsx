@@ -111,23 +111,25 @@ export default function Landing() {
         @keyframes sonar-ping { 0% { transform: scale(1); opacity: 0.8; } 70% { transform: scale(3.5); opacity: 0; } 100% { transform: scale(3.5); opacity: 0; } }
         @keyframes shimmer-sweep { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         @keyframes ecg-draw { 0% { stroke-dashoffset: 60; } 100% { stroke-dashoffset: -60; } }
-        @keyframes border-glow-pulse {
-          0%   { box-shadow: 0 0 12px rgba(74,222,128,0.7), inset 0 0 6px rgba(74,222,128,0.3); border-color: rgba(74,222,128,0.8); color: #4ade80; }
-          25%  { box-shadow: 0 0 16px rgba(56,189,248,0.8), inset 0 0 6px rgba(56,189,248,0.4); border-color: rgba(56,189,248,0.9); color: #38bdf8; }
-          50%  { box-shadow: 0 0 16px rgba(168,85,247,0.8), inset 0 0 6px rgba(168,85,247,0.4); border-color: rgba(168,85,247,0.9); color: #a855f7; }
-          75%  { box-shadow: 0 0 16px rgba(245,158,11,0.8), inset 0 0 6px rgba(245,158,11,0.4); border-color: rgba(245,158,11,0.9); color: #f59e0b; }
-          100% { box-shadow: 0 0 12px rgba(74,222,128,0.7), inset 0 0 6px rgba(74,222,128,0.3); border-color: rgba(74,222,128,0.8); color: #4ade80; }
+        @keyframes red-heartbeat-glow {
+          0%   { box-shadow: 0 0 0px rgba(185, 28, 28, 0); border-color: rgba(255, 255, 255, 0.1); }
+          30%  { box-shadow: 0 0 0px rgba(185, 28, 28, 0); border-color: rgba(255, 255, 255, 0.1); }
+          40%  { box-shadow: 0 0 25px rgba(185, 28, 28, 0.8), inset 0 0 8px rgba(153, 27, 27, 0.4); border-color: rgba(185, 28, 28, 0.9); }
+          45%  { box-shadow: 0 0 8px rgba(185, 28, 28, 0.3); border-color: rgba(185, 28, 28, 0.4); }
+          55%  { box-shadow: 0 0 40px rgba(153, 27, 27, 1), inset 0 0 15px rgba(153, 27, 27, 0.8); border-color: #dc2626; }
+          70%  { box-shadow: 0 0 0px rgba(185, 28, 28, 0); border-color: rgba(255, 255, 255, 0.1); }
+          100% { box-shadow: 0 0 0px rgba(185, 28, 28, 0); border-color: rgba(255, 255, 255, 0.1); }
         }
         .afp-status-badge {
           display: inline-flex; align-items: center; gap: 6px;
-          margin-left: 12px; padding: 3px 12px;
-          background: linear-gradient(90deg, rgba(74,222,128,0.08) 0%, rgba(74,222,128,0.15) 50%, rgba(74,222,128,0.08) 100%);
-          background-size: 200% 100%;
-          animation: shimmer-sweep 3s ease-in-out infinite, border-glow-pulse 4s ease-in-out infinite;
-          border: 1px solid rgba(74,222,128,0.3);
-          border-radius: 100px; text-decoration: none; color: #4ade80;
+          margin-left: 12px; padding: 4px 12px;
+          background: #000000;
+          animation: red-heartbeat-glow 4s ease-in-out infinite;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 6px; text-decoration: none; color: #ffffff;
           font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
           cursor: pointer; white-space: nowrap;
+          transition: border-color 0.3s;
         }
       `}</style>
 
@@ -137,11 +139,11 @@ export default function Landing() {
         <span><strong>Disclaimer:</strong> Experimental AI platform by Ambuj Kumar Tripathi. Not financial advice.</span>
         <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noreferrer" className="afp-status-badge">
           <span style={{ position: 'relative', width: '8px', height: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ position: 'absolute', width: '8px', height: '8px', borderRadius: '50%', background: 'rgba(74,222,128,0.4)', animation: 'sonar-ping 2s ease-out infinite' }} />
-            <span style={{ position: 'relative', width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.6)' }} />
+            <span style={{ position: 'absolute', width: '8px', height: '8px', borderRadius: '50%', background: 'rgba(185, 28, 28, 0.4)', animation: 'sonar-ping 2s ease-out infinite' }} />
+            <span style={{ position: 'relative', width: '6px', height: '6px', borderRadius: '50%', background: '#b91c1c', boxShadow: '0 0 6px rgba(185, 28, 28, 0.6)' }} />
           </span>
           <svg width="28" height="12" viewBox="0 0 28 12" style={{ overflow: 'visible', marginLeft: '-2px' }}>
-            <path d="M0,6 L6,6 L8,2 L10,10 L12,4 L14,8 L16,6 L28,6" fill="none" stroke="#4ade80" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: '30', strokeDashoffset: '0', animation: 'ecg-draw 2s linear infinite' }} />
+            <path d="M0,6 L6,6 L8,2 L10,10 L12,4 L14,8 L16,6 L28,6" fill="none" stroke="#dc2626" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: '30', strokeDashoffset: '0', animation: 'ecg-draw 2s linear infinite' }} />
           </svg>
           System Status
         </a>
