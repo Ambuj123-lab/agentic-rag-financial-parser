@@ -156,7 +156,7 @@ export default function Landing() {
         borderBottom: '1px solid var(--border)',
         background: 'rgba(12, 12, 20, 0.92)',
         backdropFilter: 'blur(12px)',
-        position: 'sticky', top: 0, zIndex: 50,
+        position: 'sticky', top: 0, zIndex: 9999,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <FiCpu size={22} color="var(--accent)" />
@@ -195,7 +195,7 @@ export default function Landing() {
 
       {/* ===== MOBILE MENU ===== */}
       {mobileMenuOpen && (
-        <div style={{ position: 'fixed', top: '110px', left: '16px', right: '16px', background: 'var(--bg-secondary, #111)', border: '1px solid var(--border, #222)', borderRadius: '16px', padding: '24px', zIndex: 100, boxShadow: '0 20px 40px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ position: 'fixed', top: '80px', left: '16px', right: '16px', background: 'var(--bg-secondary, #111)', border: '1px solid var(--border, #222)', borderRadius: '16px', padding: '24px', zIndex: 9998, boxShadow: '0 20px 40px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <button onClick={() => { document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Architecture</button>
           <button onClick={() => { document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Live Demo</button>
           <button onClick={() => { document.getElementById('depth')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Engineering</button>
@@ -204,7 +204,6 @@ export default function Landing() {
           <div style={{ height: '1px', background: 'var(--border, #222)' }} />
           <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" style={{ color: 'var(--accent, #c9a84c)', textDecoration: 'none', fontSize: '15px' }}>📄 Documentation</a>
           <a href={GOOGLE_AUTH_URL} style={{ color: '#ccc', textDecoration: 'none', fontSize: '15px' }}>🔐 Sign In</a>
-          <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.5)', color: '#ef4444', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold', padding: '12px', borderRadius: '8px', textAlign: 'center', marginTop: '10px' }}>❌ Close Menu</button>
         </div>
       )}
 
