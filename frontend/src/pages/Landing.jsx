@@ -191,21 +191,22 @@ export default function Landing() {
             {mobileMenuOpen ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></> : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>}
           </svg>
         </button>
-      </nav>
 
-      {/* ===== MOBILE MENU ===== */}
-      {mobileMenuOpen && (
-        <div style={{ position: 'fixed', top: '80px', left: '16px', right: '16px', background: 'var(--bg-secondary, #111)', border: '1px solid var(--border, #222)', borderRadius: '16px', padding: '24px', zIndex: 9998, boxShadow: '0 20px 40px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <button onClick={() => { document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Architecture</button>
-          <button onClick={() => { document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Live Demo</button>
-          <button onClick={() => { document.getElementById('depth')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Engineering</button>
-          <button onClick={() => { document.getElementById('opensource')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>qLoRA Fine-Tuned Models</button>
-          <button onClick={() => { document.getElementById('engineer')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>About</button>
-          <div style={{ height: '1px', background: 'var(--border, #222)' }} />
-          <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" style={{ color: 'var(--accent, #c9a84c)', textDecoration: 'none', fontSize: '15px' }}>📄 Documentation</a>
-          <a href={GOOGLE_AUTH_URL} style={{ color: '#ccc', textDecoration: 'none', fontSize: '15px' }}>🔐 Sign In</a>
-        </div>
-      )}
+        {/* ===== MOBILE MENU (inside nav, top:100% = always below navbar) ===== */}
+        {mobileMenuOpen && (
+          <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', margin: '8px 16px 0', background: 'var(--bg-secondary, #111)', border: '1px solid var(--border, #222)', borderRadius: '16px', padding: '24px', zIndex: 9998, boxShadow: '0 20px 40px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <button onClick={() => { document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Architecture</button>
+            <button onClick={() => { document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Live Demo</button>
+            <button onClick={() => { document.getElementById('depth')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Engineering</button>
+            <button onClick={() => { document.getElementById('opensource')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>qLoRA Fine-Tuned Models</button>
+            <button onClick={() => { document.getElementById('engineer')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>About</button>
+            <div style={{ height: '1px', background: 'var(--border, #222)' }} />
+            <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" style={{ color: 'var(--accent, #c9a84c)', textDecoration: 'none', fontSize: '15px' }}>📄 Documentation</a>
+            <a href={GOOGLE_AUTH_URL} style={{ color: '#ccc', textDecoration: 'none', fontSize: '15px' }}>🔐 Sign In</a>
+            <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#ef4444', cursor: 'pointer', fontSize: '14px', fontWeight: 600, padding: '12px', borderRadius: '8px', textAlign: 'center' }}>✕ Close Menu</button>
+          </div>
+        )}
+      </nav>
 
       {/* ===== HERO ===== */}
       <section style={{
