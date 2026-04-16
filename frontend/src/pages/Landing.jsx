@@ -430,7 +430,9 @@ export default function Landing() {
           </div>
           <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(212,165,116,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(212,165,116,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(212,165,116,0.3) 0%, transparent 100%)', zIndex: 2 }} />
-            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=bot_response_k79sbj" width="640" height="360" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="Live Bot Response Demo" />
+            <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', height: 0, borderRadius: '12px', overflow: 'hidden' }}>
+              <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=bot_response_k79sbj" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', borderRadius: '12px', display: 'block' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="Live Bot Response Demo" />
+            </div>
           </div>
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Real-time RAG pipeline response · Streaming · Source verification against PDF</p>
         </div>
@@ -646,7 +648,9 @@ export default function Landing() {
           </div>
           <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(201,168,76,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(201,168,76,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 100%)', zIndex: 2 }} />
-            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=qlora_training_nsjd7g" width="640" height="360" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="qLoRA Fine-Tuning Training" />
+            <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', height: 0, borderRadius: '12px', overflow: 'hidden' }}>
+              <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=qlora_training_nsjd7g" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', borderRadius: '12px', display: 'block' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="qLoRA Fine-Tuning Training" />
+            </div>
           </div>
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: '#4B5563', letterSpacing: '0.5px' }}>qLoRA 4-bit training · Loss convergence · GGUF Q4_K_M quantization export</p>
         </div>
