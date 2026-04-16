@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -62,6 +62,35 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))`;
   return (
     <pre style={{ margin: '0', padding: '24px', fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', lineHeight: '1.8', color: '#888', overflowX: 'auto', minHeight: '340px' }} dangerouslySetInnerHTML={{ __html: highlightCode(displayText) }}></pre>
   );
+}
+
+function AnimatedNumber({ end, suffix = '', duration = 2000 }) {
+  const [count, setCount] = useState(0)
+  const nodeRef = useRef(null)
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          let startTimestamp = null
+          const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1)
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+            setCount(Math.floor(easeOutQuart * end))
+            if (progress < 1) window.requestAnimationFrame(step)
+          }
+          window.requestAnimationFrame(step)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+    if (nodeRef.current) observer.observe(nodeRef.current)
+    return () => observer.disconnect()
+  }, [end, duration])
+
+  return <span ref={nodeRef}>{count.toLocaleString()}{suffix}</span>
 }
 
 export default function Landing() {
@@ -365,6 +394,45 @@ export default function Landing() {
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Real-time RAG pipeline response · Streaming · Source verification against PDF</p>
         </div>
       </section>
+
+      {/* ===== ANIMATED STATS STRIP ===== */}
+      <section style={{
+        padding: '60px 40px',
+        borderTop: '1px solid rgba(212, 165, 116, 0.1)',
+        borderBottom: '1px solid rgba(212, 165, 116, 0.1)',
+        background: 'linear-gradient(90deg, rgba(22,27,38,0.3) 0%, rgba(212,165,116,0.03) 50%, rgba(22,27,38,0.3) 100%)',
+      }}>
+        <div style={{
+          maxWidth: 1040, margin: '0 auto', display: 'flex', flexWrap: 'wrap',
+          justifyContent: 'space-around', gap: '30px', textAlign: 'center'
+        }}>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={31528} suffix="+" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Chunks</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={28352} suffix="+" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Child Vectors</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={3176} suffix="+" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Parent Nodes</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginBottom: 8, fontFamily: 'var(--font-mono)' }}>
+              <AnimatedNumber end={256} suffix="-dim" />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>MRL Embedding</div>
+          </div>
+        </div>
+      </section>
+      
       {/* ===== ENGINEERING DEPTH ===== */}
       <section id="depth" style={{
         padding: '80px 40px',
