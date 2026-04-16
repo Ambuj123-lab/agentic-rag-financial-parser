@@ -112,11 +112,11 @@ export default function Landing() {
         @keyframes shimmer-sweep { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         @keyframes ecg-draw { 0% { stroke-dashoffset: 60; } 100% { stroke-dashoffset: -60; } }
         @keyframes border-glow-pulse {
-          0%   { box-shadow: 0 0 6px rgba(212,165,116,0.4), inset 0 0 4px rgba(212,165,116,0.1); border-color: rgba(212,165,116,0.3); }
-          25%  { box-shadow: 0 0 8px rgba(56,189,248,0.5), inset 0 0 4px rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.4); }
-          50%  { box-shadow: 0 0 8px rgba(168,85,247,0.5), inset 0 0 4px rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.4); }
-          75%  { box-shadow: 0 0 8px rgba(74,222,128,0.5), inset 0 0 4px rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); }
-          100% { box-shadow: 0 0 6px rgba(212,165,116,0.4), inset 0 0 4px rgba(212,165,116,0.1); border-color: rgba(212,165,116,0.3); }
+          0%   { box-shadow: 0 0 12px rgba(74,222,128,0.7), inset 0 0 6px rgba(74,222,128,0.3); border-color: rgba(74,222,128,0.8); color: #4ade80; }
+          25%  { box-shadow: 0 0 16px rgba(56,189,248,0.8), inset 0 0 6px rgba(56,189,248,0.4); border-color: rgba(56,189,248,0.9); color: #38bdf8; }
+          50%  { box-shadow: 0 0 16px rgba(168,85,247,0.8), inset 0 0 6px rgba(168,85,247,0.4); border-color: rgba(168,85,247,0.9); color: #a855f7; }
+          75%  { box-shadow: 0 0 16px rgba(245,158,11,0.8), inset 0 0 6px rgba(245,158,11,0.4); border-color: rgba(245,158,11,0.9); color: #f59e0b; }
+          100% { box-shadow: 0 0 12px rgba(74,222,128,0.7), inset 0 0 6px rgba(74,222,128,0.3); border-color: rgba(74,222,128,0.8); color: #4ade80; }
         }
         .afp-status-badge {
           display: inline-flex; align-items: center; gap: 6px;
