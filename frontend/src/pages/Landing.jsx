@@ -105,7 +105,7 @@ export default function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
       {/* ===== STATUS BADGE ANIMATIONS ===== */}
       <style>{`
         @keyframes sonar-ping { 0% { transform: scale(1); opacity: 0.8; } 70% { transform: scale(3.5); opacity: 0; } 100% { transform: scale(3.5); opacity: 0; } }
@@ -184,32 +184,16 @@ export default function Landing() {
               }}>Dev Login</button>
           )}
         </div>
-        <button className="hamburger-btn" onClick={() => setMobileMenuOpen(true)} style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round">
+            {mobileMenuOpen ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></> : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>}
           </svg>
         </button>
       </nav>
 
-      {/* ===== MOBILE MENU (FULL OVERLAY) ===== */}
+      {/* ===== MOBILE MENU ===== */}
       {mobileMenuOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh',
-          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-          zIndex: 9999, display: 'flex', flexDirection: 'column'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px' }}>
-            <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px' }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
-          <div style={{ 
-            background: 'var(--bg-secondary)', margin: '0 16px', borderRadius: '16px', 
-            padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px',
-            border: '1px solid var(--border)' 
-          }}>
+        <div style={{ position: 'fixed', top: '110px', left: '16px', right: '16px', background: 'var(--bg-secondary, #111)', border: '1px solid var(--border, #222)', borderRadius: '16px', padding: '24px', zIndex: 100, boxShadow: '0 20px 40px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <button onClick={() => { document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Architecture</button>
           <button onClick={() => { document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Live Demo</button>
           <button onClick={() => { document.getElementById('depth')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Engineering</button>
@@ -443,7 +427,7 @@ export default function Landing() {
           </div>
           <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(212,165,116,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(212,165,116,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(212,165,116,0.3) 0%, transparent 100%)', zIndex: 2 }} />
-            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=bot_response_k79sbj" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="Live Bot Response Demo" />
+            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=bot_response_k79sbj" width="640" height="360" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="Live Bot Response Demo" />
           </div>
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Real-time RAG pipeline response · Streaming · Source verification against PDF</p>
         </div>
@@ -659,7 +643,7 @@ export default function Landing() {
           </div>
           <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(201,168,76,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(201,168,76,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 100%)', zIndex: 2 }} />
-            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=qlora_training_nsjd7g" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="qLoRA Fine-Tuning Training" />
+            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=qlora_training_nsjd7g" width="640" height="360" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="qLoRA Fine-Tuning Training" />
           </div>
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: '#4B5563', letterSpacing: '0.5px' }}>qLoRA 4-bit training · Loss convergence · GGUF Q4_K_M quantization export</p>
         </div>
