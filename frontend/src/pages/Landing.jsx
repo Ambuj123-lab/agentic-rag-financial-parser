@@ -68,6 +68,7 @@ export default function Landing() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
   const [docsOpen, setDocsOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   if (user) {
     navigate('/chat', { replace: true })
@@ -76,6 +77,47 @@ export default function Landing() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      {/* ===== STATUS BADGE ANIMATIONS ===== */}
+      <style>{`
+        @keyframes sonar-ping { 0% { transform: scale(1); opacity: 0.8; } 70% { transform: scale(3.5); opacity: 0; } 100% { transform: scale(3.5); opacity: 0; } }
+        @keyframes shimmer-sweep { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes ecg-draw { 0% { stroke-dashoffset: 60; } 100% { stroke-dashoffset: -60; } }
+        @keyframes border-glow-pulse {
+          0%   { box-shadow: 0 0 6px rgba(212,165,116,0.4), inset 0 0 4px rgba(212,165,116,0.1) !important; border-color: rgba(212,165,116,0.3) !important; }
+          25%  { box-shadow: 0 0 8px rgba(56,189,248,0.5), inset 0 0 4px rgba(56,189,248,0.1) !important; border-color: rgba(56,189,248,0.4) !important; }
+          50%  { box-shadow: 0 0 8px rgba(168,85,247,0.5), inset 0 0 4px rgba(168,85,247,0.1) !important; border-color: rgba(168,85,247,0.4) !important; }
+          75%  { box-shadow: 0 0 8px rgba(74,222,128,0.5), inset 0 0 4px rgba(74,222,128,0.1) !important; border-color: rgba(74,222,128,0.4) !important; }
+          100% { box-shadow: 0 0 6px rgba(212,165,116,0.4), inset 0 0 4px rgba(212,165,116,0.1) !important; border-color: rgba(212,165,116,0.3) !important; }
+        }
+        .afp-status-badge {
+          display: inline-flex; align-items: center; gap: 6px;
+          margin-left: 12px; padding: 3px 12px;
+          background: linear-gradient(90deg, rgba(74,222,128,0.08) 0%, rgba(74,222,128,0.15) 50%, rgba(74,222,128,0.08) 100%);
+          background-size: 200% 100%;
+          animation: shimmer-sweep 3s ease-in-out infinite, border-glow-pulse 4s ease-in-out infinite;
+          border: 1px solid rgba(74,222,128,0.3);
+          border-radius: 100px; text-decoration: none; color: #4ade80;
+          font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+          cursor: pointer; white-space: nowrap;
+        }
+      `}</style>
+
+      {/* ===== TOP STATUS BANNER ===== */}
+      <div style={{ background: 'rgba(212,165,116,0.08)', borderBottom: '1px solid rgba(212,165,116,0.15)', padding: '8px 16px', textAlign: 'center', fontSize: '10px', fontWeight: 500, color: 'var(--accent)', letterSpacing: '0.02em', position: 'relative', zIndex: 100, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '4px', lineHeight: '1.5' }}>
+        <span style={{ fontSize: '13px' }}>⚠️</span>
+        <span><strong>Disclaimer:</strong> Experimental AI platform by Ambuj Kumar Tripathi. Not financial advice.</span>
+        <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noreferrer" className="afp-status-badge">
+          <span style={{ position: 'relative', width: '8px', height: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ position: 'absolute', width: '8px', height: '8px', borderRadius: '50%', background: 'rgba(74,222,128,0.4)', animation: 'sonar-ping 2s ease-out infinite' }} />
+            <span style={{ position: 'relative', width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.6)' }} />
+          </span>
+          <svg width="28" height="12" viewBox="0 0 28 12" style={{ overflow: 'visible', marginLeft: '-2px' }}>
+            <path d="M0,6 L6,6 L8,2 L10,10 L12,4 L14,8 L16,6 L28,6" fill="none" stroke="#4ade80" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: '30', strokeDashoffset: '0', animation: 'ecg-draw 2s linear infinite' }} />
+          </svg>
+          System Status
+        </a>
+      </div>
+
       {/* ===== NAVBAR ===== */}
       <nav style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -91,50 +133,48 @@ export default function Landing() {
             Agentic Financial Parser
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" className="nav-link nav-docs-btn">
-            <span className="hide-mobile">Documentation</span>
-            <span className="show-mobile" style={{ display: 'none' }}>Docs</span>
-          </a>
+        <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" className="nav-link nav-docs-btn">Documentation</a>
           <a href="#architecture" className="nav-link">Architecture</a>
+          <a href="#demo" className="nav-link">Live Demo</a>
           <a href="#depth" className="nav-link">Engineering</a>
           <a href="#opensource" className="nav-link" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: '1.2', gap: '2px' }}>
             <span>qLoRA Fine-Tuned</span>
             <span style={{ fontSize: '0.65rem', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.5px' }}>By Ambuj Kumar Tripathi</span>
           </a>
           <a href="#engineer" className="nav-link">About</a>
-          <a href={GOOGLE_AUTH_URL} className="btn-ghost" style={{
-            padding: '8px 18px', fontSize: '0.84rem',
-          }}>
-            Sign In
-          </a>
+          <a href={GOOGLE_AUTH_URL} className="btn-ghost" style={{ padding: '8px 18px', fontSize: '0.84rem' }}>Sign In</a>
           {import.meta.env.DEV && (
-            <button
-              className="btn-ghost"
-              style={{
-                padding: '8px 18px', fontSize: '0.84rem',
-                background: 'var(--accent)', color: '#000',
-                border: 'none', borderRadius: '8px', cursor: 'pointer',
-                fontWeight: 600,
-              }}
+            <button className="btn-ghost" style={{ padding: '8px 18px', fontSize: '0.84rem', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
               onClick={async () => {
                 try {
                   const res = await fetch('http://localhost:8000/auth/dev-login', { method: 'POST' })
                   const data = await res.json()
-                  if (data.access_token) {
-                    login(data.access_token, data.user)
-                    navigate('/chat')
-                  }
-                } catch (e) {
-                  alert('Backend not running! Start: uvicorn app.main:app --port 8000')
-                }
-              }}
-            >
-              Dev Login
-            </button>
+                  if (data.access_token) { login(data.access_token, data.user); navigate('/chat') }
+                } catch (e) { alert('Backend not running!') }
+              }}>Dev Login</button>
           )}
         </div>
+        <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round">
+            {mobileMenuOpen ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></> : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>}
+          </svg>
+        </button>
       </nav>
+
+      {/* ===== MOBILE MENU ===== */}
+      {mobileMenuOpen && (
+        <div style={{ position: 'fixed', top: '110px', left: '16px', right: '16px', background: 'var(--bg-secondary, #111)', border: '1px solid var(--border, #222)', borderRadius: '16px', padding: '24px', zIndex: 100, boxShadow: '0 20px 40px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <button onClick={() => { document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Architecture</button>
+          <button onClick={() => { document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Live Demo</button>
+          <button onClick={() => { document.getElementById('depth')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>Engineering</button>
+          <button onClick={() => { document.getElementById('opensource')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>qLoRA Fine-Tuned Models</button>
+          <button onClick={() => { document.getElementById('engineer')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>About</button>
+          <div style={{ height: '1px', background: 'var(--border, #222)' }} />
+          <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" style={{ color: 'var(--accent, #c9a84c)', textDecoration: 'none', fontSize: '15px' }}>📄 Documentation</a>
+          <a href={GOOGLE_AUTH_URL} style={{ color: '#ccc', textDecoration: 'none', fontSize: '15px' }}>🔐 Sign In</a>
+        </div>
+      )}
 
       {/* ===== HERO ===== */}
       <section style={{
@@ -308,6 +348,23 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ===== LIVE DEMO VIDEO ===== */}
+      <section id="demo" style={{ padding: '80px 40px', borderTop: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--accent)', border: '1px solid rgba(212,165,116,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'var(--accent-glow)' }}>
+              <span style={{ fontSize: '12px' }}>▶</span> Live Demo
+            </span>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px' }}>See It In <span style={{ color: 'var(--accent)' }}>Action</span></h2>
+            <p style={{ fontSize: '0.93rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>Watch the AI parse legal and financial queries in real-time with streaming responses and source-grounded citations.</p>
+          </div>
+          <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(212,165,116,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(212,165,116,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(212,165,116,0.3) 0%, transparent 100%)', zIndex: 2 }} />
+            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=bot_response_k79sbj" width="640" height="360" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="Live Bot Response Demo" />
+          </div>
+          <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Real-time RAG pipeline response · Streaming · Source verification against PDF</p>
+        </div>
+      </section>
       {/* ===== ENGINEERING DEPTH ===== */}
       <section id="depth" style={{
         padding: '80px 40px',
@@ -504,7 +561,23 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ===== ENGINEER ===== */}
+      {/* ===== TRAINING PIPELINE VIDEO ===== */}
+      <section style={{ padding: '80px 40px', borderTop: '1px solid #2a2a2a', background: '#0a0a0a' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '100px', marginBottom: '20px', background: 'rgba(201,168,76,0.05)' }}>
+              <span style={{ fontSize: '12px' }}>▶</span> Training Process
+            </span>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px', color: '#fff' }}>Training <span style={{ color: '#c9a84c' }}>Pipeline</span></h2>
+            <p style={{ fontSize: '0.93rem', color: '#6B7280', maxWidth: '480px', margin: '0 auto', lineHeight: 1.6 }}>Watch the full qLoRA fine-tuning cycle — from training steps and loss convergence to GGUF quantization export.</p>
+          </div>
+          <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(201,168,76,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(201,168,76,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 100%)', zIndex: 2 }} />
+            <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=qlora_training_nsjd7g" width="640" height="360" style={{ height: 'auto', width: '100%', aspectRatio: '640 / 360', borderRadius: '12px', display: 'block', border: 'none' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="qLoRA Fine-Tuning Training" />
+          </div>
+          <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: '#4B5563', letterSpacing: '0.5px' }}>qLoRA 4-bit training · Loss convergence · GGUF Q4_K_M quantization export</p>
+        </div>
+      </section>
       <section id="engineer" style={{
         padding: '80px 40px',
         borderTop: '1px solid rgba(212, 165, 116, 0.1)',
@@ -621,16 +694,16 @@ export default function Landing() {
           text-decoration: none;
         }
         .nav-link:hover { color: var(--text-primary); }
+        .hamburger-btn { display: none !important; }
         
         @media (max-width: 768px) {
           nav { padding: 12px 16px !important; }
-          nav > div:last-child a:not(.btn-ghost) { display: none; }
+          .desktop-nav { display: none !important; }
+          .hamburger-btn { display: block !important; }
           section { padding-left: 16px !important; padding-right: 16px !important; }
           h1 { font-size: 1.8rem !important; }
           div[style*='grid-template-columns: 1fr 1fr'] { grid-template-columns: 1fr !important; }
           div[style*='repeat(auto-fit'] { grid-template-columns: 1fr 1fr !important; }
-          .hide-mobile { display: none !important; }
-          .show-mobile { display: inline !important; }
         }
         @media (max-width: 480px) {
           div[style*='repeat(auto-fit'] { grid-template-columns: 1fr !important; }
