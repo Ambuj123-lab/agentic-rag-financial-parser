@@ -157,17 +157,16 @@ export default function Landing() {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 12px 26px;
           background: #000000;
-          border: 1.5px solid rgba(251,191,36,0.4);
+          border: 1px solid rgba(255,255,255,0.1);
           border-radius: 10px;
-          color: #fbbf24;
+          color: #ffffff;
           font-size: 0.9rem; font-weight: 600;
           letter-spacing: 0.5px;
           text-decoration: none;
           font-family: 'Share Tech Mono', var(--font-mono), monospace;
           transition: background 0.3s, border-color 0.3s;
-          animation: golden-border-glow 3s ease-in-out infinite;
         }
-        .arch-btn-inner:hover { background: #0a0a0a; border-color: #fbbf24; }
+        .arch-btn-inner:hover { background: #0a0a0a; border-color: rgba(255,255,255,0.3); }
         .arch-btn-inner svg { opacity: 0.9; }
       `}</style>
 
@@ -310,7 +309,7 @@ export default function Landing() {
           </a>
           <a href="/architecture.html" target="_blank" rel="noreferrer" className="arch-btn-wrapper" style={{ textDecoration: 'none' }}>
             <span className="arch-btn-inner">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
               </svg>
