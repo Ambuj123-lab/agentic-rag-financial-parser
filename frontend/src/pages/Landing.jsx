@@ -131,6 +131,21 @@ export default function Landing() {
           cursor: pointer; white-space: nowrap;
           transition: border-color 0.3s;
         }
+        @keyframes deep-glow-pulse {
+          0%   { box-shadow: 0 0 0px rgba(251,191,36,0), 0 0 0px rgba(251,191,36,0); border-color: rgba(255,255,255,0.12); }
+          35%  { box-shadow: 0 0 0px rgba(251,191,36,0), 0 0 0px rgba(251,191,36,0); border-color: rgba(255,255,255,0.12); }
+          50%  { box-shadow: 0 0 20px rgba(251,191,36,0.5), 0 0 40px rgba(217,119,6,0.3), 0 0 60px rgba(251,191,36,0.15); border-color: rgba(251,191,36,0.7); }
+          65%  { box-shadow: 0 0 0px rgba(251,191,36,0), 0 0 0px rgba(251,191,36,0); border-color: rgba(255,255,255,0.12); }
+          100% { box-shadow: 0 0 0px rgba(251,191,36,0), 0 0 0px rgba(251,191,36,0); border-color: rgba(255,255,255,0.12); }
+        }
+        .hero-docs-btn {
+          animation: deep-glow-pulse 5s ease-in-out infinite !important;
+          border: 1px solid rgba(255,255,255,0.12) !important;
+        }
+        .hero-docs-btn:hover {
+          box-shadow: 0 0 25px rgba(251,191,36,0.6), 0 0 50px rgba(217,119,6,0.4), 0 0 80px rgba(251,191,36,0.2) !important;
+          border-color: #fbbf24 !important;
+        }
         @keyframes circuit-trace {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
