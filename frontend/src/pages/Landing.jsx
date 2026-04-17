@@ -131,6 +131,39 @@ export default function Landing() {
           cursor: pointer; white-space: nowrap;
           transition: border-color 0.3s;
         }
+        @keyframes circuit-trace {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .arch-btn-wrapper {
+          position: relative;
+          display: inline-flex;
+          padding: 2px;
+          border-radius: 10px;
+          background: linear-gradient(270deg, #fbbf24, #f59e0b, #d97706, #92400e, #fbbf24);
+          background-size: 400% 400%;
+          animation: circuit-trace 4s ease infinite;
+        }
+        .arch-btn-wrapper:hover {
+          filter: brightness(1.3);
+          transform: translateY(-2px);
+          box-shadow: 0 0 30px rgba(251,191,36,.35), 0 8px 32px rgba(0,0,0,.4);
+        }
+        .arch-btn-inner {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 12px 26px;
+          background: #0a0a0a;
+          border-radius: 8px;
+          color: #fbbf24;
+          font-size: 0.9rem; font-weight: 600;
+          letter-spacing: 0.5px;
+          text-decoration: none;
+          font-family: 'Share Tech Mono', var(--font-mono), monospace;
+          transition: background 0.3s;
+        }
+        .arch-btn-inner:hover { background: #111; }
+        .arch-btn-inner svg { opacity: 0.8; }
       `}</style>
 
       {/* ===== TOP STATUS BANNER ===== */}
@@ -253,7 +286,7 @@ export default function Landing() {
           Cohere neural reranking, multi-version synthesis, and hallucination guard.
         </p>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, alignItems: 'center' }}>
           <a href={GOOGLE_AUTH_URL} style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             padding: '14px 32px', borderRadius: 'var(--radius-sm)',
@@ -269,6 +302,19 @@ export default function Landing() {
           </button>
           <a href="#architecture" className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
             Inside System
+          </a>
+          <a href="/architecture.html" target="_blank" rel="noreferrer" className="arch-btn-wrapper" style={{ textDecoration: 'none' }}>
+            <span className="arch-btn-inner">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+                <line x1="10" y1="6.5" x2="14" y2="6.5"/>
+                <line x1="6.5" y1="10" x2="6.5" y2="14"/>
+              </svg>
+              System Blueprint
+            </span>
           </a>
         </div>
 
