@@ -132,6 +132,15 @@ if os.path.exists(frontend_dist):
     if os.path.exists(os.path.join(frontend_dist, "branding")):
         app.mount("/branding", StaticFiles(directory=os.path.join(frontend_dist, "branding")), name="branding")
 
+    # Serve architecture.html directly (static page, not SPA)
+    @app.get("/architecture.html")
+    async def serve_architecture():
+        arch_path = os.path.join(frontend_dist, "architecture.html")
+        if os.path.exists(arch_path):
+            with open(arch_path, "rb") as f:
+                return Response(content=f.read(), media_type="text/html")
+        return Response(status_code=404)
+
     # Serve index.html for all other routes (SPA React Router)
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
