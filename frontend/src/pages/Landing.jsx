@@ -131,54 +131,44 @@ export default function Landing() {
           cursor: pointer; white-space: nowrap;
           transition: border-color 0.3s;
         }
-        @keyframes deep-glow-pulse {
-          0%   { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); border-color: rgba(255,255,255,0.12); }
-          35%  { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); border-color: rgba(255,255,255,0.12); }
-          50%  { box-shadow: 0 0 20px rgba(255,0,0,0.6), 0 0 40px rgba(255,0,0,0.4), 0 0 60px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.7); }
-          65%  { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); border-color: rgba(255,255,255,0.12); }
-          100% { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); border-color: rgba(255,255,255,0.12); }
+        @keyframes blueprint-red-glow {
+          0%   { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); }
+          35%  { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); }
+          50%  { box-shadow: 0 0 20px rgba(255,0,0,0.6), 0 0 40px rgba(255,0,0,0.4), 0 0 60px rgba(255,0,0,0.2); }
+          65%  { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); }
+          100% { box-shadow: 0 0 0px rgba(255,0,0,0), 0 0 0px rgba(255,0,0,0); }
         }
-        .hero-docs-btn {
-          animation: deep-glow-pulse 5s ease-in-out infinite !important;
-          border: 1px solid rgba(255,255,255,0.12) !important;
-        }
-        .hero-docs-btn:hover {
-          box-shadow: 0 0 25px rgba(255,0,0,0.6), 0 0 50px rgba(255,0,0,0.5), 0 0 80px rgba(255,0,0,0.3) !important;
-          border-color: #ff0000 !important;
-        }
-        @keyframes circuit-trace {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        @keyframes golden-border-glow {
+          0%   { border-color: rgba(251,191,36,0.3); }
+          50%  { border-color: rgba(251,191,36,0.9); }
+          100% { border-color: rgba(251,191,36,0.3); }
         }
         .arch-btn-wrapper {
           position: relative;
           display: inline-flex;
-          padding: 2px;
           border-radius: 10px;
-          background: linear-gradient(270deg, #fbbf24, #f59e0b, #d97706, #92400e, #fbbf24);
-          background-size: 400% 400%;
-          animation: circuit-trace 4s ease infinite;
+          animation: blueprint-red-glow 5s ease-in-out infinite;
         }
         .arch-btn-wrapper:hover {
-          filter: brightness(1.3);
           transform: translateY(-2px);
-          box-shadow: 0 0 30px rgba(251,191,36,.35), 0 8px 32px rgba(0,0,0,.4);
+          box-shadow: 0 0 30px rgba(255,0,0,0.6), 0 0 50px rgba(255,0,0,0.4), 0 0 80px rgba(255,0,0,0.25) !important;
         }
         .arch-btn-inner {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 12px 26px;
-          background: #0a0a0a;
-          border-radius: 8px;
+          background: #000000;
+          border: 1.5px solid rgba(251,191,36,0.4);
+          border-radius: 10px;
           color: #fbbf24;
           font-size: 0.9rem; font-weight: 600;
           letter-spacing: 0.5px;
           text-decoration: none;
           font-family: 'Share Tech Mono', var(--font-mono), monospace;
-          transition: background 0.3s;
+          transition: background 0.3s, border-color 0.3s;
+          animation: golden-border-glow 3s ease-in-out infinite;
         }
-        .arch-btn-inner:hover { background: #111; }
-        .arch-btn-inner svg { opacity: 0.8; }
+        .arch-btn-inner:hover { background: #0a0a0a; border-color: #fbbf24; }
+        .arch-btn-inner svg { opacity: 0.9; }
       `}</style>
 
       {/* ===== TOP STATUS BANNER ===== */}
@@ -320,13 +310,9 @@ export default function Landing() {
           </a>
           <a href="/architecture.html" target="_blank" rel="noreferrer" className="arch-btn-wrapper" style={{ textDecoration: 'none' }}>
             <span className="arch-btn-inner">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="1"/>
-                <rect x="14" y="3" width="7" height="7" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" rx="1"/>
-                <rect x="14" y="14" width="7" height="7" rx="1"/>
-                <line x1="10" y1="6.5" x2="14" y2="6.5"/>
-                <line x1="6.5" y1="10" x2="6.5" y2="14"/>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
               </svg>
               System Blueprint
             </span>
