@@ -163,7 +163,7 @@ export default function Landing() {
           font-size: 0.9rem; font-weight: 600;
           letter-spacing: 0.5px;
           text-decoration: none;
-          font-family: 'Share Tech Mono', var(--font-mono), monospace;
+          font-family: inherit;
           transition: background 0.3s, border-color 0.3s;
         }
         .arch-btn-inner:hover { background: #0a0a0a; border-color: rgba(255,255,255,0.3); }
