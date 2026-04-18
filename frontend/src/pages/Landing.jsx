@@ -125,9 +125,16 @@ export default function Landing() {
   const [docsOpen, setDocsOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
-      const handleScroll = () => setShowBackToTop(window.scrollY > 600)
+      const handleScroll = () => {
+          setShowBackToTop(window.scrollY > 600)
+          const totalScroll = document.documentElement.scrollTop
+          const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+          const scroll = totalScroll / windowHeight * 100
+          setScrollProgress(scroll)
+      }
       window.addEventListener('scroll', handleScroll, { passive: true })
       return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -139,6 +146,25 @@ export default function Landing() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      {/* ===== SCROLL PROGRESS BAR ===== */}
+      <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '3px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          zIndex: 10000,
+          pointerEvents: 'none',
+      }}>
+          <div style={{
+              height: '100%',
+              width: `${scrollProgress}%`,
+              background: '#dc2626',
+              boxShadow: '0 0 10px #dc2626, 0 0 5px #dc2626',
+              transition: 'width 0.1s ease-out'
+          }} />
+      </div>
       {/* ===== STATUS BADGE ANIMATIONS ===== */}
       <style>{`
         @keyframes sonar-ping { 0% { transform: scale(1); opacity: 0.8; } 70% { transform: scale(3.5); opacity: 0; } 100% { transform: scale(3.5); opacity: 0; } }
