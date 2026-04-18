@@ -93,11 +93,44 @@ function AnimatedNumber({ end, suffix = '', duration = 2000 }) {
   return <span ref={nodeRef}>{count.toLocaleString()}{suffix}</span>
 }
 
+/* ── Fade-In on Scroll ── */
+const useFadeIn = (delay = 0) => {
+    const [visible, setVisible] = useState(false);
+    const ref = useRef(null);
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) { setVisible(true); observer.disconnect(); }
+        }, { threshold: 0.15 });
+        if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+    }, []);
+    return {
+        ref,
+        style: {
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(30px)',
+            transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+        }
+    };
+};
+
+const FadeIn = ({ delay = 0, children, style = {} }) => {
+    const fade = useFadeIn(delay);
+    return <div ref={fade.ref} style={{ ...fade.style, ...style }}>{children}</div>;
+};
+
 export default function Landing() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
   const [docsOpen, setDocsOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showBackToTop, setShowBackToTop] = useState(false)
+
+  useEffect(() => {
+      const handleScroll = () => setShowBackToTop(window.scrollY > 600)
+      window.addEventListener('scroll', handleScroll, { passive: true })
+      return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   if (user) {
     navigate('/chat', { replace: true })
@@ -387,23 +420,110 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ===== TECH STRIP ===== */}
-      <section style={{
-        display: 'flex', justifyContent: 'center', flexWrap: 'wrap',
-        gap: '32px', padding: '30px 40px 50px',
-      }}>
-        {[
-          'LangGraph StateGraph', 'Jina v3 MRL (256-dim)', 'Pinecone Serverless',
-          'Cohere Reranker', 'LlamaParse 3-Tier', 'FastAPI + Uvicorn'
-        ].map(t => (
-          <span key={t} style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.76rem',
-            color: 'var(--text-muted)', letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-          }}>
-            {t}
-          </span>
-        ))}
+      {/* ===== CORE ARSENAL MARQUEE (MERCOR STYLE) ===== */}
+      <style>{`
+          @keyframes marquee-scroll {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+          }
+          .marquee-wrapper {
+              position: relative;
+              background: var(--bg-primary);
+              border-top: 1px solid rgba(212, 165, 116, 0.05);
+              border-bottom: 1px solid rgba(212, 165, 116, 0.05);
+              overflow: hidden;
+          }
+          .marquee-container {
+              display: flex;
+              align-items: center;
+              padding: 18px 0;
+              position: relative;
+          }
+          .marquee-label-box {
+              position: absolute;
+              left: 0;
+              top: 0;
+              bottom: 0;
+              display: flex;
+              align-items: center;
+              padding: 0 40px;
+              background: linear-gradient(90deg, var(--bg-primary) 80%, transparent 100%);
+              z-index: 10;
+          }
+          .marquee-label-text {
+              font-size: 11px;
+              color: var(--text-secondary);
+              text-transform: uppercase;
+              letter-spacing: 0.25em;
+              font-weight: 700;
+          }
+          .marquee-track {
+              display: flex;
+              width: max-content;
+              animation: marquee-scroll 45s linear infinite;
+              padding-left: 200px;
+          }
+          .marquee-track:hover { animation-play-state: paused; }
+          .marquee-item {
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              margin: 0 24px;
+              font-size: 14px;
+              font-weight: 600;
+              white-space: nowrap;
+              transition: opacity 0.2s;
+              cursor: default;
+          }
+          .marquee-item:hover { opacity: 0.7; }
+          .marquee-icon { display: flex; align-items: center; font-size: 16px; }
+          .marquee-icon img { height: 16px; width: auto; object-fit: contain; }
+          .marquee-gradient-right {
+              position: absolute;
+              right: 0;
+              top: 0;
+              bottom: 0;
+              width: 60px;
+              background: linear-gradient(-90deg, var(--bg-primary) 0%, transparent 100%);
+              z-index: 10;
+              pointer-events: none;
+          }
+      `}</style>
+      <section className="marquee-wrapper" style={{ zIndex: 10 }}>
+          <div className="marquee-container">
+              <div className="marquee-label-box">
+                  <span className="marquee-label-text">Core Arsenal</span>
+              </div>
+              <div className="marquee-gradient-right"></div>
+              
+              <div className="marquee-track">
+                  {[...Array(2)].map((_, setIdx) => (
+                      [
+                          { name: 'FastAPI', emoji: '⚡', color: '#009688' },
+                          { name: 'LangGraph', emoji: '🕸️', color: '#A855F7' },
+                          { name: 'Qdrant', emoji: '🔴', color: '#EF4444' },
+                          { name: 'Pinecone', emoji: '🌲', color: '#D1D5DB' },
+                          { name: 'Redis', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg', color: '#FF4438' },
+                          { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg', color: '#47A248' },
+                          { name: 'Supabase', emoji: '⚡', color: '#3ECF8E' },
+                          { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg', color: '#61DAFB' },
+                          { name: 'Vite', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg', color: '#646CFF' },
+                          { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg', color: '#2496ED' },
+                          { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg', color: '#3776AB' },
+                          { name: 'Jina AI', emoji: '🧬', color: '#009193' },
+                          { name: 'Presidio', emoji: '🛡️', color: '#0078D4' },
+                          { name: 'Langfuse', emoji: '📈', color: '#F59E0B' },
+                      ].map((tech, i) => (
+                          <span className="marquee-item" key={`${setIdx}-${i}`} style={{ color: tech.color }}>
+                              <span className="marquee-icon">
+                                  {tech.icon ? <img src={tech.icon} alt={tech.name} /> : tech.emoji}
+                              </span>
+                              {tech.name}
+                          </span>
+                      ))
+                  ))}
+              </div>
+          </div>
       </section>
 
       {/* ===== 8-NODE ARCHITECTURE ===== */}
@@ -437,8 +557,9 @@ export default function Landing() {
               { icon: FiActivity, name: 'Hallucination Guard', desc: 'Post-generation check: is the answer grounded in retrieved chunks? If not → fallback. Confidence < 40% → reject.', color: 'var(--red)' },
               { icon: FiGitBranch, name: 'PostProcess', desc: 'Save Q&A to MongoDB (sliding window), log to Langfuse, cache response in Redis (1hr TTL). Feedback tracking.', color: 'var(--amber)' },
               { icon: FiZap, name: 'Fallback', desc: 'Circuit breaker (pybreaker): 3 API failures → circuit opens → graceful fallback message. No crash, no hang.', color: 'var(--text-muted)' },
-            ].map(node => (
-              <div key={node.name} className="glass-card" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+            ].map((node, i) => (
+              <FadeIn key={node.name} delay={i * 0.1}>
+              <div className="glass-card" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <div style={{
                     position: 'relative', width: '48px', height: '48px', borderRadius: '50%', marginBottom: '20px'
                 }}>
@@ -456,6 +577,7 @@ export default function Landing() {
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 8 }}>{node.name}</h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{node.desc}</p>
               </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -463,6 +585,7 @@ export default function Landing() {
 
       {/* ===== LIVE DEMO VIDEO ===== */}
       <section id="demo" style={{ padding: '80px 40px', borderTop: '1px solid var(--border)' }}>
+        <FadeIn delay={0}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--accent)', border: '1px solid rgba(212,165,116,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'var(--accent-glow)' }}>
@@ -479,6 +602,7 @@ export default function Landing() {
           </div>
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Real-time RAG pipeline response · Streaming · Source verification against PDF</p>
         </div>
+        </FadeIn>
       </section>
 
 
@@ -836,6 +960,46 @@ export default function Landing() {
           20%, 60% { box-shadow: 0 0 0 8px rgba(212, 165, 116, 0.4); border-color: var(--accent); }
         }
       `}</style>
+      {/* ===== BACK TO TOP BUTTON ===== */}
+      <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{
+              position: 'fixed',
+              bottom: '24px',
+              right: '24px',
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              background: 'rgba(220, 38, 38, 0.1)',
+              border: '1px solid rgba(220, 38, 38, 0.3)',
+              color: '#dc2626',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              zIndex: 9999,
+              opacity: showBackToTop ? 1 : 0,
+              visibility: showBackToTop ? 'visible' : 'hidden',
+              transform: showBackToTop ? 'scale(1)' : 'scale(0.8)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 8px 32px rgba(220, 38, 38, 0.1)',
+              backdropFilter: 'blur(8px)',
+          }}
+          onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(220, 38, 38, 0.2)';
+              e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseOut={(e) => {
+              e.currentTarget.style.background = 'rgba(220, 38, 38, 0.1)';
+              e.currentTarget.style.transform = 'scale(1)';
+          }}
+          aria-label="Back to Top"
+      >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 19V5M5 12l7-7 7 7"/>
+          </svg>
+      </button>
+
       {/* ===== DOCS MODAL ===== */}
       {docsOpen && (
         <div className="docs-modal-overlay" onClick={() => setDocsOpen(false)}>
