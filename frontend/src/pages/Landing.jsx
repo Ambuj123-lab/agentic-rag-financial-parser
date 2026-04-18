@@ -645,6 +645,7 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
             {/* LlamaParse */}
+            <FadeIn delay={0.1}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiFileText size={16} /> LlamaParse 3-Tier Hybrid Parsing
@@ -662,8 +663,10 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            </FadeIn>
 
             {/* Parent-Child Chunking */}
+            <FadeIn delay={0.2}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiGrid size={16} /> Parent-Child Chunking & Recursive Retrieval
@@ -681,8 +684,10 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            </FadeIn>
 
             {/* MRL Embeddings */}
+            <FadeIn delay={0.3}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiDatabase size={16} /> Matryoshka Representation Learning (MRL)
@@ -700,8 +705,10 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            </FadeIn>
 
             {/* SHA-256 + Deterministic IDs */}
+            <FadeIn delay={0.4}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiHash size={16} /> SHA-256 Sync & Deterministic Chunk IDs
@@ -719,8 +726,10 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            </FadeIn>
 
             {/* Backend Security */}
+            <FadeIn delay={0.5}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiLock size={16} /> Backend Security (7 Layers + API Protection)
@@ -741,8 +750,10 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            </FadeIn>
 
             {/* HITL */}
+            <FadeIn delay={0.6}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <FiUploadCloud size={16} /> Human-in-the-Loop (HITL) Chunk Review
@@ -761,6 +772,7 @@ export default function Landing() {
                 </div>
               ))}
             </div>
+            </FadeIn>
           </div>
         </div>
       </section>
