@@ -7,12 +7,12 @@
 
 /* --- CSS Variables (Design Tokens) --- */
 :root {
-  /* Core Colors — Pure Pitch Black (Matched to Indian Legal LLM) */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #0d0d0d;
-  --bg-tertiary: #141414;
-  --bg-card: rgba(10, 10, 10, 0.75);
-  --bg-glass: rgba(10, 10, 10, 0.55);
+  /* Core Colors — Deep charcoal with warm undertones */
+  --bg-primary: #0c0c14;
+  --bg-secondary: #111119;
+  --bg-tertiary: #1a1a24;
+  --bg-card: rgba(18, 18, 26, 0.75);
+  --bg-glass: rgba(18, 18, 26, 0.55);
 
   /* Accent — Warm Gold (premium, authoritative) */
   --accent: #d4a574;
@@ -25,9 +25,9 @@
   --purple: #a78bfa;
 
   /* Text */
-  --text-primary: #f8f9fa;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
+  --text-primary: #e8e4df;
+  --text-secondary: #9a9490;
+  --text-muted: #5e5954;
 
   /* Borders */
   --border: rgba(154, 148, 144, 0.1);
