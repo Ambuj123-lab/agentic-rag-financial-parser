@@ -133,22 +133,11 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via OpenRouter with circuit breaker + Langfuse tracing."""
+    """Call LLM via Nvidia Nemotron (primary) with Gemini 3.5 Flash fallback + Langfuse tracing."""
     import httpx
 
-    headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ],
-        "temperature": temperature,
-        "max_tokens": 4096,
-    }
+    primary_model = "nvidia/nemotron-3-super-120b-a12b:free"
+    fallback_model = "gemini-3.5-flash"
 
     # --- Langfuse Trace ---
     langfuse_trace = None
@@ -159,11 +148,11 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
             langfuse_trace = lf.trace(
                 name="RunnableSequence",
                 input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": "nvidia/nemotron-3-super-120b-a12b:free", "temperature": temperature},
+                metadata={"model": primary_model, "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
                 name="openrouter-completion",
-                model="nvidia/nemotron-3-super-120b-a12b:free",
+                model=primary_model,
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
                 model_parameters={"temperature": temperature, "max_tokens": 4096},
@@ -172,100 +161,197 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         logger.debug(f"Langfuse trace init skipped: {e}")
 
     start = time.time()
+    used_model = primary_model
 
-    with httpx.Client(timeout=60.0) as client:
-        resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
+    # === PRIMARY: Nvidia Nemotron via OpenRouter ===
+    try:
+        openrouter_headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        openrouter_payload = {
+            "model": primary_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            "temperature": temperature,
+            "max_tokens": 4096,
+        }
+
+        with httpx.Client(timeout=60.0) as client:
+            resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers)
+
+        if resp.status_code != 200:
+            raise Exception(f"Primary LLM call failed: {resp.status_code} — {resp.text}")
+
+        data = resp.json()
+        raw_content = data.get("choices", [{}])[0].get("message", {}).get("content")
+        answer = (raw_content or "").strip()
+
+        if not answer:
+            raise Exception("Primary LLM returned empty content")
+
+    except Exception as primary_e:
+        # === FALLBACK: Gemini 3.5 Flash (Google Generative Language API) ===
+        logger.warning(f"Primary model {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
+        used_model = fallback_model
+
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_headers = {"Content-Type": "application/json"}
+        gemini_payload = {
+            "systemInstruction": {
+                "parts": [{"text": system_prompt}]
+            },
+            "contents": [{
+                "parts": [{"text": user_message}]
+            }],
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": 4096,
+            }
+        }
+
+        with httpx.Client(timeout=60.0) as client:
+            fallback_resp = client.post(gemini_url, json=gemini_payload, headers=gemini_headers)
+            if fallback_resp.status_code != 200:
+                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} — {fallback_resp.text}")
+
+        data = fallback_resp.json()
+        try:
+            answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+        except (KeyError, IndexError):
+            answer = ""
+
+    # Strip <think>...</think> blocks if model outputs reasoning tokens
+    if "<think>" in answer:
+        import re as _re
+        answer = _re.sub(r"<think>[\s\S]*?</think>", "", answer).strip()
+
+    if not answer:
+        logger.warning("⚠️ LLM returned empty content — treating as generation failure")
+        raise Exception("LLM returned empty content")
 
     latency = round(time.time() - start, 2)
 
-    if resp.status_code == 200:
-        data = resp.json()
-        raw_content = data.get("choices", [{}])[0].get("message", {}).get("content")
-
-        # CRITICAL: Some models return content: null — guard against None
-        answer = (raw_content or "").strip()
-
-        # Strip <think>...</think> blocks if model outputs reasoning tokens
-        if "<think>" in answer:
-            import re as _re
-            answer = _re.sub(r"<think>[\s\S]*?</think>", "", answer).strip()
-
-        if not answer:
-            logger.warning("⚠️ LLM returned empty content — treating as generation failure")
-            raise Exception("LLM returned empty content")
-
-        # Log to Langfuse
+    # Log to Langfuse
+    try:
+        if langfuse_gen:
+            usage = data.get("usage") or {}
+            langfuse_gen.end(
+                output=answer[:500],
+                usage={
+                    "input": usage.get("prompt_tokens", 0),
+                    "output": usage.get("completion_tokens", 0),
+                },
+                metadata={"latency_sec": latency, "used_model": used_model},
+            )
+        if langfuse_trace:
+            langfuse_trace.update(output=answer[:200])
+    except Exception as e:
+        logger.error(f"Langfuse log error: {e}")
+    finally:
         try:
-            if langfuse_gen:
-                usage = data.get("usage") or {}
-                langfuse_gen.end(
-                    output=answer[:500],
-                    usage={
-                        "input": usage.get("prompt_tokens", 0),
-                        "output": usage.get("completion_tokens", 0),
-                    },
-                    metadata={"latency_sec": latency},
-                )
-            if langfuse_trace:
-                langfuse_trace.update(output=answer[:200])
-        except Exception as e:
-            logger.error(f"Langfuse log error: {e}")
-        finally:
-            try:
-                lf = get_langfuse_client()
-                if lf:
-                    lf.flush()
-            except Exception:
-                pass
+            lf = get_langfuse_client()
+            if lf:
+                lf.flush()
+        except Exception:
+            pass
 
-        return answer
-    raise Exception(f"LLM call failed: {resp.status_code} — {resp.text}")
+    return answer
 
 
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Uses OpenRouter's streaming API (SSE) for word-by-word delivery.
+    Primary: OpenRouter Nvidia Nemotron SSE streaming.
+    Fallback: Gemini 3.5 Flash SSE streaming.
     """
     import httpx
 
-    headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ],
-        "temperature": temperature,
-        "max_tokens": 4096,
-        "stream": True,
+    primary_model = "nvidia/nemotron-3-super-120b-a12b:free"
+    fallback_model = "gemini-3.5-flash"
+
+    # === PRIMARY: OpenRouter Nemotron Streaming ===
+    try:
+        openrouter_headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        openrouter_payload = {
+            "model": primary_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            "temperature": temperature,
+            "max_tokens": 4096,
+            "stream": True,
+        }
+
+        with httpx.Client(timeout=120.0) as client:
+            with client.stream(
+                "POST",
+                "https://openrouter.ai/api/v1/chat/completions",
+                json=openrouter_payload,
+                headers=openrouter_headers,
+            ) as resp:
+                if resp.status_code != 200:
+                    raise Exception(f"Primary stream failed: {resp.status_code}")
+
+                for line in resp.iter_lines():
+                    if not line or not line.startswith("data: "):
+                        continue
+                    data_str = line[6:]
+                    if data_str.strip() == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data_str)
+                        delta = chunk.get("choices", [{}])[0].get("delta", {})
+                        content = delta.get("content", "")
+                        if content:
+                            yield content
+                    except (json.JSONDecodeError, IndexError, KeyError):
+                        continue
+        return  # Primary succeeded, exit
+
+    except Exception as e:
+        logger.warning(f"Primary stream {primary_model} failed ({e}). Switching to FALLBACK {fallback_model}")
+
+    # === FALLBACK: Gemini 3.5 Flash Streaming ===
+    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+    gemini_headers = {"Content-Type": "application/json"}
+    gemini_payload = {
+        "systemInstruction": {
+            "parts": [{"text": system_prompt}]
+        },
+        "contents": [{
+            "parts": [{"text": user_message}]
+        }],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": 4096,
+        }
     }
 
     with httpx.Client(timeout=120.0) as client:
-        with client.stream(
-            "POST",
-            "https://openrouter.ai/api/v1/chat/completions",
-            json=payload,
-            headers=headers,
-        ) as resp:
+        with client.stream("POST", gemini_url, json=gemini_payload, headers=gemini_headers) as resp:
             if resp.status_code != 200:
-                raise Exception(f"LLM stream failed: {resp.status_code}")
+                raise Exception(f"Fallback Gemini stream failed: {resp.status_code}")
 
             for line in resp.iter_lines():
                 if not line or not line.startswith("data: "):
                     continue
-                data_str = line[6:]  # Remove "data: " prefix
+                data_str = line[6:]
                 if data_str.strip() == "[DONE]":
                     break
                 try:
                     chunk = json.loads(data_str)
-                    delta = chunk.get("choices", [{}])[0].get("delta", {})
-                    content = delta.get("content", "")
-                    if content:
-                        yield content
+                    parts = chunk.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+                    for part in parts:
+                        text = part.get("text", "")
+                        if text:
+                            yield text
                 except (json.JSONDecodeError, IndexError, KeyError):
                     continue
 
