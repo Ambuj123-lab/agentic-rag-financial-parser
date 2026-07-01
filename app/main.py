@@ -67,7 +67,13 @@ app.add_middleware(
 
 # Required for Authlib (Google OAuth state tracking)
 from starlette.middleware.sessions import SessionMiddleware
-app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.JWT_SECRET,
+    same_site="lax",
+    https_only=False,       # Must be False for localhost (no HTTPS)
+    max_age=14 * 24 * 60 * 60,  # 14 days
+)
 
 # Auth routes at root level (for direct browser navigation: /auth/login, /auth/callback)
 app.include_router(auth.router, tags=["Authentication (root)"])

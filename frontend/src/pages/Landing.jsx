@@ -8,7 +8,7 @@ import {
   FiFileText, FiDatabase, FiLock, FiHash, FiGrid, FiActivity
 } from 'react-icons/fi'
 
-const GOOGLE_AUTH_URL = '/auth/login'
+const GOOGLE_AUTH_URL = 'http://localhost:8000/auth/login'
 
 /* Google "G" logo SVG — actual brand icon */
 function GoogleLogo({ size = 18 }) {
