@@ -51,7 +51,7 @@ LLAMA_TIER_MAPPING = {
     "ITA2025_Part1_P1to250.pdf": "Agentic",                           # 250 pg → ~2,500 cr
     "ITA2025_Part2_P251to500.pdf": "Agentic",                         # 250 pg → ~2,500 cr
     "ITA2025_Part3_P501to555.pdf": "Agentic",                         # 155 pg → ~1,550 cr
-    "constitution of india.pdf": "Cost Effective",                    # 402 pg → ~1,200 cr
+    "constitution of india.pdf": "Agentic",                           # 402 pg → ~4,020 cr
     "Finance_Bill.pdf": "Agentic",                                    # 232 pg → ~2,320 cr
     "Finance Act 2026.pdf": "Agentic",                                # 121 pg → ~1,210 cr
     "RBI Master Direction KYC.pdf": "Cost Effective",                 # 107 pg

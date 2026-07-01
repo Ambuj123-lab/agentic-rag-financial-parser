@@ -43,7 +43,7 @@ def upload_file_to_storage(file_path: str, object_name: str) -> bool:
         return False
 
 # We are using v2 table for testing the Blue/Green deployment to keep the live app registry strictly isolated.
-REGISTRY_TABLE = "fp_file_registry_v2"
+REGISTRY_TABLE = "fp_file_registry"
 
 def get_registry_entry(file_name: str) -> Optional[Dict[str, Any]]:
     """Retrieve file metadata from the registry table."""
