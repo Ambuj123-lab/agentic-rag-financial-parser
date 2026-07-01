@@ -181,9 +181,33 @@ def chunk_with_parent_child(docs: List[Dict[str, Any]], is_temporary: bool = Fal
         page = doc.get("page", 0)
         
         # Step 1: Create parent chunks
-        parent_texts = parent_splitter.split_text(text)
+        if "constitution of india" in source.lower():
+            # GEMINI STRATEGY: Split by Article boundary (\n followed by number and dot)
+            # This ensures each Parent is exactly one Article/Schedule, no arbitrary cuts!
+            parent_texts_with_meta = []
+            raw_splits = re.split(r'\n(?=\d{1,3}[A-Z]*\.\s+[A-Z])', text)
+            for split in raw_splits:
+                split = split.strip()
+                if not split:
+                    continue
+                    
+                # Extract Article Number (e.g., "19", "370", "21A")
+                article_num = None
+                match = re.match(r'^(\d{1,3}[A-Z]*)\.', split)
+                if match:
+                    article_num = match.group(1)
+                    
+                if len(split) > 5000:
+                    # If schedule/part is too massive, fallback to size splitter
+                    sub_splits = parent_splitter.split_text(split)
+                    for sub in sub_splits:
+                        parent_texts_with_meta.append((sub, article_num))
+                else:
+                    parent_texts_with_meta.append((split, article_num))
+        else:
+            parent_texts_with_meta = [(p, None) for p in parent_splitter.split_text(text)]
         
-        for parent_idx, parent_text in enumerate(parent_texts):
+        for parent_idx, (parent_text, article_num) in enumerate(parent_texts_with_meta):
             # Deterministic parent ID: hash_parentIdx (same as prev project)
             parent_id = f"{source}_{page}_{parent_idx}"
             parent_count += 1

@@ -60,6 +60,24 @@ def parse_with_pymupdf(file_path: str) -> list[dict]:
         for page_num in range(len(pdf)):
             page = pdf[page_num]
             text = page.get_text("text")
+            
+            # --- CUSTOM CLEANING FOR CONSTITUTION ---
+            if "constitution of india" in file_path.lower():
+                import re
+                
+                # 1. Remove Page Headers
+                text = re.sub(r'THE CONSTITUTION OF\s*INDIA\n\(Part.*?\)', '', text, flags=re.IGNORECASE)
+                text = re.sub(r'THE CONSTITUTION OF INDIA', '', text, flags=re.IGNORECASE)
+                
+                # 2. Aggressive Footnote Removal
+                # The Constitution uses a solid line of underscores to separate main text from footnotes.
+                # We split the page text on this line and completely discard everything after it.
+                parts = re.split(r'_{10,}', text)
+                text = parts[0]
+                
+                # 3. Clean any remaining inline floating footnote numbers (e.g. ^1, ^2 if any are lingering alone)
+                # But we skip this to avoid deleting valid list numbers. Splitting by underscore is 99% effective.
+                
             if text.strip():
                 docs.append({
                     "page": page_num + 1,

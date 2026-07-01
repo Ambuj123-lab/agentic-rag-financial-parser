@@ -415,7 +415,8 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
     {
       "search_query": "specific context rich search query",
       "doc_type": "act" | "rules" | "circular" | "scheme" | "budget" | "constitution" | "bill" | "memorandum" | "reference" | "finance_act" | "any",
-      "year": "1952" | "1961" | "1962" | "1995" | "2022" | "2024" | "2025" | "2026" | "any"
+      "year": "1952" | "1961" | "1962" | "1995" | "2022" | "2024" | "2025" | "2026" | "any",
+      "article_number": "Extract exact article number if user asks for it (e.g., '19', '21A', '370'), else null"
     }
   ]
 }
@@ -439,19 +440,22 @@ Intent Rules:
 Few-Shot Examples:
 
 Query: "What is the tax slab?"
-{"reasoning": "User asked about tax slab without specifying year. Slabs are in Income Tax Acts. Searching both old (1961) and new (2025) Acts for comparison.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "income tax slab rates", "doc_type": "act", "year": "1961"}, {"search_query": "income tax slab rates new regime", "doc_type": "act", "year": "2025"}]}
+{"reasoning": "User asked about tax slab without specifying year. Slabs are in Income Tax Acts. Searching both old (1961) and new (2025) Acts for comparison.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "income tax slab rates", "doc_type": "act", "year": "1961", "article_number": null}, {"search_query": "income tax slab rates new regime", "doc_type": "act", "year": "2025", "article_number": null}]}
 
 Query: "How to file ITR?"
-{"reasoning": "Procedural question about filing process. This is in IT Rules, checking latest 2026 rules first.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "procedure to file income tax return ITR", "doc_type": "rules", "year": "2026"}]}
+{"reasoning": "Procedural question about filing process. This is in IT Rules, checking latest 2026 rules first.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "procedure to file income tax return ITR", "doc_type": "rules", "year": "2026", "article_number": null}]}
 
 Query: "What changed in Finance Act 2025?"
-{"reasoning": "User specifically asking about Finance Act 2025 amendments.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "Finance Act 2025 amendments changes", "doc_type": "finance_act", "year": "2025"}]}
+{"reasoning": "User specifically asking about Finance Act 2025 amendments.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "Finance Act 2025 amendments changes", "doc_type": "finance_act", "year": "2025", "article_number": null}]}
 
 Query: "Compare 80C deduction old vs new"
 {"reasoning": "Comparative query about Section 80C across old (1961) and new (2025) Income Tax Acts. Also including reference for rate summary.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "Section 80C deduction limit", "doc_type": "act", "year": "1961"}, {"search_query": "Section 80C deduction limit new regime", "doc_type": "act", "year": "2025"}, {"search_query": "80C deduction rate reference", "doc_type": "reference", "year": "2025"}]}
 
 Query: "EPF withdrawal rules"
-{"reasoning": "Question about EPF scheme withdrawal procedure.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "EPF provident fund withdrawal rules", "doc_type": "scheme", "year": "1952"}]}
+{"reasoning": "Question about EPF scheme withdrawal procedure.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "EPF provident fund withdrawal rules", "doc_type": "scheme", "year": "1952", "article_number": null}]}
+
+Query: "What is article 19 of the constitution?"
+{"reasoning": "User is asking for a specific constitutional article.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "article 19", "doc_type": "constitution", "year": "any", "article_number": "19"}]}
 
 search_scope rules:
 - "system_only": Query is about ANY general financial, legal, constitutional, taxation, or policy topic. No mention of user's own file.
@@ -629,13 +633,28 @@ def retriever_node(state: AgentState) -> dict:
                     target_files.append(file_name)
                     
             pinecone_filter = {"is_temporary": {"$eq": False}}
+            
+            # Base filter with target files if any
             if target_files:
-                pinecone_filter = {
-                    "$and": [
-                        {"is_temporary": {"$eq": False}},
-                        {"source_file": {"$in": target_files}}
-                    ]
-                }
+                base_filter = [
+                    {"is_temporary": {"$eq": False}},
+                    {"source_file": {"$in": target_files}}
+                ]
+            else:
+                base_filter = [{"is_temporary": {"$eq": False}}]
+                
+            # If an exact article_number is requested, inject it into the AND filter
+            target_article = intent.get("article_number")
+            if target_article and isinstance(target_article, str):
+                base_filter.append({"article_number": {"$eq": target_article}})
+                logger.info(f"  🔍 Applying strict METADATA FILTER for Article: {target_article}")
+                
+            if len(base_filter) > 1:
+                pinecone_filter = {"$and": base_filter}
+            elif len(base_filter) == 1:
+                pinecone_filter = base_filter[0]
+
+            if target_files:
                 logger.info(f"  🎯 Intent scope [{target_doc_type} | {target_year}]: {len(target_files)} target files → {target_files}")
             else:
                 logger.info(f"  🎯 Intent scope [{target_doc_type} | {target_year}]: No registry match, fallback to global search")
