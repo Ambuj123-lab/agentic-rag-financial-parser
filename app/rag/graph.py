@@ -645,7 +645,7 @@ def retriever_node(state: AgentState) -> dict:
                 
             # If an exact article_number is requested, inject it into the AND filter
             target_article = intent.get("article_number")
-            if target_article and isinstance(target_article, str):
+            if target_article and isinstance(target_article, str) and target_article.lower() not in ("null", "none", ""):
                 base_filter.append({"article_number": {"$eq": target_article}})
                 logger.info(f"  🔍 Applying strict METADATA FILTER for Article: {target_article}")
                 

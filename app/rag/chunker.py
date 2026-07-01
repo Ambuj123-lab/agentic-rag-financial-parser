@@ -223,24 +223,29 @@ def chunk_with_parent_child(docs: List[Dict[str, Any]], is_temporary: bool = Fal
                 child_id = hashlib.md5(f"{parent_id}_{child_idx}".encode()).hexdigest()
                 child_count += 1
                 
+                chunk_meta = {
+                    "parent_id": parent_id,
+                    "parent_text": context_prefix + parent_text,
+                    "text_preview": child_text[:500],
+                    "source_file": source,
+                    "loader": loader,
+                    "page": page,
+                    "chunk_type": "parent_child",
+                    "child_index": child_idx,
+                    "parent_chunk_index": parent_idx,
+                    "is_omitted": is_omitted,
+                    "is_temporary": is_temporary,
+                    "uploaded_by": uploaded_by if is_temporary else "system",
+                    "indexed_at": datetime.now().isoformat(),
+                }
+                # Inject article_number for Constitution chunks (enables exact metadata filtering)
+                if article_num:
+                    chunk_meta["article_number"] = article_num
+                
                 all_chunks.append({
                     "chunk_id": child_id,
                     "text": context_prefix + child_text,
-                    "metadata": {
-                        "parent_id": parent_id,
-                        "parent_text": context_prefix + parent_text,
-                        "text_preview": child_text[:500],
-                        "source_file": source,
-                        "loader": loader,
-                        "page": page,
-                        "chunk_type": "parent_child",
-                        "child_index": child_idx,
-                        "parent_chunk_index": parent_idx,
-                        "is_omitted": is_omitted,
-                        "is_temporary": is_temporary,
-                        "uploaded_by": uploaded_by if is_temporary else "system",
-                        "indexed_at": datetime.now().isoformat(),
-                    }
+                    "metadata": chunk_meta
                 })
     
     logger.info(
