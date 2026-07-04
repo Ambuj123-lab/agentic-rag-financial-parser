@@ -33,7 +33,6 @@ export function AuthProvider({ children }) {
     } catch (e) { /* ignore */ }
     localStorage.removeItem('token')
     setUser(null)
-    window.location.href = '/'
   }
 
   return (

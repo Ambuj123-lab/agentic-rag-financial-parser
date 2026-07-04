@@ -21,7 +21,7 @@ export default function AuthCallback() {
           picture: user.picture || null,
           is_admin: user.is_admin || false
         })
-        window.location.href = '/chat'
+        navigate('/chat', { replace: true })
       } catch (err) {
         console.error('Invalid token payload', err)
         navigate('/?error=invalid_token', { replace: true })
