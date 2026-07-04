@@ -362,6 +362,7 @@ class AgentState(TypedDict):
 
     # Control
     is_fallback: bool
+    is_web_search: bool
     error: Optional[str]
     pii_detected: bool
     pii_entities: list
@@ -409,6 +410,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
   "reasoning": "Brief explanation of WHY you chose these doc_types and years",
   "is_vague": true/false,
   "is_out_of_scope": true/false,
+  "is_web_search": true/false,
   "clarifying_question": "ask if vague, else null",
   "search_scope": "system_only" | "user_only" | "hybrid",
   "search_intents": [
@@ -422,7 +424,9 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 }
 
 Intent Rules:
-- If query is about unrelated topics like cooking, sports, entertainment, general world news, or non-Indian legal/financial systems -> set is_out_of_scope: true.
+- If query is about unrelated topics like cooking, sports, entertainment, current events, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: false, and set is_web_search: true.
+- If query is related to Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
+- ONLY set is_out_of_scope: true if the query is extremely harmful or completely nonsensical where even a web search is inappropriate.
 - If about Income Tax Act sections, deductions, limits, slabs -> doc_type: "act".
 - If about Finance Act amendments, surcharges, new tax changes -> doc_type: "finance_act".
 - If procedural ("how to file", "form format", "steps") -> doc_type: "rules".
@@ -483,6 +487,8 @@ Default to "system_only" if unsure."""
         routing_reason = result.get("reasoning", "No reasoning provided")
         logger.info(f"🧠 Router Reasoning: {routing_reason} | Out of Scope: {is_out_of_scope}")
 
+        is_web_search = result.get("is_web_search", False)
+
         if is_out_of_scope:
             return {
                 "query_type": "rag",
@@ -491,7 +497,20 @@ Default to "system_only" if unsure."""
                 "needs_cross_question": False,
                 "search_scope": "system_only",
                 "search_intents": [],
-                "reasoning": routing_reason
+                "reasoning": routing_reason,
+                "is_web_search": False
+            }
+            
+        if is_web_search:
+            return {
+                "query_type": "web_search",
+                "is_vague": False,
+                "is_out_of_scope": False,
+                "needs_cross_question": False,
+                "search_scope": "system_only",
+                "search_intents": [{"search_query": query, "doc_type": "web", "year": "any"}],
+                "reasoning": routing_reason,
+                "is_web_search": True
             }
 
         if result.get("is_vague", False) and state.get("cross_question_count", 0) < 2:
@@ -503,11 +522,12 @@ Default to "system_only" if unsure."""
                 "needs_cross_question": True,
                 "search_scope": search_scope,
                 "search_intents": search_intents,
-                "reasoning": routing_reason
+                "reasoning": routing_reason,
+                "is_web_search": False
             }
     except pybreaker.CircuitBreakerError:
         logger.warning("⚡ LLM circuit breaker OPEN — skipping classification")
-        return {"query_type": "rag", "is_vague": False, "is_out_of_scope": False, "needs_cross_question": False, "search_scope": "hybrid", "search_intents": [{"search_query": query, "doc_type": "any", "year": "any"}], "reasoning": "Circuit breaker triggered during routing."}
+        return {"query_type": "rag", "is_vague": False, "is_out_of_scope": False, "needs_cross_question": False, "search_scope": "hybrid", "search_intents": [{"search_query": query, "doc_type": "any", "year": "any"}], "reasoning": "Circuit breaker triggered during routing.", "is_web_search": False}
     except Exception:
         search_scope = "hybrid"  # Fallback: search both if parsing fails
         search_intents = [{"search_query": query, "doc_type": "any", "year": "any"}]
@@ -515,7 +535,7 @@ Default to "system_only" if unsure."""
         is_out_of_scope = False
 
     logger.info(f"📌 Search scope: {search_scope} | Intents: {len(search_intents)}")
-    return {"query_type": "rag", "is_vague": False, "is_out_of_scope": is_out_of_scope, "needs_cross_question": False, "search_scope": search_scope, "search_intents": search_intents, "reasoning": routing_reason}
+    return {"query_type": "rag", "is_vague": False, "is_out_of_scope": is_out_of_scope, "needs_cross_question": False, "search_scope": search_scope, "search_intents": search_intents, "reasoning": routing_reason, "is_web_search": False}
 
 
 # ========== NODE 2: REJECT ==========
@@ -576,6 +596,60 @@ def cross_question_node(state: AgentState) -> dict:
         "cross_question_count": round_num,
         "is_fallback": False
     }
+
+
+# ========== NODE 4.5: WEB SEARCH ==========
+
+def web_search_node(state: AgentState) -> dict:
+    """Fallback to internet search for out-of-domain queries via Tavily API."""
+    logger.info("🌐 [4.5/9] Web Search: Falling back to internet (Tavily)")
+    start = time.time()
+    query = state["user_query"]
+    
+    try:
+        from tavily import TavilyClient
+        import os
+        
+        tavily_key = os.getenv("TAVILY_API_KEY")
+        if not tavily_key:
+            raise ValueError("TAVILY_API_KEY is not set.")
+            
+        tavily_client = TavilyClient(api_key=tavily_key)
+        
+        # Search web with top 3 results
+        response = tavily_client.search(query=query, search_depth="advanced", max_results=3)
+        
+        chunks = []
+        for result in response.get("results", []):
+            chunks.append({
+                "score": result.get("score", 0.9),
+                "text": result.get("content", ""),
+                "parent_text": result.get("content", ""),
+                "source_file": result.get("url", "unknown"),
+                "page": "web",
+                "chunk_type": "web_search",
+                "is_temporary": False
+            })
+            
+        top_confidence = chunks[0]["score"] * 100 if chunks else 0
+        logger.info(f"🌐 Found {len(chunks)} web results (confidence: {top_confidence:.1f}%)")
+        
+        return {
+            "retrieved_chunks": chunks,
+            "confidence": top_confidence,
+            "latency": round(time.time() - start, 2),
+            "is_fallback": False,
+            "error": None
+        }
+    except Exception as e:
+        logger.error(f"Tavily search failed: {e}")
+        return {
+            "retrieved_chunks": [],
+            "confidence": 0,
+            "latency": round(time.time() - start, 2),
+            "is_fallback": True,
+            "error": f"web_search_failed: {str(e)}"
+        }
 
 
 # ========== NODE 5: RETRIEVER ==========
@@ -810,7 +884,23 @@ def generator_node(state: AgentState) -> dict:
 
     current_date = datetime.now().strftime("%B %d, %Y")
     
-    system_prompt = f"""CRITICAL BANNED PHRASES — NEVER USE THESE UNDER ANY CIRCUMSTANCE:
+    if state.get("is_web_search"):
+        system_prompt = f"""You are **Agentic Financial Parser AI** — built by **Ambuj Kumar Tripathi**.
+You are currently helping **{user_name}**.
+Today's date: **{current_date}**
+
+You have performed a live Web Search to answer the user's query, as it falls outside your primary legal/financial document scope.
+Using the provided Web Search Context, answer the user's question clearly and accurately.
+
+RULES:
+1. Synthesize the information from the provided web context.
+2. If the context contains contradictory information, mention it.
+3. Keep your tone professional and helpful.
+4. Do NOT say "Based on the web search" or "According to the internet". Just provide the answer.
+5. If the context does not contain the answer, say you couldn't find a reliable answer online.
+"""
+    else:
+        system_prompt = f"""CRITICAL BANNED PHRASES — NEVER USE THESE UNDER ANY CIRCUMSTANCE:
 - BANNED: "fully eligible" → ALWAYS say "appears eligible, subject to conditions"
 - BANNED: "you qualify" → ALWAYS say "appears to qualify"  
 - BANNED: "Rule 12AB" → NEVER mention unless user explicitly asks about ITR filing
@@ -1030,7 +1120,9 @@ Always end with — on a new line after main content:
 """
 
     try:
-        answer = call_llm(system_prompt, f"Question: {query}\n\nContext:\n{context}", 0.2)
+        # Pass the original string system_prompt, Call LLM wraps it in HumanMessage/SystemMessage
+        answer = call_llm(system_prompt, f"Context:\n{context}\n\nUser Query: {state['user_query']}", temperature=0.2)
+
     except Exception as e:
         logger.error(f"Generation failed: {e}")
         return {
@@ -1130,6 +1222,8 @@ def route_after_classify(state: AgentState) -> str:
         return "greet"
     elif qt == "vague":
         return "cross_question"
+    elif qt == "web_search":
+        return "web_search"
     return "retriever"
 
 def route_after_hallu_guard(state: AgentState) -> str:
@@ -1161,6 +1255,7 @@ def build_rag_graph():
     graph.add_node("greet", greet_node)
     graph.add_node("cross_question", cross_question_node)
     graph.add_node("retriever", retriever_node)
+    graph.add_node("web_search", web_search_node)
     graph.add_node("generator", generator_node)
     graph.add_node("hallucination_guard", hallucination_guard_node)
     graph.add_node("post_process", post_process_node)
@@ -1174,6 +1269,7 @@ def build_rag_graph():
         "reject": "reject",
         "greet": "greet",
         "cross_question": "cross_question",
+        "web_search": "web_search",
         "retriever": "retriever"
     })
 
@@ -1188,6 +1284,11 @@ def build_rag_graph():
 
     # Retriever → Generator (with fallback check)
     graph.add_conditional_edges("retriever",
+        lambda s: "fallback" if s.get("is_fallback") else "generator",
+        {"fallback": "fallback", "generator": "generator"})
+        
+    # Web Search → Generator (with fallback check)
+    graph.add_conditional_edges("web_search",
         lambda s: "fallback" if s.get("is_fallback") else "generator",
         {"fallback": "fallback", "generator": "generator"})
 
@@ -1251,6 +1352,7 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "latency": 0,
         "is_grounded": True,
         "is_fallback": False,
+        "is_web_search": False,
         "error": None,
         "pii_detected": pii_detected,
         "pii_entities": pii_detections,
@@ -1270,6 +1372,7 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "is_fallback": result.get("is_fallback", False),
         "pii_detected": result.get("pii_detected", False),
         "pii_entities": result.get("pii_entities", []),
+        "is_web_search": result.get("is_web_search", False),
         "reasoning": result.get("reasoning", ""),
         "tracker_data": result.get("tracker_data", {}),
     }

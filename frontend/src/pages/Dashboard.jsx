@@ -7,7 +7,7 @@ import api from '../api/client'
 import {
   FiSend, FiMenu, FiLogOut, FiUploadCloud, FiTrash2,
   FiThumbsUp, FiThumbsDown, FiCpu, FiSettings, FiFile,
-  FiChevronRight, FiDatabase, FiBookOpen, FiCopy, FiCheck, FiDownload, FiSearch
+  FiChevronRight, FiDatabase, FiBookOpen, FiCopy, FiCheck, FiDownload, FiSearch, FiGlobe
 } from 'react-icons/fi'
 
 export default function Dashboard() {
@@ -465,11 +465,27 @@ export default function Dashboard() {
                       </button>
                       {sourcesExpanded[i] && (
                         <div className="sources-expanded">
-                          {msg.sources.map((s, j) => (
-                            <span key={j} className="source-badge">
-                              <FiFile size={11} /> {s}
-                            </span>
-                          ))}
+                          {msg.sources.map((s, j) => {
+                            const isWeb = s.startsWith('http');
+                            const url = isWeb ? s.split(" (p.")[0] : "";
+                            let domain = "";
+                            if (isWeb) {
+                              try { domain = new URL(url).hostname; } catch(e) { domain = "web"; }
+                            }
+                            return (
+                              <span key={j} className="source-badge" style={{ cursor: isWeb ? 'pointer' : 'default' }}>
+                                {isWeb ? (
+                                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <FiGlobe size={11} /> {domain}
+                                  </a>
+                                ) : (
+                                  <>
+                                    <FiFile size={11} /> {s}
+                                  </>
+                                )}
+                              </span>
+                            );
+                          })}
                         </div>
                       )}
                     </div>

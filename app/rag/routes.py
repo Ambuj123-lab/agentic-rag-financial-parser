@@ -279,6 +279,8 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
             pipeline_trace += f"🔍 [4/8] {f_count} raw chunks fetched\n"
             if g_count > 0:
                 pipeline_trace += f"🥇 [5/8] Cohere Neural Reranking applied (Top {g_count})\n"
+            elif result.get("is_web_search", False):
+                pipeline_trace += "🥇 [5/8] Internet Knowledge Retrieved\n"
             else:
                 pipeline_trace += "🥇 [5/8] Vector Similarity Matched\n"
             pipeline_trace += "✨ [6/8] LLM Synthesis Activated\n"
@@ -288,12 +290,21 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
             yield f"data: {json.dumps({'type': 'reasoning', 'text': pipeline_trace})}\n\n"
 
         # Node Highlighter — show pipeline steps (purely cosmetic, real processing is done)
-        nodes = [
-            {"id": "guard", "label": "Safety Guard", "icon": "🛡️"},
-            {"id": "classifier", "label": "Classifying Query", "icon": "🔍"},
-            {"id": "retriever", "label": "Searching Documents", "icon": "📚"},
-            {"id": "generator", "label": "Generating Answer", "icon": "✨"},
-        ]
+        if result.get("is_web_search", False):
+            nodes = [
+                {"id": "guard", "label": "Safety Guard", "icon": "🛡️"},
+                {"id": "classifier", "label": "Classifying Query", "icon": "🔍"},
+                {"id": "web_search", "label": "Searching the Internet", "icon": "🌐"},
+                {"id": "generator", "label": "Generating Answer", "icon": "✨"},
+            ]
+        else:
+            nodes = [
+                {"id": "guard", "label": "Safety Guard", "icon": "🛡️"},
+                {"id": "classifier", "label": "Classifying Query", "icon": "🔍"},
+                {"id": "retriever", "label": "Searching Documents", "icon": "📚"},
+                {"id": "generator", "label": "Generating Answer", "icon": "✨"},
+            ]
+            
         for node in nodes:
             yield f"data: {json.dumps({'type': 'node', 'id': node['id'], 'label': node['label'], 'icon': node['icon'], 'status': 'running'})}\n\n"
             await asyncio.sleep(0.6)  # Premium visual pause for UX
