@@ -857,7 +857,9 @@ I couldn't find an exact match in my verified legal/financial documents for this
 
 **Action Required:**
 Would you like me to switch to **Autonomous Web Search** to find the latest real-time information for you? 
-*(Reply with "yes" to proceed)*"""
+*(Reply with "yes" to proceed)*
+***
+⚡ *Powered by 9-Node Agentic RAG | Engineered by Ambuj Kumar Tripathi*"""
 
         return {
             "retrieved_chunks": [],
