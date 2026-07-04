@@ -804,7 +804,7 @@ def generator_node(state: AgentState) -> dict:
             doc_label = reg.get("doc_type", "document").upper()
             year_label = reg.get("year", "")
             label = f"{source} ({doc_label}, {year_label})" if year_label else source
-            context_parts.append(f"[{idx + 1}] Source: {label}, Page {page}\n{parent_text}")
+            context_parts.append(f"Source: {label}, Page {page}\n{parent_text}")
             sources.add(f"{source} (p.{page})")
         context = "\n\n---\n\n".join(context_parts)
 
@@ -876,12 +876,6 @@ You are a highly cautious Indian tax RAG assistant. Follow these rules STRICTLY:
    "I found limited information in my documents.
     Please verify with official sources or a CA."
 5. MULTI-SOURCE SYNTHESIS: If the context contains information from multiple domains (e.g., Constitution Bare Act + Polity Theory Notes), merge them intelligently into a single cohesive answer. If the context contains only one domain, rely exclusively on it. Do not hallucinate connections that are not explicitly present in the provided context.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-## CITATION FORMATTING
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-You MUST cite your sources inline using markdown links with the '#cite-' scheme corresponding to the provided Context chunk index.
-Example: "Under Article 110 of the Constitution [[1]](#cite-1), a Money Bill..."
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ## HARDCODED CRITICAL DATA
