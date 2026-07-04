@@ -600,7 +600,7 @@ export default function Dashboard() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about Acts, Rules, Budgets, or compare old vs new laws..."
+            placeholder="Ask about Constitution, Polity, Budgets, PF Rules, or RBI Guidelines..."
             disabled={loading}
           />
           <button
@@ -720,7 +720,7 @@ function EmptyState({ onQuestionClick }) {
         maxWidth: 440,
       }}>
         {[
-          'Compare depreciation rates in ITA 1961 vs 2025',
+          'Explain Article 19 and the historical significance of Fundamental Rights',
           'What are the new KYC rules as per RBI Master Direction?',
           'Explain PF rules under EPF Act vs Pension Scheme',
           'Key changes in Budget 2026-27 vs previous years'

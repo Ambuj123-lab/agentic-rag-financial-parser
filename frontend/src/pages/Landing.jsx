@@ -344,8 +344,8 @@ export default function Landing() {
           fontSize: '1.05rem', color: 'var(--text-secondary)',
           maxWidth: 660, margin: '0 auto 36px', lineHeight: 1.7,
         }}>
-          Parse Union Budget, Finance Bill, Tax Laws (1961 & 2025), PF/Pension Schemes, RBI KYC &amp;
-          Constitution of India with an 8-node agentic RAG — parallel vector retrieval,
+          Parse Indian Constitution & Polity, Union Budgets, Finance Acts, PF/Pension Schemes, and RBI KYC
+          with an 8-node agentic RAG — featuring parallel vector retrieval,
           Cohere neural reranking, multi-version synthesis, and hallucination guard.
         </p>
 
