@@ -23,6 +23,15 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null)
   const [statsExpanded, setStatsExpanded] = useState(false)
   const [copiedMsg, setCopiedMsg] = useState(null)
+  const [activeCitation, setActiveCitation] = useState(null)
+  const [citationChunks, setCitationChunks] = useState([])
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const openCitation = (idx, chunks) => {
+    setActiveCitation(idx)
+    setCitationChunks(chunks)
+    setDrawerOpen(true)
+  }
 
   const chatEndRef = useRef(null)
 
@@ -444,7 +453,20 @@ export default function Dashboard() {
                     </details>
                   )}
 
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      a: ({node, ...props}) => {
+                        if (props.href && props.href.startsWith('cite:')) {
+                          const idx = props.href.split(':')[1];
+                          return <span className="citation-badge" onClick={() => openCitation(idx, msg.chunks)}>[{idx}]</span>;
+                        }
+                        return <a {...props} />;
+                      }
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
 
                   {/* Source Citations (Expandable) */}
                   {msg.sources?.length > 0 && (
@@ -611,6 +633,35 @@ export default function Dashboard() {
             <FiSend size={18} />
           </button>
         </div>
+      </div>
+
+      {/* Citation Drawer */}
+      {drawerOpen && <div className="citation-drawer-overlay" onClick={() => setDrawerOpen(false)} />}
+      <div className={`citation-drawer ${drawerOpen ? 'open' : ''}`}>
+        <div className="citation-drawer-header">
+          <h3><FiBookOpen /> Source Verification</h3>
+          <button className="citation-drawer-close" onClick={() => setDrawerOpen(false)}>✕</button>
+        </div>
+        
+        {activeCitation && citationChunks && citationChunks[activeCitation - 1] ? (
+          <>
+            <div className="citation-drawer-meta">
+              <div className="citation-meta-item">
+                <span className="meta-label">File:</span>
+                <span>{citationChunks[activeCitation - 1].source_file}</span>
+              </div>
+              <div className="citation-meta-item">
+                <span className="meta-label">Page:</span>
+                <span>{citationChunks[activeCitation - 1].page}</span>
+              </div>
+            </div>
+            <div className="citation-drawer-content">
+              {citationChunks[activeCitation - 1].text || citationChunks[activeCitation - 1].parent_text}
+            </div>
+          </>
+        ) : (
+          <div style={{ color: 'var(--text-muted)' }}>Source context unavailable for this chunk.</div>
+        )}
       </div>
 
       {/* ===== DOCS MODAL ===== */}
