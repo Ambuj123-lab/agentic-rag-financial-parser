@@ -313,7 +313,7 @@ export default function Landing() {
         position: 'relative',
       }}>
         {/* Deep Red Black Spotlight Background */}
-        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', background: 'radial-gradient(circle at center, rgba(220, 38, 38, 0.15) 0%, transparent 60%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
+        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', background: 'radial-gradient(circle at center, rgba(220, 38, 38, 0.28) 0%, transparent 65%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
 
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -869,7 +869,7 @@ export default function Landing() {
         overflow: 'hidden',
       }}>
         {/* Accent Gradients (Matched to Hero Deep Red) */}
-        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '120vw', height: '100%', background: 'radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.15) 0%, transparent 60%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '120vw', height: '100%', background: 'radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.28) 0%, transparent 65%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
         
         <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{
