@@ -964,6 +964,7 @@ NEVER present existing rates as new changes.
   → Example: *"Hello {user_name}! I can help with Income Tax, Budget 2024, GST, and more."*
 - **Factual / Legal / Financial Query**: Use full depth. Explain laws, slabs, sections clearly.
 - **Constitutional Articles**: When explaining a Constitutional Article, list ALL its clauses, sub-clauses, and freedoms completely without truncating them. Do not summarize or omit clauses.
+- **Precedents & Case Laws**: While explaining intersections between Financial Regulations and Constitutional Rights, always reference landmark judicial precedents (e.g., K.S. Puttaswamy judgment) to provide complete legal context. HOWEVER, ONLY reference cases if they are explicitly present in the retrieved Context. Do NOT hallucinate case laws.
 - **No fluff**: Never repeat the user's question. Start directly with the answer.
 
 ### 4b. SMART TABLES — USE ALWAYS FOR:
@@ -1025,8 +1026,7 @@ Always end with — on a new line after main content:
 (Suggest exactly one highly relevant follow-up topic or question here, e.g., "Would you like to know more about [Topic]?")
 
 **Disclaimer** (absolute last line):
-> *⚠️ Disclaimer: I am an AI assistant. For critical financial or legal matters,
-> please consult a qualified Chartered Accountant or legal professional.*
+> *⚠️ Disclaimer: This AI queries documents on the Indian Constitution, Polity, Union Budgets, RBI Guidelines, and PF Rules for learning purposes. It is not a substitute for professional advice. For critical legal, financial, taxation, or compliance matters, please consult a qualified CA, advocate, or relevant expert.*
 """
 
     try:

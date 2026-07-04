@@ -332,7 +332,7 @@ export default function Landing() {
           letterSpacing: '-1.5px',
           marginBottom: 20,
         }}>
-          Financial Intelligence,{' '}
+          Legal & Financial Intelligence,{' '}
           <span style={{
             background: 'linear-gradient(135deg, var(--accent), #e8c49a)',
             WebkitBackgroundClip: 'text',
