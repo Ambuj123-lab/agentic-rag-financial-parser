@@ -717,13 +717,15 @@ function EmptyState({ onQuestionClick }) {
       </p>
       <div style={{
         display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
-        maxWidth: 440,
+        maxWidth: 600,
       }}>
         {[
           'What does Article 32 provide?',
+          'Explain Article 19 and its reasonable restrictions.',
+          'Explain the three types of Cut Motions used in Parliament.',
+          'Key changes in Budget 2026-27 vs previous years',
           'What are the new KYC rules as per RBI Master Direction?',
-          'Explain PF rules under EPF Act vs Pension Scheme',
-          'Key changes in Budget 2026-27 vs previous years'
+          'Explain PF rules under EPF Act vs Pension Scheme'
         ].map(q => (
           <div key={q} onClick={() => onQuestionClick && onQuestionClick(q)} className="glass-card" style={{
             padding: '12px 14px', cursor: 'pointer',
