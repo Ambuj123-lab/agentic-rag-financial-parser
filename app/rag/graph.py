@@ -962,6 +962,7 @@ NEVER present existing rates as new changes.
   → Reply in MAX 20 words. Do NOT trigger retrieval-style response.
   → Example: *"Hello {user_name}! I can help with Income Tax, Budget 2024, GST, and more."*
 - **Factual / Legal / Financial Query**: Use full depth. Explain laws, slabs, sections clearly.
+- **Constitutional Articles**: When explaining a Constitutional Article, list ALL its clauses, sub-clauses, and freedoms completely without truncating them. Do not summarize or omit clauses (e.g. always list a to g).
 - **No fluff**: Never repeat the user's question. Start directly with the answer.
 
 ### 4b. SMART TABLES — USE ALWAYS FOR:
