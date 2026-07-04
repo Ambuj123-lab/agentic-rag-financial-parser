@@ -401,7 +401,7 @@ def classifier_node(state: AgentState) -> dict:
         user_reply = query.lower().strip()
         positive_replies = ["yes", "haan", "yep", "sure", "do it", "search", "ok", "okay", "kr do", "kardo", "han"]
         
-        if "search the internet for this" in prev_bot_msg and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
+        if ("autonomous web search" in prev_bot_msg or "search the internet for this" in prev_bot_msg) and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
             logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
             
             original_query = history[-2]["content"] if len(history) >= 2 else query
