@@ -851,10 +851,18 @@ def retriever_node(state: AgentState) -> dict:
 
     if top_confidence < 45.0:
         logger.info(f"⚠️ Confidence too low ({top_confidence:.1f}%). Asking user for Web Search permission.")
+        
+        engaging_prompt = """⚠️ **Low Confidence Alert (RAG)**
+I couldn't find an exact match in my verified legal/financial documents for this query.
+
+**Action Required:**
+Would you like me to switch to **Autonomous Web Search** to find the latest real-time information for you? 
+*(Reply with "yes" to proceed)*"""
+
         return {
             "retrieved_chunks": [],
             "confidence": round(top_confidence, 1),
-            "final_answer": "I couldn't find an exact match in my verified legal/financial documents. Would you like me to search the internet for this?",
+            "final_answer": engaging_prompt,
             "needs_cross_question": True,
             "is_web_search_prompt": True,
             "latency": round(time.time() - start, 2),
