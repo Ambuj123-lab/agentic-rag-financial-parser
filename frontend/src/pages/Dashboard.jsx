@@ -475,7 +475,19 @@ export default function Dashboard() {
                       }
                     }}
                   >
-                    {msg.content ? msg.content.replace(/(?<!\[)\[(\d+(?:,\s*\d+)*)\](?!\()/g, (m, nums) => nums.split(',').map(n => `[[${n.trim()}]](#cite-${n.trim()})`).join(', ')) : ''}
+                    {msg.content ? msg.content.replace(/(?<!\[)\[(\d+(?:,\s*\d+)*)\](?!\()/g, (m, nums) => {
+                      const maxIdx = msg.chunks ? msg.chunks.length : 0;
+                      const hasValid = nums.split(',').some(n => parseInt(n.trim(), 10) >= 1 && parseInt(n.trim(), 10) <= maxIdx);
+                      if (!hasValid) return m; // If no numbers are valid chunk indices, keep original [50]
+                      
+                      return nums.split(',').map(n => {
+                        const num = parseInt(n.trim(), 10);
+                        if (num >= 1 && num <= maxIdx) {
+                          return `[[${n.trim()}]](#cite-${n.trim()})`;
+                        }
+                        return `[${n.trim()}]`;
+                      }).join(', ');
+                    }) : ''}
                   </ReactMarkdown>
 
                   {/* Source Citations (Expandable) */}
