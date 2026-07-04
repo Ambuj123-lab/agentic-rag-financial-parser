@@ -457,15 +457,25 @@ export default function Dashboard() {
                     remarkPlugins={[remarkGfm]}
                     components={{
                       a: ({node, ...props}) => {
-                        if (props.href && props.href.startsWith('cite:')) {
-                          const idx = props.href.split(':')[1];
-                          return <span className="citation-badge" onClick={() => openCitation(idx, msg.chunks)}>[{idx}]</span>;
+                        if (props.href && props.href.startsWith('#cite-')) {
+                          const idx = props.href.replace('#cite-', '');
+                          return (
+                            <span 
+                              className="citation-badge" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                openCitation(idx, msg.chunks);
+                              }}
+                            >
+                              [{idx}]
+                            </span>
+                          );
                         }
                         return <a {...props} />;
                       }
                     }}
                   >
-                    {msg.content ? msg.content.replace(/(?<!\[)\[(\d+(?:,\s*\d+)*)\](?!\()/g, (m, nums) => nums.split(',').map(n => `[[${n.trim()}]](cite:${n.trim()})`).join(', ')) : ''}
+                    {msg.content ? msg.content.replace(/(?<!\[)\[(\d+(?:,\s*\d+)*)\](?!\()/g, (m, nums) => nums.split(',').map(n => `[[${n.trim()}]](#cite-${n.trim()})`).join(', ')) : ''}
                   </ReactMarkdown>
 
                   {/* Source Citations (Expandable) */}
