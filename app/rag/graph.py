@@ -414,7 +414,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
   "search_intents": [
     {
       "search_query": "specific context rich search query",
-      "doc_type": "act" | "rules" | "circular" | "scheme" | "budget" | "constitution" | "bill" | "memorandum" | "reference" | "finance_act" | "any",
+      "doc_type": "act" | "rules" | "circular" | "scheme" | "budget" | "constitution" | "polity" | "bill" | "memorandum" | "reference" | "finance_act" | "any",
       "year": "1952" | "1961" | "1962" | "1995" | "2022" | "2024" | "2025" | "2026" | "any",
       "article_number": "Extract exact article number if user asks for it (e.g., '19', '21A', '370'), else null"
     }
