@@ -465,7 +465,7 @@ export default function Dashboard() {
                       }
                     }}
                   >
-                    {msg.content}
+                    {msg.content ? msg.content.replace(/(?<!\[)\[(\d+(?:,\s*\d+)*)\](?!\()/g, (m, nums) => nums.split(',').map(n => `[[${n.trim()}]](cite:${n.trim()})`).join(', ')) : ''}
                   </ReactMarkdown>
 
                   {/* Source Citations (Expandable) */}
