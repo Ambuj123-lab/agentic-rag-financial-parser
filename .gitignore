@@ -113,3 +113,5 @@ c h e c k _ v e c t o r s . p y
  
 models.json
 sync_only_constitution.py  
+docs/
+sync_one_file.py
