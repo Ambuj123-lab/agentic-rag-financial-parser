@@ -206,8 +206,10 @@ async def chat_stream_endpoint(req: ChatRequest, user: dict = Depends(get_curren
             pass
 
     # --- CACHE CHECK ---
+    # Bypass cache for short conversational queries like "yes" or "search it" to avoid context overlap
+    is_conversational = len(question.strip().split()) <= 2
     cache_key = f"chat:{email}:{question[:100]}"
-    if redis:
+    if redis and not is_conversational:
         try:
             cached = redis.get(cache_key)
             if cached:
