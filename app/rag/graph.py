@@ -395,16 +395,30 @@ def classifier_node(state: AgentState) -> dict:
 
     history = state.get("chat_history", [])
     
-    # ReAct Agent: Check if user is saying YES to a Web Search prompt (DO THIS FIRST)
     if history:
-        prev_bot_msg = history[-1]["content"].lower()
+        # Safely find the last assistant message
+        prev_bot_msg = ""
+        for msg in reversed(history):
+            if msg.get("role") == "assistant":
+                prev_bot_msg = msg.get("content", "").lower()
+                break
+                
         user_reply = query.lower().strip()
         positive_replies = ["yes", "haan", "yep", "sure", "do it", "search", "ok", "okay", "kr do", "kardo", "han"]
         
-        if ("autonomous web search" in prev_bot_msg or "search the internet for this" in prev_bot_msg) and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
+        is_web_prompt = "autonomous web search" in prev_bot_msg or "search the internet" in prev_bot_msg or "low confidence alert" in prev_bot_msg
+        
+        if is_web_prompt and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
             logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
             
-            original_query = history[-2]["content"] if len(history) >= 2 else query
+            # Safely find the last actual user query (ignoring previous 'yes' replies)
+            original_query = query
+            for msg in reversed(history):
+                content = msg.get("content", "").strip()
+                if msg.get("role") == "user" and content.lower() not in positive_replies:
+                    original_query = content
+                    break
+                    
             return {
                 "query_type": "web_search",
                 "is_vague": False,
