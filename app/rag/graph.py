@@ -363,6 +363,7 @@ class AgentState(TypedDict):
     # Control
     is_fallback: bool
     is_web_search: bool
+    is_web_search_prompt: bool
     error: Optional[str]
     pii_detected: bool
     pii_entities: list
@@ -395,12 +396,33 @@ def classifier_node(state: AgentState) -> dict:
         return {"query_type": "greeting", "search_scope": "system_only"}
 
     # Combined: vagueness check + search scope classification (1 LLM call)
-    # Combined: vagueness check + search scope classification (1 LLM call)
     try:
         history = state.get("chat_history", [])
         context_prefix = ""
         if history:
             recent = history[-2:]
+            
+            # ReAct Agent: Check if user is saying YES to a Web Search prompt
+            if len(recent) == 2:
+                prev_bot_msg = recent[0]["content"].lower()
+                user_reply = recent[1]["content"].lower().strip()
+                positive_replies = ["yes", "haan", "yep", "sure", "do it", "search", "ok", "okay", "kr do", "kardo", "han"]
+                
+                if "search the internet for this" in prev_bot_msg and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
+                    logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
+                    
+                    original_query = history[-4]["content"] if len(history) >= 4 else query
+                    return {
+                        "query_type": "web_search",
+                        "is_vague": False,
+                        "is_out_of_scope": False,
+                        "needs_cross_question": False,
+                        "search_scope": "system_only",
+                        "search_intents": [{"search_query": original_query, "doc_type": "web", "year": "any"}],
+                        "reasoning": "User approved web search for previous query.",
+                        "is_web_search": True
+                    }
+
             context_prefix = "Recent Conversation Context:\n" + "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in recent]) + "\n\n"
             
         system_prompt = """You are an expert AI Router for a Financial and Legal Knowledge Base.
@@ -824,6 +846,18 @@ def retriever_node(state: AgentState) -> dict:
     else:
         final_chunks = chunks[:10] # Default without Cohere
 
+    if top_confidence < 45.0:
+        logger.info(f"⚠️ Confidence too low ({top_confidence:.1f}%). Asking user for Web Search permission.")
+        return {
+            "retrieved_chunks": [],
+            "confidence": round(top_confidence, 1),
+            "final_answer": "I couldn't find an exact match in my verified legal/financial documents. Would you like me to search the internet for this?",
+            "needs_cross_question": True,
+            "is_web_search_prompt": True,
+            "latency": round(time.time() - start, 2),
+            "tracker_data": {"fetched": len(all_matches), "golden": 0}
+        }
+
     return {
         "retrieved_chunks": final_chunks,
         "confidence": round(top_confidence, 1),
@@ -1230,6 +1264,13 @@ def route_after_hallu_guard(state: AgentState) -> str:
     """Always pass to post_process. Guard is advisory, never blocks answers."""
     return "post_process"
 
+def route_after_retriever(state: AgentState) -> str:
+    if state.get("needs_cross_question"):
+        return "post_process"
+    if state.get("is_fallback"):
+        return "fallback"
+    return "generator"
+
 
 # ========== FALLBACK (embedded in generator, but also standalone) ==========
 
@@ -1278,14 +1319,13 @@ def build_rag_graph():
 
     # Reject → post_process → END
     graph.add_edge("reject", "post_process")
-    
     # Greet → post_process → END (same as prev project)
     graph.add_edge("greet", "post_process")
 
     # Retriever → Generator (with fallback check)
     graph.add_conditional_edges("retriever",
-        lambda s: "fallback" if s.get("is_fallback") else "generator",
-        {"fallback": "fallback", "generator": "generator"})
+        route_after_retriever,
+        {"post_process": "post_process", "fallback": "fallback", "generator": "generator"})
         
     # Web Search → Generator (with fallback check)
     graph.add_conditional_edges("web_search",
@@ -1353,6 +1393,7 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "is_grounded": True,
         "is_fallback": False,
         "is_web_search": False,
+        "is_web_search_prompt": False,
         "error": None,
         "pii_detected": pii_detected,
         "pii_entities": pii_detections,
