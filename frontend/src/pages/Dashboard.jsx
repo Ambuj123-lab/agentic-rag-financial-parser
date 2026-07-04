@@ -412,7 +412,7 @@ export default function Dashboard() {
           </a>
 
           <span className="hide-mobile" style={{ fontSize: '0.75rem', color: 'var(--primary)', marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontWeight: 600, letterSpacing: '0.3px', background: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '4px', border: '1px solid var(--border)' }}>
-            8-Node Agentic RAG × Parallel Vector Search · Built by Ambuj
+            9-Node Agentic RAG × Live Web Search · Built by Ambuj
           </span>
         </div>
 
@@ -466,17 +466,19 @@ export default function Dashboard() {
                       {sourcesExpanded[i] && (
                         <div className="sources-expanded">
                           {msg.sources.map((s, j) => {
-                            const isWeb = s.startsWith('http');
-                            const url = isWeb ? s.split(" (p.")[0] : "";
+                            const isWeb = s.startsWith('http') || s.includes('🌐') || s.includes('.com') || s.includes('.org') || s.includes('.gov') || s.includes('.net') || s.includes('.co');
+                            const rawUrl = s.replace('🌐', '').trim().split(" (p.")[0];
+                            const url = isWeb ? (rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`) : "";
+                            
                             let domain = "";
                             if (isWeb) {
                               try { domain = new URL(url).hostname; } catch(e) { domain = "web"; }
                             }
                             return (
-                              <span key={j} className="source-badge" style={{ cursor: isWeb ? 'pointer' : 'default' }}>
+                              <span key={j} className="source-badge" style={{ cursor: isWeb ? 'pointer' : 'default', transition: 'all 0.2s' }} onMouseOver={(e) => { if(isWeb) e.currentTarget.style.borderColor = 'var(--accent)' }} onMouseOut={(e) => { if(isWeb) e.currentTarget.style.borderColor = 'var(--border)' }}>
                                 {isWeb ? (
-                                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <FiGlobe size={11} /> {domain}
+                                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }} title={url}>
+                                    <FiGlobe size={11} color="var(--accent)" /> {domain}
                                   </a>
                                 ) : (
                                   <>
@@ -616,7 +618,7 @@ export default function Dashboard() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about Constitution, Polity, Budgets, PF Rules, or RBI Guidelines..."
+            placeholder="Ask about Constitution, Finance, Tax, or any General Topic (Web Search)..."
             disabled={loading}
           />
           <button

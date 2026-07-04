@@ -322,7 +322,7 @@ export default function Landing() {
           fontSize: '0.78rem', color: 'var(--accent)', fontWeight: 500,
           marginBottom: 28,
         }}>
-          <FiZap size={13} /> 8-Node LangGraph StateGraph • Production-Grade Agentic RAG
+          <FiZap size={13} /> 9-Node StateGraph • Adaptive ReAct Web Search
         </div>
 
         <h1 style={{
@@ -340,13 +340,38 @@ export default function Landing() {
           }}>Engineered.</span>
         </h1>
 
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          padding: '8px 20px', borderRadius: '30px',
+          background: 'linear-gradient(90deg, rgba(201, 168, 76, 0.05), rgba(201, 168, 76, 0.15), rgba(201, 168, 76, 0.05))',
+          border: '1px solid rgba(201, 168, 76, 0.3)',
+          boxShadow: '0 0 20px rgba(201, 168, 76, 0.15), inset 0 0 10px rgba(201, 168, 76, 0.05)',
+          marginBottom: '32px',
+          animation: 'pulseGlow 3s infinite alternate',
+        }}>
+          <span style={{ fontSize: '18px' }}>✨</span>
+          <span style={{
+            background: 'linear-gradient(90deg, #fff, var(--accent))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.5px'
+          }}>
+            Now with Real-Time Web Reasoning
+          </span>
+        </div>
+        <style>{`
+          @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(201, 168, 76, 0.1); border-color: rgba(201, 168, 76, 0.2); }
+            100% { box-shadow: 0 0 30px rgba(201, 168, 76, 0.3); border-color: rgba(201, 168, 76, 0.5); }
+          }
+        `}</style>
+
         <p style={{
           fontSize: '1.05rem', color: 'var(--text-secondary)',
           maxWidth: 660, margin: '0 auto 36px', lineHeight: 1.7,
         }}>
-          Parse Indian Constitution & Polity, Union Budgets, Finance Acts, PF/Pension Schemes, and RBI KYC
-          with an 8-node agentic RAG — featuring parallel vector retrieval,
-          Cohere neural reranking, multi-version synthesis, and hallucination guard.
+          Parse Indian Constitution, Union Budgets, Finance Acts, and RBI KYC with a <strong>9-Node Agentic RAG</strong>. 
+          Featuring parallel vector retrieval, Autonomous Web Search Fallback, multi-version synthesis, and a strict hallucination guard.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, alignItems: 'center' }}>
@@ -376,6 +401,21 @@ export default function Landing() {
 
         {/* Model Badges */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '28px', flexWrap: 'wrap' }}>
+          <a href="https://tavily.com" target="_blank" rel="noreferrer" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+            textDecoration: 'none', transition: 'transform 0.2s',
+          }} onMouseOver={(e) => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}>
+            <div style={{
+              width: '52px', height: '52px', borderRadius: '14px',
+              background: '#111', border: '1px solid rgba(201, 168, 76, 0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '24px', transition: 'all 0.2s', boxShadow: '0 0 15px rgba(201, 168, 76, 0.15)'
+            }} onMouseOver={(e) => { e.currentTarget.style.borderColor='#c9a84c'; e.currentTarget.style.boxShadow='0 0 20px rgba(201, 168, 76, 0.3)' }} onMouseOut={(e) => { e.currentTarget.style.borderColor='rgba(201, 168, 76, 0.3)'; e.currentTarget.style.boxShadow='0 0 15px rgba(201, 168, 76, 0.15)' }}>
+              🌐
+            </div>
+            <span style={{ color: 'var(--accent)', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px', fontWeight: 600 }}>Live Web Agent ›</span>
+          </a>
+
           <a href="https://huggingface.co/invincibleambuj/Ambuj-Tripathi-Indian-Legal-Llama-GGUF" target="_blank" rel="noreferrer" style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
             textDecoration: 'none', transition: 'transform 0.2s',

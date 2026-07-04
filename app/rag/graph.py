@@ -114,18 +114,18 @@ def is_abusive(text: str) -> bool:
 
 def is_greeting(text: str) -> bool:
     """Check if query is a greeting — skip vector DB search (same as prev project)."""
-    greetings = [
+    greetings = {
         "hi", "hello", "hey", "namaste", "good morning", "good afternoon",
         "good evening", "thanks", "thank you", "ok", "okay", "bye",
         "what can you do", "help"
-    ]
+    }
     normalized = text.strip().lower().rstrip("?!.")
     
     # NEVER treat queries about the creator or 'Ambuj' as simple greetings
     if any(keyword in normalized for keyword in ["ambuj", "creator", "made you", "built you"]):
         return False
         
-    return normalized in greetings or len(normalized) < 4
+    return normalized in greetings
 
 
 # ========== EMBEDDING HELPERS ==========
@@ -389,40 +389,43 @@ def classifier_node(state: AgentState) -> dict:
     query = state["user_query"]
     logger.info(f"🧠 [1/8] Classifier: '{query[:60]}...'")
 
+    # SECURITY FIRST: Always check for abusive language before any contextual routing
     if is_abusive(query):
         return {"query_type": "abusive", "search_scope": "system_only"}
+
+    history = state.get("chat_history", [])
+    
+    # ReAct Agent: Check if user is saying YES to a Web Search prompt (DO THIS FIRST)
+    if history:
+        recent = history[-2:]
+        if len(recent) == 2:
+            prev_bot_msg = recent[0]["content"].lower()
+            user_reply = recent[1]["content"].lower().strip()
+            positive_replies = ["yes", "haan", "yep", "sure", "do it", "search", "ok", "okay", "kr do", "kardo", "han"]
+            
+            if "search the internet for this" in prev_bot_msg and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
+                logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
+                
+                original_query = history[-4]["content"] if len(history) >= 4 else query
+                return {
+                    "query_type": "web_search",
+                    "is_vague": False,
+                    "is_out_of_scope": False,
+                    "needs_cross_question": False,
+                    "search_scope": "system_only",
+                    "search_intents": [{"search_query": original_query, "doc_type": "web", "year": "any"}],
+                    "reasoning": "User approved web search for previous query.",
+                    "is_web_search": True
+                }
 
     if is_greeting(query):
         return {"query_type": "greeting", "search_scope": "system_only"}
 
     # Combined: vagueness check + search scope classification (1 LLM call)
     try:
-        history = state.get("chat_history", [])
         context_prefix = ""
         if history:
             recent = history[-2:]
-            
-            # ReAct Agent: Check if user is saying YES to a Web Search prompt
-            if len(recent) == 2:
-                prev_bot_msg = recent[0]["content"].lower()
-                user_reply = recent[1]["content"].lower().strip()
-                positive_replies = ["yes", "haan", "yep", "sure", "do it", "search", "ok", "okay", "kr do", "kardo", "han"]
-                
-                if "search the internet for this" in prev_bot_msg and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
-                    logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
-                    
-                    original_query = history[-4]["content"] if len(history) >= 4 else query
-                    return {
-                        "query_type": "web_search",
-                        "is_vague": False,
-                        "is_out_of_scope": False,
-                        "needs_cross_question": False,
-                        "search_scope": "system_only",
-                        "search_intents": [{"search_query": original_query, "doc_type": "web", "year": "any"}],
-                        "reasoning": "User approved web search for previous query.",
-                        "is_web_search": True
-                    }
-
             context_prefix = "Recent Conversation Context:\n" + "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in recent]) + "\n\n"
             
         system_prompt = """You are an expert AI Router for a Financial and Legal Knowledge Base.
