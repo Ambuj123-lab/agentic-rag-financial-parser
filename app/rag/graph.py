@@ -52,7 +52,7 @@ def graceful_degradation_response(query: str, reason: str) -> str:
 Your question falls outside my verified document scope.
 
 I can only answer questions related to:
-- 📜 Constitution of India
+- 📜 Constitution of India & Indian Polity
 - 💰 Budget 2026-27 (Speech, Features, At a Glance)
 - 🏦 RBI Master Direction KYC
 - 📋 Finance Bill & Memorandum 2026
@@ -432,7 +432,8 @@ Intent Rules:
 - If about EPF/pension schemes -> doc_type: "scheme".
 - If about RBI/CBDT directions/circulars -> doc_type: "circular".
 - If about memorandum explanations -> doc_type: "memorandum".
-- If about constitutional rights/civic law -> doc_type: "constitution".
+- If about specific constitutional articles -> doc_type: "constitution".
+- If about general civic concepts, political systems, fundamental rights theory, DPSP, or historical acts -> output TWO intents: one with doc_type: "constitution" and one with doc_type: "polity".
 - If comparative ("old vs new 80C", "compare tax rates") or if year is ambiguous in a generic finance query -> output MULTIPLE intents (e.g. one for "1961" and one for "2025"). For tax rate comparisons, also add an intent with doc_type: "reference".
 - Default to "any" if unspecified.
 - is_out_of_scope should be false for any query related to Indian Tax, Law, Finance, Budget, or EPF.

@@ -40,6 +40,8 @@ LLAMA_TIER_MAPPING = {
     "FAQs-on-Interplay-and-Transition.pdf": "Agentic",                # 99 pg
 
     # 🟡 TIER 2: Agentic (10 Credits/Page) — ALL legal/financial structured docs (BEST for tables+sections)
+    "5ca16-polity.pdf": "Agentic Plus",
+    "IPG_const.pdf": "Agentic Plus",
     "ITA1961_Part1_P1to300.pdf": "Agentic",                           # 300 pg → ~3,000 cr
     "ITA1961_Part2_P301to600.pdf": "Agentic",                         # 300 pg → ~3,000 cr
     "ITA1961_Part3_P601to900.pdf": "Agentic",                         # 300 pg → ~3,000 cr
@@ -71,6 +73,8 @@ LLAMA_TIER_MAPPING = {
 # ---------------------------
 # LlamaParse target_pages uses 0-indexed page numbers
 PAGE_FILTER_MAPPING = {
+    "5ca16-polity.pdf": "3-263",
+    "IPG_const.pdf": "8-131",
     "Finance_Bill.pdf": "9-39,105-116,127-132",
     # You can specify exact page ranges later to save credits! e.g., "0-10, 50-60"
     "Income-tax-Act-2025_2026-01-08_05-25-02_9f98ce_en.pdf": "",
@@ -103,6 +107,8 @@ FILE_METADATA_REGISTRY = {
     "Finance Act 2024.pdf": {"doc_type": "finance_act", "law": "finance", "year": "2024"},
 
     # Other Domains
+    "5ca16-polity.pdf": {"doc_type": "polity", "law": "civic", "year": "any"},
+    "IPG_const.pdf": {"doc_type": "polity", "law": "civic", "year": "any"},
     "constitution of india.pdf": {"doc_type": "constitution", "law": "civic", "year": "any"},
     "RBI Master Direction KYC.pdf": {"doc_type": "circular", "law": "rbi", "year": "any"},
     "Employees' Provident Funds Scheme.1952.pdf": {"doc_type": "scheme", "law": "epf", "year": "1952"},
