@@ -720,7 +720,7 @@ function EmptyState({ onQuestionClick }) {
         maxWidth: 440,
       }}>
         {[
-          'Explain the provisions of the 10th Schedule (Anti-Defection Law)',
+          'What does Article 32 provide?',
           'What are the new KYC rules as per RBI Master Direction?',
           'Explain PF rules under EPF Act vs Pension Scheme',
           'Key changes in Budget 2026-27 vs previous years'
