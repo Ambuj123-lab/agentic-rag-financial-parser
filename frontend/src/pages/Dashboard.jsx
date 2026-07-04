@@ -723,7 +723,7 @@ function EmptyState({ onQuestionClick }) {
           'What does Article 32 provide?',
           'Explain Article 19 and its reasonable restrictions.',
           'Explain the three types of Cut Motions used in Parliament.',
-          'Key changes in Budget 2026-27 vs previous years',
+          'Analysis: Budget 2026-27 Capex vs. Previous Years',
           'What are the new KYC rules as per RBI Master Direction?',
           'Explain PF rules under EPF Act vs Pension Scheme'
         ].map(q => (
