@@ -720,7 +720,7 @@ function EmptyState({ onQuestionClick }) {
         maxWidth: 600,
       }}>
         {[
-          'What does Article 32 provide?',
+          'Difference between Money Bill (Art 110) & Financial Bill I, and Rajya Sabha\'s powers?',
           'Explain Article 19 and its reasonable restrictions.',
           'Explain the three types of Cut Motions used in Parliament.',
           'Analysis: Budget 2026-27 Capex vs. Previous Years',
