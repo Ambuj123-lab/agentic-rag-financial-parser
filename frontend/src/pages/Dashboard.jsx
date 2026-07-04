@@ -720,7 +720,7 @@ function EmptyState({ onQuestionClick }) {
         maxWidth: 440,
       }}>
         {[
-          'Explain Article 19 and the historical significance of Fundamental Rights',
+          'Explain the provisions of the 10th Schedule (Anti-Defection Law)',
           'What are the new KYC rules as per RBI Master Direction?',
           'Explain PF rules under EPF Act vs Pension Scheme',
           'Key changes in Budget 2026-27 vs previous years'
