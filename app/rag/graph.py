@@ -169,28 +169,12 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via Gemini with circuit breaker + Langfuse tracing."""
+    """Call LLM via OpenRouter Qwen 80B (primary) with Gemini Flash fallback + Langfuse tracing."""
     import httpx
+    import time
 
-    model_name = "gemini-3.1-flash-lite-preview"
-
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
-    
-    headers = {
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "systemInstruction": {
-            "parts": [{"text": system_prompt}]
-        },
-        "contents": [{
-            "parts": [{"text": user_message}]
-        }],
-        "generationConfig": {
-            "temperature": temperature,
-            "maxOutputTokens": 4096,
-        }
-    }
+    primary_model = "qwen/qwen3-next-80b-a3b-instruct:free"
+    fallback_model = "gemini-3.1-flash-lite-preview"
 
     # --- Langfuse Trace ---
     langfuse_trace = None
@@ -201,11 +185,11 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
             langfuse_trace = lf.trace(
                 name="RunnableSequence",
                 input={"system": system_prompt[:200], "user": user_message[:500]},
-                metadata={"model": model_name, "temperature": temperature},
+                metadata={"model": primary_model, "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
-                name="gemini-completion",
-                model=model_name,
+                name="openrouter-completion",
+                model=primary_model,
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
                 model_parameters={"temperature": temperature, "max_tokens": 4096},
@@ -214,51 +198,61 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         logger.debug(f"Langfuse trace init skipped: {e}")
 
     start = time.time()
-
+    
+    # === PRIMARY: OpenRouter Qwen 80B ===
     try:
+        openrouter_headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        openrouter_payload = {
+            "model": primary_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            "temperature": temperature,
+            "max_tokens": 4096,
+        }
+
         with httpx.Client(timeout=60.0) as client:
-            resp = client.post(url, json=payload, headers=headers)
+            resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers)
             resp.raise_for_status()
             
         data = resp.json()
         try:
-            answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+            answer = data.get("choices", [{}])[0].get("message", {}).get("content", "")
         except (KeyError, IndexError):
             answer = ""
             
     except Exception as primary_e:
-        logger.warning(f"Primary model {model_name} failed ({primary_e}). Switching to FALLBACK gemma-4-31b-it")
-        fallback_model = "gemma-4-31b-it"
+        logger.warning(f"Primary model {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
+        
         fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_payload = {
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "contents": [{"parts": [{"text": user_message}]}],
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
+        }
         
         with httpx.Client(timeout=60.0) as client:
-            fallback_resp = client.post(fallback_url, json=payload, headers=headers)
+            fallback_resp = client.post(fallback_url, json=gemini_payload)
             if fallback_resp.status_code != 200:
-                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} — {fallback_resp.text}")
+                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} - {fallback_resp.text}")
             
         data = fallback_resp.json()
         try:
             answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
         except (KeyError, IndexError):
             answer = ""
-            
-    # --- REGEX CENSORING FOR GEMMA FALLBACK ---
-    if "<think>" in answer:
-        import re as _re
-        answer = _re.sub(r"<think>[\s\S]*?</think>", "", answer).strip()
 
     latency = round(time.time() - start, 2)
 
     # Log to Langfuse
     try:
         if langfuse_gen:
-            usage = data.get("usageMetadata", {})
             langfuse_gen.end(
                 output=answer[:500],
-                usage={
-                    "input": usage.get("promptTokenCount", 0),
-                    "output": usage.get("candidatesTokenCount", 0),
-                },
                 metadata={"latency_sec": latency},
             )
         if langfuse_trace:
@@ -279,51 +273,87 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Uses Gemini's streaming API (SSE) for word-by-word delivery.
+    Primary: OpenRouter Qwen 80B
+    Fallback: Gemini Flash Lite
     """
     import httpx
+    import json
 
-    model_name = "gemini-3.1-flash-lite-preview"
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+    primary_model = "qwen/qwen3-next-80b-a3b-instruct:free"
+    fallback_model = "gemini-3.1-flash-lite-preview"
 
-    headers = {
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "systemInstruction": {
-            "parts": [{"text": system_prompt}]
-        },
-        "contents": [{
-            "parts": [{"text": user_message}]
-        }],
-        "generationConfig": {
-            "temperature": temperature,
-            "maxOutputTokens": 4096,
+    # === PRIMARY: OpenRouter Qwen 80B ===
+    try:
+        openrouter_headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
         }
-    }
+        openrouter_payload = {
+            "model": primary_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            "temperature": temperature,
+            "max_tokens": 4096,
+            "stream": True,
+        }
 
-    with httpx.Client(timeout=120.0) as client:
-        with client.stream("POST", url, json=payload, headers=headers) as resp:
-            if resp.status_code != 200:
-                raise Exception(f"LLM stream failed: {resp.status_code}")
+        with httpx.Client(timeout=120.0) as client:
+            with client.stream("POST", "https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers) as resp:
+                if resp.status_code != 200:
+                    raise Exception(f"Primary stream failed: {resp.status_code}")
 
-            for line in resp.iter_lines():
-                if not line or not line.startswith("data: "):
-                    continue
-                data_str = line[6:]  # Remove "data: " prefix
-                if data_str.strip() == "[DONE]":
-                    break
-                try:
-                    chunk = json.loads(data_str)
-                    candidates = chunk.get("candidates", [])
-                    if candidates:
-                        parts = candidates[0].get("content", {}).get("parts", [])
-                        if parts:
-                            content = parts[0].get("text", "")
+                for line in resp.iter_lines():
+                    if not line or not line.startswith("data: "):
+                        continue
+                    data_str = line[6:]  # Remove "data: " prefix
+                    if data_str.strip() == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data_str)
+                        choices = chunk.get("choices", [])
+                        if choices:
+                            delta = choices[0].get("delta", {})
+                            content = delta.get("content", "")
                             if content:
                                 yield content
-                except (json.JSONDecodeError, IndexError, KeyError):
-                    continue
+                    except (json.JSONDecodeError, IndexError, KeyError):
+                        continue
+                        
+    except Exception as e:
+        logger.warning(f"Primary stream failed ({e}). Falling back to {fallback_model}")
+        
+        fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+        gemini_payload = {
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "contents": [{"parts": [{"text": user_message}]}],
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
+        }
+        gemini_headers = {"Content-Type": "application/json"}
+        
+        with httpx.Client(timeout=120.0) as client:
+            with client.stream("POST", fallback_url, json=gemini_payload, headers=gemini_headers) as resp:
+                if resp.status_code != 200:
+                    raise Exception(f"Fallback stream failed: {resp.status_code}")
+
+                for line in resp.iter_lines():
+                    if not line or not line.startswith("data: "):
+                        continue
+                    data_str = line[6:]
+                    if data_str.strip() == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data_str)
+                        candidates = chunk.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts:
+                                content = parts[0].get("text", "")
+                                if content:
+                                    yield content
+                    except (json.JSONDecodeError, IndexError, KeyError):
+                        continue
 
 
 # ========== STATE DEFINITION ==========
