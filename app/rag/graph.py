@@ -169,11 +169,11 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via OpenRouter Nvidia Nemotron 30B (primary) with Gemini Flash fallback + Langfuse tracing."""
+    """Call LLM via OpenRouter Gemma 4 31B (primary) with Gemini Flash fallback + Langfuse tracing."""
     import httpx
     import time
 
-    primary_model = "nvidia/nemotron-3-nano-30b-a3b:free"
+    primary_model = "google/gemma-4-31b-it:free"
     fallback_model = "gemini-3.1-flash-lite-preview"
 
     # --- Langfuse Trace ---
@@ -273,13 +273,13 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Primary: OpenRouter Nvidia Nemotron 30B
+    Primary: OpenRouter Gemma 4 31B
     Fallback: Gemini Flash Lite
     """
     import httpx
     import json
 
-    primary_model = "nvidia/nemotron-3-nano-30b-a3b:free"
+    primary_model = "google/gemma-4-31b-it:free"
     fallback_model = "gemini-3.1-flash-lite-preview"
 
     # === PRIMARY: OpenRouter Qwen 80B ===
