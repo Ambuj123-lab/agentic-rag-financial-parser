@@ -878,6 +878,17 @@ export default function Landing() {
 
           <p style={{ color: '#aaa', fontSize: '12px', marginTop: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>Built with Llama 3.2 · Fine-tuned by <strong style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</strong> · Llama 3.2 Community License</p>
 
+          <div style={{ marginTop: '60px', borderTop: '1px solid #1e1e1e', paddingTop: '40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
+              <span style={{ fontSize: '20px' }}>🐦</span>
+              <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', letterSpacing: '1px' }}>Recognized by Hugging Face</h3>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <blockquote className="twitter-tweet" data-theme="dark">
+                <p lang="en" dir="ltr">Meet Ambuj-Tripathi-Indian-Legal-Llama-GGUF: a specialized AI model fine-tuned for Indian law. This isn&#39;t just another chatbot. It&#39;s a legal assistant trained to understand the nuances of Indian statutes, case law, and legal language. A game-changer for legal tech in India. <a href="https://t.co/SkLzeaDgpE">pic.twitter.com/SkLzeaDgpE</a></p>&mdash; Hugging Models (@HuggingModels) <a href="https://x.com/HuggingModels/status/2044027666324697451?ref_src=twsrc%5Etfw">April 14, 2026</a>
+              </blockquote>
+            </div>
+          </div>
         </div>
       </section>
 
