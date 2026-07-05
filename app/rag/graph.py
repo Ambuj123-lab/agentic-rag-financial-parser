@@ -169,12 +169,11 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via OpenRouter Gemma 4 31B (primary) with Gemini Flash fallback + Langfuse tracing."""
+    """Call LLM directly via Google Gemini API + Langfuse tracing."""
     import httpx
     import time
 
-    primary_model = "google/gemma-4-31b-it:free"
-    fallback_model = "gemini-3.1-flash-lite-preview"
+    primary_model = "gemini-3.1-flash-lite-preview"
 
     # --- Langfuse Trace ---
     langfuse_trace = None
@@ -188,7 +187,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
                 metadata={"model": primary_model, "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
-                name="openrouter-completion",
+                name="gemini-completion",
                 model=primary_model,
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
@@ -199,36 +198,9 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 
     start = time.time()
     
-    # === PRIMARY: OpenRouter Qwen 80B ===
+    # === PRIMARY: Gemini Flash Lite ===
     try:
-        openrouter_headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-        }
-        openrouter_payload = {
-            "model": primary_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature,
-            "max_tokens": 4096,
-        }
-
-        with httpx.Client(timeout=60.0) as client:
-            resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers)
-            resp.raise_for_status()
-            
-        data = resp.json()
-        try:
-            answer = data.get("choices", [{}])[0].get("message", {}).get("content", "")
-        except (KeyError, IndexError):
-            answer = ""
-            
-    except Exception as primary_e:
-        logger.warning(f"Primary model {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
-        
-        fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
         gemini_payload = {
             "systemInstruction": {"parts": [{"text": system_prompt}]},
             "contents": [{"parts": [{"text": user_message}]}],
@@ -236,15 +208,19 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         }
         
         with httpx.Client(timeout=60.0) as client:
-            fallback_resp = client.post(fallback_url, json=gemini_payload)
-            if fallback_resp.status_code != 200:
-                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} - {fallback_resp.text}")
+            resp = client.post(gemini_url, json=gemini_payload)
+            if resp.status_code != 200:
+                raise Exception(f"Gemini LLM call failed: {resp.status_code} - {resp.text}")
             
-        data = fallback_resp.json()
+        data = resp.json()
         try:
             answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
         except (KeyError, IndexError):
             answer = ""
+            
+    except Exception as e:
+        logger.error(f"LLM call failed: {e}")
+        answer = "I apologize, but I am currently facing technical difficulties. Please try again later."
 
     latency = round(time.time() - start, 2)
 
@@ -273,58 +249,16 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Primary: OpenRouter Gemma 4 31B
-    Fallback: Gemini Flash Lite
+    Primary: Google Gemini Flash Lite
     """
     import httpx
     import json
 
-    primary_model = "google/gemma-4-31b-it:free"
-    fallback_model = "gemini-3.1-flash-lite-preview"
+    primary_model = "gemini-3.1-flash-lite-preview"
 
-    # === PRIMARY: OpenRouter Qwen 80B ===
+    # === PRIMARY: Gemini Flash Lite ===
     try:
-        openrouter_headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-        }
-        openrouter_payload = {
-            "model": primary_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature,
-            "max_tokens": 4096,
-            "stream": True,
-        }
-
-        with httpx.Client(timeout=120.0) as client:
-            with client.stream("POST", "https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers) as resp:
-                if resp.status_code != 200:
-                    raise Exception(f"Primary stream failed: {resp.status_code}")
-
-                for line in resp.iter_lines():
-                    if not line or not line.startswith("data: "):
-                        continue
-                    data_str = line[6:]  # Remove "data: " prefix
-                    if data_str.strip() == "[DONE]":
-                        break
-                    try:
-                        chunk = json.loads(data_str)
-                        choices = chunk.get("choices", [])
-                        if choices:
-                            delta = choices[0].get("delta", {})
-                            content = delta.get("content", "")
-                            if content:
-                                yield content
-                    except (json.JSONDecodeError, IndexError, KeyError):
-                        continue
-                        
-    except Exception as e:
-        logger.warning(f"Primary stream failed ({e}). Falling back to {fallback_model}")
-        
-        fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
         gemini_payload = {
             "systemInstruction": {"parts": [{"text": system_prompt}]},
             "contents": [{"parts": [{"text": user_message}]}],
@@ -333,9 +267,9 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
         gemini_headers = {"Content-Type": "application/json"}
         
         with httpx.Client(timeout=120.0) as client:
-            with client.stream("POST", fallback_url, json=gemini_payload, headers=gemini_headers) as resp:
+            with client.stream("POST", gemini_url, json=gemini_payload, headers=gemini_headers) as resp:
                 if resp.status_code != 200:
-                    raise Exception(f"Fallback stream failed: {resp.status_code}")
+                    raise Exception(f"Stream failed: {resp.status_code}")
 
                 for line in resp.iter_lines():
                     if not line or not line.startswith("data: "):
@@ -354,6 +288,10 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
                                     yield content
                     except (json.JSONDecodeError, IndexError, KeyError):
                         continue
+                        
+    except Exception as e:
+        logger.error(f"Stream failed: {e}")
+        yield "I apologize, but I am currently facing technical difficulties. Please try again later."
 
 
 # ========== STATE DEFINITION ==========
