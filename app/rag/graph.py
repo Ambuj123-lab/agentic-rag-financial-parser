@@ -860,8 +860,7 @@ I couldn't find an exact match in my verified legal/financial documents for this
 > **ACTION REQUIRED:**  
 > Would you like me to switch to **Autonomous Web Search** to fetch real-time information for you?
 > 
-> | 🟢 **[YES](#action:yes)** (Proceed to Web Search) | 🔴 **[NO](#action:no)** (Cancel) |
-> | :---: | :---: |
+> 🟢 **[YES](#action:yes)** (Proceed to Web Search) &nbsp; &nbsp; &nbsp; 🔴 **[NO](#action:no)** (Cancel)
 > 
 > *(Please type your choice below)*
 > 
