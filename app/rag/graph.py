@@ -198,55 +198,29 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 
     start = time.time()
     
-    # === PRIMARY: OpenRouter (NVIDIA Nemotron) ===
+    # === Google Gemini Flash Lite ===
     try:
-        openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
-        openrouter_headers = {"Authorization": f"Bearer {settings.OPENROUTER_API_KEY}"}
-        openrouter_payload = {
-            "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature,
-            "max_tokens": 4096
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_payload = {
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "contents": [{"parts": [{"text": user_message}]}],
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
         }
         
-        with httpx.Client(timeout=45.0) as client:
-            resp = client.post(openrouter_url, headers=openrouter_headers, json=openrouter_payload)
+        with httpx.Client(timeout=60.0) as client:
+            resp = client.post(gemini_url, json=gemini_payload)
             if resp.status_code != 200:
-                raise Exception(f"OpenRouter LLM call failed: {resp.status_code} - {resp.text}")
-        
+                raise Exception(f"Gemini LLM call failed: {resp.status_code} - {resp.text}")
+            
         data = resp.json()
-        answer = data.get("choices", [{}])[0].get("message", {}).get("content", "")
-        if not answer:
-            raise Exception("OpenRouter returned empty response")
+        try:
+            answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+        except (KeyError, IndexError):
+            answer = ""
             
     except Exception as e:
-        logger.warning(f"⚠️ Primary (OpenRouter) down: {e} → Switching to Gemini fallback")
-        # === FALLBACK: Gemini Flash Lite ===
-        try:
-            gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
-            gemini_payload = {
-                "systemInstruction": {"parts": [{"text": system_prompt}]},
-                "contents": [{"parts": [{"text": user_message}]}],
-                "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
-            }
-            
-            with httpx.Client(timeout=60.0) as client:
-                resp = client.post(gemini_url, json=gemini_payload)
-                if resp.status_code != 200:
-                    raise Exception(f"Gemini LLM call failed: {resp.status_code} - {resp.text}")
-                
-            data = resp.json()
-            try:
-                answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-            except (KeyError, IndexError):
-                answer = ""
-                
-        except Exception as e:
-            logger.error(f"🆘 Both LLMs failed: {e}")
-            answer = "I apologize, but I am currently facing technical difficulties. Please try again later."
+        logger.error(f"🆘 Gemini LLM failed: {e}")
+        answer = "I apologize, but I am currently facing technical difficulties. Please try again later."
 
     latency = round(time.time() - start, 2)
 
@@ -282,25 +256,20 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
 
     primary_model = "gemini-3.1-flash-lite-preview"
 
-    # === PRIMARY: OpenRouter (NVIDIA Nemotron) ===
+    # === Google Gemini Flash Lite ===
     try:
-        openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
-        openrouter_headers = {"Authorization": f"Bearer {settings.OPENROUTER_API_KEY}"}
-        openrouter_payload = {
-            "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature,
-            "max_tokens": 4096,
-            "stream": True
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+        gemini_payload = {
+            "systemInstruction": {"parts": [{"text": system_prompt}]},
+            "contents": [{"parts": [{"text": user_message}]}],
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
         }
+        gemini_headers = {"Content-Type": "application/json"}
         
-        with httpx.Client(timeout=45.0) as client:
-            with client.stream("POST", openrouter_url, headers=openrouter_headers, json=openrouter_payload) as resp:
+        with httpx.Client(timeout=120.0) as client:
+            with client.stream("POST", gemini_url, json=gemini_payload, headers=gemini_headers) as resp:
                 if resp.status_code != 200:
-                    raise Exception(f"OpenRouter Stream failed: {resp.status_code}")
+                    raise Exception(f"Gemini Stream failed: {resp.status_code}")
 
                 for line in resp.iter_lines():
                     if not line or not line.startswith("data: "):
@@ -310,53 +279,19 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
                         break
                     try:
                         chunk = json.loads(data_str)
-                        choices = chunk.get("choices", [])
-                        if choices:
-                            delta = choices[0].get("delta", {})
-                            content = delta.get("content", "")
-                            if content:
-                                yield content
+                        candidates = chunk.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts:
+                                content = parts[0].get("text", "")
+                                if content:
+                                    yield content
                     except (json.JSONDecodeError, IndexError, KeyError):
                         continue
                         
     except Exception as e:
-        logger.warning(f"⚠️ Primary stream (OpenRouter) down: {e} → Switching to Gemini fallback")
-        # === FALLBACK: Gemini Flash Lite ===
-        try:
-            gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
-            gemini_payload = {
-                "systemInstruction": {"parts": [{"text": system_prompt}]},
-                "contents": [{"parts": [{"text": user_message}]}],
-                "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
-            }
-            gemini_headers = {"Content-Type": "application/json"}
-            
-            with httpx.Client(timeout=120.0) as client:
-                with client.stream("POST", gemini_url, json=gemini_payload, headers=gemini_headers) as resp:
-                    if resp.status_code != 200:
-                        raise Exception(f"Gemini Stream failed: {resp.status_code}")
-
-                    for line in resp.iter_lines():
-                        if not line or not line.startswith("data: "):
-                            continue
-                        data_str = line[6:]
-                        if data_str.strip() == "[DONE]":
-                            break
-                        try:
-                            chunk = json.loads(data_str)
-                            candidates = chunk.get("candidates", [])
-                            if candidates:
-                                parts = candidates[0].get("content", {}).get("parts", [])
-                                if parts:
-                                    content = parts[0].get("text", "")
-                                    if content:
-                                        yield content
-                        except (json.JSONDecodeError, IndexError, KeyError):
-                            continue
-                            
-        except Exception as e:
-            logger.error(f"🆘 Both LLM streams failed: {e}")
-            yield "I apologize, but I am currently facing technical difficulties. Please try again later."
+        logger.error(f"🆘 Gemini LLM stream failed: {e}")
+        yield "I apologize, but I am currently facing technical difficulties. Please try again later."
 
 
 # ========== STATE DEFINITION ==========
