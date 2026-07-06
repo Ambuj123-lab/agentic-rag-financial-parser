@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 # Constants for 7-Layer Security
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
-MAX_PDF_PAGES = 500
+MAX_PDF_PAGES = 30
 ALLOWED_MIME_TYPES = ["application/pdf"]
 TEMP_UPLOAD_DIR = os.path.join(os.getcwd(), "data", "temp_uploads")
 
