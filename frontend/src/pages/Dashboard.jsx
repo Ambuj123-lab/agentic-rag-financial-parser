@@ -450,9 +450,10 @@ export default function Dashboard() {
                       a: ({node, ...props}) => {
                         if (props.href && props.href.startsWith('#action:')) {
                           const actionValue = props.href.split(':')[1];
+                          const btnClass = actionValue === 'yes' ? 'action-btn-yes' : 'action-btn-no';
                           return (
                             <button 
-                              className="action-btn-wrapper" 
+                              className={`action-btn-wrapper ${btnClass}`} 
                               onClick={(e) => { e.preventDefault(); sendMessage(actionValue); }}
                             >
                               <span className="action-btn-inner">{props.children}</span>

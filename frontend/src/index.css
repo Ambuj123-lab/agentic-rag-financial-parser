@@ -873,9 +873,17 @@ a:hover {
 
 .action-btn-wrapper:hover {
   transform: translateY(-2px);
+  color: #fff !important;
+}
+
+.action-btn-yes:hover {
+  box-shadow: 0 0 20px rgba(0,255,0,0.5), 0 0 30px rgba(0,255,0,0.3) !important;
+  border-color: rgba(0,255,0,0.8);
+}
+
+.action-btn-no:hover {
   box-shadow: 0 0 20px rgba(255,0,0,0.6), 0 0 30px rgba(255,0,0,0.4) !important;
   border-color: rgba(255,0,0,0.8);
-  color: #fff !important;
 }
 
 .action-btn-inner {
