@@ -658,7 +658,15 @@ def cross_question_node(state: AgentState) -> dict:
     else:
         question = f"Hi {user_name}, {question}"
         
-    question += "\n\n💡 *Tip: I can help you with Income Tax Slabs, PF rules, RBI guidelines, or specific sections of the Constitution.*"
+    question += """
+
+> ──────────────────────────────────────────
+> ❓ **CLARIFICATION REQUIRED:**  
+> Please provide more specific details so I can search the correct legal/financial documents.
+> 
+> 💡 *Tip: Try asking about 'Income Tax Slabs 2026', 'PF withdrawal rules', 'RBI KYC guidelines', or 'Constitution Article 21'.*
+> 
+> *(Type your clarified query below to proceed)*"""
         
     return {
         "final_answer": question,
@@ -899,14 +907,19 @@ def retriever_node(state: AgentState) -> dict:
     if top_confidence < 45.0:
         logger.info(f"⚠️ Confidence too low ({top_confidence:.1f}%). Asking user for Web Search permission.")
         
-        engaging_prompt = """⚠️ **Low Confidence Alert (RAG)**
-I couldn't find an exact match in my verified legal/financial documents for this query.
+        engaging_prompt = """⚠️ **LOW CONFIDENCE ALERT (RAG)**  
+I couldn't find an exact match in my verified legal/financial documents for this specific query.
 
-**Action Required:**
-Would you like me to switch to **Autonomous Web Search** to find the latest real-time information for you? 
-*(Reply with "yes" to proceed)*
-***
-⚡ *Powered by 9-Node Agentic RAG | Engineered by Ambuj Kumar Tripathi*"""
+> ──────────────────────────────────────────
+> **ACTION REQUIRED:**  
+> Would you like me to switch to **Autonomous Web Search** to fetch real-time information for you?
+> 
+> | 🟢 **[YES]** (Proceed to Web Search) | 🔴 **[NO]** (Cancel) |
+> | :---: | :---: |
+> 
+> *(Please type your choice below)*
+> 
+> ⚡ *Powered by 9-Node Agentic RAG | Engineered by Ambuj Kumar Tripathi*"""
 
         return {
             "retrieved_chunks": [],
