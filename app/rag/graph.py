@@ -203,7 +203,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
         openrouter_headers = {"Authorization": f"Bearer {settings.OPENROUTER_API_KEY}"}
         openrouter_payload = {
-            "model": "nvidia/nemotron-3-super-120b-a12b:free",
+            "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message}
@@ -287,7 +287,7 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
         openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
         openrouter_headers = {"Authorization": f"Bearer {settings.OPENROUTER_API_KEY}"}
         openrouter_payload = {
-            "model": "nvidia/nemotron-3-super-120b-a12b:free",
+            "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message}
