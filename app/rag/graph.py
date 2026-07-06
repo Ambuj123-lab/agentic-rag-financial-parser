@@ -925,7 +925,7 @@ I couldn't find an exact match in my verified legal/financial documents for this
 > **ACTION REQUIRED:**  
 > Would you like me to switch to **Autonomous Web Search** to fetch real-time information for you?
 > 
-> | 🟢 **[YES]** (Proceed to Web Search) | 🔴 **[NO]** (Cancel) |
+> | 🟢 **[YES](#action:yes)** (Proceed to Web Search) | 🔴 **[NO](#action:no)** (Cancel) |
 > | :---: | :---: |
 > 
 > *(Please type your choice below)*

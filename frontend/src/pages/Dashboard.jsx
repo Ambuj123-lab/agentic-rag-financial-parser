@@ -444,7 +444,27 @@ export default function Dashboard() {
                     </details>
                   )}
 
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      a: ({node, ...props}) => {
+                        if (props.href && props.href.startsWith('#action:')) {
+                          const actionValue = props.href.split(':')[1];
+                          return (
+                            <button 
+                              className="action-btn-wrapper" 
+                              onClick={(e) => { e.preventDefault(); sendMessage(actionValue); }}
+                            >
+                              <span className="action-btn-inner">{props.children}</span>
+                            </button>
+                          );
+                        }
+                        return <a {...props} />;
+                      }
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
 
                   {/* Source Citations (Expandable) */}
                   {msg.sources?.length > 0 && (
