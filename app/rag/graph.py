@@ -773,6 +773,17 @@ def retriever_node(state: AgentState) -> dict:
         k_per_intent = max(8, 25 // len(intents))
         
         for intent in intents:
+            intent_query = intent.get("search_query", state["user_query"])
+            
+            # Multi-turn Context Aware: Embed the specific intent query instead of raw user query
+            try:
+                if intent_query != state["user_query"]:
+                    logger.info(f"  🔄 Multi-turn Context: Embedding rewritten query '{intent_query}'")
+                intent_vector = embed_query(intent_query)
+            except Exception as e:
+                logger.error(f"Embedding failed for intent '{intent_query}': {e}")
+                intent_vector = query_vector # fallback
+                
             target_files = []
             target_doc_type = str(intent.get("doc_type", "any")).lower()
             target_year = str(intent.get("year", "any")).lower()
@@ -816,7 +827,7 @@ def retriever_node(state: AgentState) -> dict:
             
             try:
                 core_results = index.query(
-                    vector=query_vector, top_k=k_per_intent, include_metadata=True,
+                    vector=intent_vector, top_k=k_per_intent, include_metadata=True,
                     filter=pinecone_filter
                 )
                 all_matches.extend(core_results.matches)
