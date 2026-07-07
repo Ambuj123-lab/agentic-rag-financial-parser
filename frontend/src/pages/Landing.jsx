@@ -649,6 +649,41 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ===== OMNICHANNEL DEPLOYMENT ===== */}
+      <section id="omnichannel" style={{ padding: '80px 40px', borderTop: '1px solid var(--border)' }}>
+        <FadeIn delay={0}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--green)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'rgba(16,185,129,0.05)' }}>
+              <FiGlobe size={12} /> Decoupled Architecture
+            </span>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px' }}>Omnichannel <span style={{ color: 'var(--green)' }}>Deployment</span></h2>
+            <p style={{ fontSize: '0.93rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>A single headless Agentic Brain serving users seamlessly across multiple interfaces.</p>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            {/* Web Interface */}
+            <div className="glass-card" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(56, 189, 248, 0.1)', padding: '16px', borderRadius: '50%', marginBottom: '20px' }}>
+                <FiGrid size={28} color="#38bdf8" />
+              </div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>React Web Interface</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Secure React SPA with Google OAuth 2.0. Features streaming responses, interactive markdown rendering, citation links, and Human-in-the-Loop chunk reviewing.</p>
+            </div>
+
+            {/* WhatsApp Integration */}
+            <div className="glass-card" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', border: '1px solid rgba(37, 211, 102, 0.2)' }}>
+              <div style={{ background: 'rgba(37, 211, 102, 0.1)', padding: '16px', borderRadius: '50%', marginBottom: '20px' }}>
+                <FiMessageSquare size={28} color="#25D366" />
+              </div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>WhatsApp Integration (Webhook)</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Asynchronous native WhatsApp API webhooks. Retains full multi-turn conversational memory, confidence-aware routing, and adaptive fallback logic on mobile.</p>
+            </div>
+          </div>
+        </div>
+        </FadeIn>
+      </section>
+
       {/* ===== LIVE DEMO VIDEO ===== */}
       <section id="demo" style={{ padding: '80px 40px', borderTop: '1px solid var(--border)' }}>
         <FadeIn delay={0}>
