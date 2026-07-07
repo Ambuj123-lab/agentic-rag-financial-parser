@@ -511,11 +511,13 @@ Default to "system_only" if unsure."""
                 "query_type": "web_search",
                 "is_vague": False,
                 "is_out_of_scope": False,
-                "needs_cross_question": False,
+                "needs_cross_question": True,  # Ask permission first
+                "clarifying_question": "This question requires an autonomous web search to find the latest real-time data. Should I proceed? (Reply with Yes or No)",
                 "search_scope": "system_only",
                 "search_intents": [{"search_query": query, "doc_type": "web", "year": "any"}],
                 "reasoning": routing_reason,
-                "is_web_search": True
+                "is_web_search": True,
+                "is_web_search_prompt": True
             }
 
         if result.get("is_vague", False) and state.get("cross_question_count", 0) < 2:
@@ -587,13 +589,15 @@ def cross_question_node(state: AgentState) -> dict:
     
     user_name = state.get("user_name", "User")
     question = state.get("clarifying_question")
+    is_web_prompt = state.get("is_web_search_prompt", False)
     
     if not question:
         question = f"Hi {user_name}! Could you please provide a bit more detail about what financial or legal information you're looking for?"
     else:
         question = f"Hi {user_name}, {question}"
         
-    question += """
+    if not is_web_prompt:
+        question += """
 
 > ──────────────────────────────────────────
 > ❓ **CLARIFICATION REQUIRED:**  
@@ -623,9 +627,8 @@ def web_search_node(state: AgentState) -> dict:
     
     try:
         from tavily import TavilyClient
-        import os
         
-        tavily_key = os.getenv("TAVILY_API_KEY")
+        tavily_key = settings.TAVILY_API_KEY
         if not tavily_key:
             raise ValueError("TAVILY_API_KEY is not set.")
             
@@ -955,6 +958,7 @@ RULES:
 3. Keep your tone professional and helpful.
 4. Do NOT say "Based on the web search" or "According to the internet". Just provide the answer.
 5. If the context does not contain the answer, say you couldn't find a reliable answer online.
+6. IF you are on WhatsApp, start your answer exactly with: "*(Live Web Search) 🌐*\n\n" so the user knows you fetched real-time data.
 """
     else:
         system_prompt = f"""CRITICAL BANNED PHRASES — NEVER USE THESE UNDER ANY CIRCUMSTANCE:
@@ -1176,9 +1180,16 @@ Always end with — on a new line after main content:
 > *⚠️ Disclaimer: This AI queries documents on the Indian Constitution, Polity, Union Budgets, RBI Guidelines, and PF Rules for learning purposes. It is not a substitute for professional advice. For critical legal, financial, taxation, or compliance matters, please consult a qualified CA, advocate, or relevant expert.*
 """
 
+    if state.get("source") == "whatsapp":
+        from app.rag.whatsapp_prompts import WHATSAPP_SYSTEM_INSTRUCTION, WHATSAPP_DISCLAIMER
+        system_prompt += WHATSAPP_SYSTEM_INSTRUCTION
+
     try:
         # Pass the original string system_prompt, Call LLM wraps it in HumanMessage/SystemMessage
         answer = call_llm(system_prompt, f"Context:\n{context}\n\nUser Query: {state['user_query']}", temperature=0.2)
+
+        if state.get("source") == "whatsapp" and not state.get("is_web_search_prompt"):
+            answer += WHATSAPP_DISCLAIMER
 
     except Exception as e:
         logger.error(f"Generation failed: {e}")
@@ -1277,7 +1288,7 @@ def route_after_classify(state: AgentState) -> str:
         return "reject"
     elif qt == "greeting":
         return "greet"
-    elif qt == "vague":
+    elif qt == "vague" or state.get("needs_cross_question"):
         return "cross_question"
     elif qt == "web_search":
         return "web_search"
@@ -1380,7 +1391,7 @@ def get_rag_graph():
     return _rag_graph
 
 
-async def run_query(query: str, user_email: str, user_name: str = "User", chat_history: list = None) -> dict:
+async def run_query(query: str, user_email: str, user_name: str = "User", chat_history: list = None, source: str = "web") -> dict:
     """Main entry point for the Agentic RAG pipeline."""
     graph = get_rag_graph()
 
@@ -1400,6 +1411,7 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "user_email": user_email,
         "user_name": user_name,
         "chat_history": chat_history or [],
+        "source": source,
         "query_type": "",
         "is_out_of_scope": False,
         "search_scope": "hybrid",  # Default: search both, Classifier will override

@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str
     COHERE_API_KEY: Optional[str] = None
     GEMINI_API_KEY: str = ""
+    TAVILY_API_KEY: str = ""
     
     # Vector DB (Pinecone)
     PINECONE_API_KEY: str
@@ -39,6 +40,12 @@ class Settings(BaseSettings):
     LANGFUSE_SECRET_KEY: str = ""
     LANGFUSE_PUBLIC_KEY: str = ""
     LANGFUSE_HOST: str = "https://us.cloud.langfuse.com"
+
+    # WhatsApp API
+    WHATSAPP_ACCESS_TOKEN: str = ""
+    WHATSAPP_PHONE_NUMBER_ID: str = ""
+    WHATSAPP_BUSINESS_ACCOUNT_ID: str = ""
+    WHATSAPP_WEBHOOK_VERIFY_TOKEN: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
