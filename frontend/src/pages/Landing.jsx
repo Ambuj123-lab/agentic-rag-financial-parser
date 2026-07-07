@@ -592,21 +592,21 @@ export default function Landing() {
           </div>
       </section>
 
-      {/* ===== 8-NODE ARCHITECTURE ===== */}
+      {/* ===== 9-NODE ARCHITECTURE ===== */}
       <section id="architecture" style={{
         padding: '80px 40px',
         borderTop: '1px solid var(--border)',
       }}>
         <div style={{ maxWidth: 1040, margin: '0 auto' }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>
-            8-Node <span style={{ color: 'var(--accent)' }}>LangGraph StateGraph</span>
+            9-Node <span style={{ color: 'var(--accent)' }}>LangGraph StateGraph</span>
           </h2>
           <p style={{
             textAlign: 'center', color: 'var(--text-secondary)',
             maxWidth: 650, margin: '0 auto 48px', fontSize: '0.93rem',
           }}>
             Not API wrapping. A full state machine with conditional edges,
-            self-correction loops, cross-questioning, and hallucination detection —
+            self-correction loops, cross-questioning, web search fallback, and hallucination detection —
             built on LangGraph's <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)', fontSize: '0.85rem' }}>StateGraph(AgentState)</code>.
           </p>
 
@@ -619,6 +619,7 @@ export default function Landing() {
               { icon: FiMessageSquare, name: 'CrossQuestioner', desc: 'Vague query? Asks clarifying question (max 2 rounds). Prevents hallucinated answers on ambiguous inputs.', color: 'var(--purple)' },
               { icon: FiShield, name: 'Reject Node', desc: 'Blocks abusive/harmful queries with professional response. PII masking applied before any processing.', color: 'var(--red)' },
               { icon: FiLayers, name: 'Retriever', desc: 'Parallel intent-based Pinecone search across multiple law versions. Cohere neural reranker filters top 10 golden chunks from 100+ candidates. Parent-Child Recursive Retrieval.', color: 'var(--accent)' },
+              { icon: FiGlobe, name: 'Web Search Fallback', desc: 'Autonomous internet search via Tavily API for out-of-domain queries, triggered after Human-in-the-Loop permission.', color: '#38bdf8' },
               { icon: FiCpu, name: 'Generator', desc: 'LLM with multi-version synthesis: compares 1961 vs 2025 Act provisions. Cautious RAG policy with banned-phrase guardrails. Confidence scoring.', color: 'var(--green)' },
               { icon: FiActivity, name: 'Hallucination Guard', desc: 'Post-generation check: is the answer grounded in retrieved chunks? If not → fallback. Confidence < 40% → reject.', color: 'var(--red)' },
               { icon: FiGitBranch, name: 'PostProcess', desc: 'Save Q&A to MongoDB (sliding window), log to Langfuse, cache response in Redis (1hr TTL). Feedback tracking.', color: 'var(--amber)' },
