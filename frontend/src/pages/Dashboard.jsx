@@ -366,8 +366,14 @@ export default function Dashboard() {
           </div>
 
 
-          <SidebarBtn icon={FiUploadCloud} label="Upload PDF" onClick={() => document.getElementById('file-upload').click()} />
-          <FileUploader />
+          <div style={{ position: 'relative' }}>
+            <SidebarBtn icon={FiUploadCloud} label="Upload PDF" onClick={() => document.getElementById('file-upload').click()} />
+            <div style={{ padding: '2px 16px 12px 16px', lineHeight: 1.4 }}>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block' }}>Max 10MB / 30 Pages per file</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--amber)', display: 'block', marginTop: '2px' }}>⚠️ Web Interface Only (WhatsApp Unsupported)</span>
+            </div>
+            <FileUploader />
+          </div>
 
           {user?.is_admin && (
             <SidebarBtn icon={FiSettings} label="Admin Panel" onClick={() => navigate('/admin')} />

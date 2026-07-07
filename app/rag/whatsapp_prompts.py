@@ -13,7 +13,6 @@ I can help you with:
 
 ⚖️ Indian Constitution, Laws & Legal Research
 💰 Taxation & Financial Regulations
-📄 Intelligent PDF & Document Analysis
 💻 Programming, AI & Technical Queries
 🌐 Live Web Search *(when additional information is required)*
 
@@ -24,11 +23,10 @@ I can help you with:
 ✅ Multi-turn Conversations
 ✅ Context-Aware Responses
 
-📂 Simply ask a question or upload a PDF to get started.
+⚠️ *Note:* WhatsApp does NOT support file/PDF uploads. Please use my Web Interface at https://agentic-financial-parser.onrender.com for Document Analysis (Max 10MB / 30 Pages).
 
 💡 Example Questions:
 • Explain Article 21 of the Constitution.
-• Analyze my Form-16.
 • What are the latest RBI KYC guidelines?
 • Show a FastAPI Semantic Cache example.
 
