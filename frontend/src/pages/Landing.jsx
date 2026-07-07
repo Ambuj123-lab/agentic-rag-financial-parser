@@ -322,7 +322,7 @@ export default function Landing() {
           fontSize: '0.78rem', color: 'var(--accent)', fontWeight: 500,
           marginBottom: 28,
         }}>
-          <FiZap size={13} /> 9-Node StateGraph • Adaptive ReAct Web Search
+          <FiZap size={13} /> Adaptive ReAct • 9-Node LangGraph • Human-in-the-Loop • Live Web Search • WhatsApp Omnichannel
         </div>
 
         <h1 style={{
@@ -332,12 +332,12 @@ export default function Landing() {
           letterSpacing: '-1.5px',
           marginBottom: 20,
         }}>
-          Legal & Financial Intelligence,{' '}
+          Production-Grade Agentic AI for{' '}
           <span style={{
             background: 'linear-gradient(135deg, var(--accent), #e8c49a)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-          }}>Engineered.</span>
+          }}>Legal & Financial Intelligence</span>
         </h1>
 
         <div style={{
