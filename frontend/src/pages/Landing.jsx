@@ -316,11 +316,11 @@ export default function Landing() {
         <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', background: 'radial-gradient(circle at center, rgba(220, 38, 38, 0.28) 0%, transparent 65%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
 
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 8,
           padding: '6px 16px', borderRadius: 20,
           background: 'var(--accent-glow)', border: '1px solid rgba(212,165,116,0.2)',
           fontSize: '0.78rem', color: 'var(--accent)', fontWeight: 500,
-          marginBottom: 28,
+          marginBottom: 28, textAlign: 'center'
         }}>
           <FiZap size={13} /> Adaptive ReAct • 9-Node LangGraph • Human-in-the-Loop • Live Web Search • WhatsApp Omnichannel
         </div>
