@@ -1185,8 +1185,14 @@ Always end with — on a new line after main content:
         system_prompt += WHATSAPP_SYSTEM_INSTRUCTION
 
     try:
+        history = state.get("chat_history", [])
+        context_prefix = ""
+        if history:
+            recent = history[-4:] # Use last 4 messages to give good context for "Yes" replies
+            context_prefix = "Recent Conversation Context:\n" + "\n".join([f"{msg.get('role', 'unknown').capitalize()}: {msg.get('content', '')}" for msg in recent]) + "\n\n"
+
         # Pass the original string system_prompt, Call LLM wraps it in HumanMessage/SystemMessage
-        answer = call_llm(system_prompt, f"Context:\n{context}\n\nUser Query: {state['user_query']}", temperature=0.2)
+        answer = call_llm(system_prompt, f"{context_prefix}Retrieved Document Context:\n{context}\n\nCurrent User Query: {state['user_query']}", temperature=0.2)
 
         if state.get("source") == "whatsapp" and not state.get("is_web_search_prompt"):
             answer += WHATSAPP_DISCLAIMER
