@@ -66,14 +66,18 @@ async def receive_whatsapp_message(request: Request, background_tasks: Backgroun
                     phone_number_id = value["metadata"]["phone_number_id"]
                     from_number = message["from"]
                     message_id = message["id"]
+                    # Extract user profile name if available
+                    user_name = "WhatsApp User"
+                    if "contacts" in value and len(value["contacts"]) > 0:
+                        user_name = value["contacts"][0].get("profile", {}).get("name", "WhatsApp User")
                     
                     # We only process text messages
                     if message["type"] == "text":
                         text_body = message["text"]["body"].strip()
-                        logger.info(f"📱 WhatsApp Msg Received from {from_number}: {text_body}")
+                        logger.info(f"📱 WhatsApp Msg Received from {from_number} ({user_name}): {text_body}")
                         
                         # Process the message asynchronously in the background so we return 200 OK instantly
-                        background_tasks.add_task(process_and_reply, from_number, text_body, phone_number_id, message_id)
+                        background_tasks.add_task(process_and_reply, from_number, text_body, phone_number_id, message_id, user_name)
                         
     except Exception as e:
         logger.error(f"Error processing webhook: {e}")
@@ -81,7 +85,7 @@ async def receive_whatsapp_message(request: Request, background_tasks: Backgroun
     return Response(content="EVENT_RECEIVED", status_code=200)
 
 
-async def process_and_reply(to_number: str, text: str, phone_number_id: str, message_id: str):
+async def process_and_reply(to_number: str, text: str, phone_number_id: str, message_id: str, user_name: str = "WhatsApp User"):
     """Run LangGraph and send reply via WhatsApp API."""
     from app.rag.graph import run_query
     from app.rag.whatsapp_prompts import WHATSAPP_GREETING_MENU
@@ -103,7 +107,7 @@ async def process_and_reply(to_number: str, text: str, phone_number_id: str, mes
         result = await run_query(
             query=text,
             user_email=fake_email,
-            user_name="WhatsApp User",
+            user_name=user_name,
             chat_history=history,
             source="whatsapp"  # Critical: tells Graph to use WhatsApp formatting
         )
