@@ -376,27 +376,42 @@ def classifier_node(state: AgentState) -> dict:
         
         is_web_prompt = "autonomous web search" in prev_bot_msg or "search the internet" in prev_bot_msg or "low confidence alert" in prev_bot_msg
         
-        if is_web_prompt and any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
-            logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
-            
-            # Safely find the last actual user query (ignoring previous 'yes' replies)
-            original_query = query
-            for msg in reversed(history):
-                content = msg.get("content", "").strip()
-                if msg.get("role") == "user" and content.lower() not in positive_replies:
-                    original_query = content
-                    break
-                    
-            return {
-                "query_type": "web_search",
-                "is_vague": False,
-                "is_out_of_scope": False,
-                "needs_cross_question": False,
-                "search_scope": "system_only",
-                "search_intents": [{"search_query": original_query, "doc_type": "web", "year": "any"}],
-                "reasoning": "User approved web search for previous query.",
-                "is_web_search": True
-            }
+        negative_replies = ["no", "nahi", "nope", "cancel", "stop", "na", "mat karo", "rehne do"]
+        
+        if is_web_prompt:
+            if any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
+                logger.info("🌐 User gave permission for Web Search. Bypassing classification.")
+                
+                # Safely find the last actual user query (ignoring previous 'yes' replies)
+                original_query = query
+                for msg in reversed(history):
+                    content = msg.get("content", "").strip()
+                    if msg.get("role") == "user" and content.lower() not in positive_replies:
+                        original_query = content
+                        break
+                        
+                return {
+                    "query_type": "web_search",
+                    "is_vague": False,
+                    "is_out_of_scope": False,
+                    "needs_cross_question": False,
+                    "search_scope": "system_only",
+                    "search_intents": [{"search_query": original_query, "doc_type": "web", "year": "any"}],
+                    "reasoning": "User approved web search for previous query.",
+                    "is_web_search": True
+                }
+            elif any(user_reply.startswith(nr) or user_reply == nr for nr in negative_replies):
+                logger.info("🚫 User denied Web Search. Routing to graceful degradation.")
+                return {
+                    "query_type": "rag",
+                    "is_vague": False,
+                    "is_out_of_scope": True,
+                    "needs_cross_question": False,
+                    "search_scope": "system_only",
+                    "search_intents": [],
+                    "reasoning": "User denied web search prompt.",
+                    "is_web_search": False
+                }
 
     if is_greeting(query):
         return {"query_type": "greeting", "search_scope": "system_only"}
@@ -430,7 +445,8 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 
 Intent Rules:
 - If query is about unrelated topics like cooking, sports, entertainment, current events, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: false, and set is_web_search: true.
-- If query is related to Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
+- If query is asking for REAL-TIME data, current market rates (like RBI Repo Rate, stock prices), or recent financial news -> set is_out_of_scope: false, and set is_web_search: true.
+- If query is related to STATIC Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
 - ONLY set is_out_of_scope: true if the query is extremely harmful or completely nonsensical where even a web search is inappropriate.
 - If about Income Tax Act sections, deductions, limits, slabs -> doc_type: "act".
 - If about Finance Act amendments, surcharges, new tax changes -> doc_type: "finance_act".

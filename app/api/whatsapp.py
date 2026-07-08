@@ -73,6 +73,15 @@ async def receive_whatsapp_message(request: Request, background_tasks: Backgroun
                     
                     # We only process text messages
                     if message["type"] == "text":
+                        # Ignore stale messages (older than 5 minutes) from Meta retries
+                        timestamp = message.get("timestamp")
+                        if timestamp:
+                            import time
+                            current_time = int(time.time())
+                            if current_time - int(timestamp) > 300:
+                                logger.warning(f"⏳ Dropping stale WhatsApp message from {from_number} (Age: {current_time - int(timestamp)}s)")
+                                continue
+
                         text_body = message["text"]["body"].strip()
                         logger.info(f"📱 WhatsApp Msg Received from {from_number} ({user_name}): {text_body}")
                         
@@ -123,6 +132,12 @@ async def process_and_reply(to_number: str, text: str, phone_number_id: str, mes
                 title = str(src)
                 answer += f"\n{i+1}. {title}"
         
+        # Convert standard Markdown to WhatsApp-friendly format
+        import re
+        answer = re.sub(r'\*\*(.*?)\*\*', r'*\1*', answer) # **bold** to *bold*
+        answer = re.sub(r'^#+\s+', '', answer, flags=re.MULTILINE) # Remove Headers
+        answer = re.sub(r'^\s*-\s+', '• ', answer, flags=re.MULTILINE) # Clean bullets
+
         # WhatsApp limits text to 4096 chars.
         if len(answer) > 4000:
             answer = answer[:4000] + "...\n(Answer truncated due to WhatsApp limits)"
