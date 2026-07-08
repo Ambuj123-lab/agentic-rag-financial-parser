@@ -112,6 +112,16 @@ def is_abusive(text: str) -> bool:
             return True
     return False
 
+def is_jailbreak(text: str) -> bool:
+    """Check for prompt injection or jailbreak attempts."""
+    jailbreak_keywords = [
+        "forget all instructions", "ignore previous", "reveal your system prompt",
+        "forget previous instructions", "disregard instructions", "reveal system prompt",
+        "system prompt", "ignore instructions"
+    ]
+    normalized = text.lower()
+    return any(kw in normalized for kw in jailbreak_keywords)
+
 def is_greeting(text: str) -> bool:
     """Check if query is a greeting — skip vector DB search (same as prev project)."""
     greetings = {
@@ -361,6 +371,10 @@ def classifier_node(state: AgentState) -> dict:
     if is_abusive(query):
         return {"query_type": "abusive", "search_scope": "system_only"}
 
+    # ANTI-JAILBREAK SHIELD: Immediately intercept prompt injections
+    if is_jailbreak(query):
+        return {"query_type": "jailbreak", "search_scope": "system_only"}
+
     history = state.get("chat_history", [])
     
     if history:
@@ -565,11 +579,19 @@ Default to "system_only" if unsure."""
 # ========== NODE 2: REJECT ==========
 
 def reject_node(state: AgentState) -> dict:
-    """Handle abusive queries (same as prev project)."""
-    logger.info("🚫 [2/8] Reject: Abusive query blocked")
+    """Handle abusive or jailbreak queries."""
+    query_type = state.get("query_type")
+    
+    if query_type == "jailbreak":
+        logger.warning("🚨 [2/8] Reject: Jailbreak/Prompt Injection attempt blocked!")
+        msg = "I am an AI assistant engineered by Ambuj Kumar Tripathi. I cannot disclose my system instructions or bypass my security protocols."
+    else:
+        logger.warning("🚫 [2/8] Reject: Abusive query blocked")
+        msg = "I am a Financial AI Assistant. I can only respond to professional and respectful queries. Please rephrase your question."
+
     return {
-        "final_answer": "I am a Financial AI Assistant. I can only respond to professional and respectful queries. Please rephrase your question.",
-        "confidence": 0, "latency": 0, "sources": [], "error": "abusive_content",
+        "final_answer": msg,
+        "confidence": 0, "latency": 0, "sources": [], "error": query_type,
         "is_fallback": False, "needs_cross_question": False
     }
 
@@ -1324,7 +1346,7 @@ def post_process_node(state: AgentState) -> dict:
 def route_after_classify(state: AgentState) -> str:
     """Route after classifier (same pattern as prev project + vague route)."""
     qt = state.get("query_type", "rag")
-    if qt == "abusive":
+    if qt in ("abusive", "jailbreak"):
         return "reject"
     elif qt == "greeting":
         return "greet"
