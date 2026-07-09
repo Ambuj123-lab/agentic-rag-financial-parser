@@ -467,7 +467,7 @@
 <rect x="0" y="800" width="1280" height="60" fill="#040408dd"/>
 <rect x="0" y="800" width="1280" height="1" fill="url(#goldLine)" opacity="0.3"/>
 <text x="640" y="822" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#aaaacc" letter-spacing="1">
-  Ambuj Kumar Tripathi · GenAI Solution Architect · LLMOps · ambuj-portfolio-v2.netlify.app · github.com/Ambuj123-lab
+  Ambuj Kumar Tripathi · GenAI Solution Architect · LLMOps · ambuj-ai-portfolio.vercel.app · github.com/Ambuj123-lab
 </text>
 <text x="640" y="842" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="8" fill="#8888aa" letter-spacing="0.5">
   LangGraph · Pinecone · Jina v3 MRL 256d · Qwen 2.5 72B · LlamaParse · FastAPI · MongoDB · Supabase · Langfuse · pybreaker · $0/month · 2026
