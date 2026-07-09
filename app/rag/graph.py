@@ -911,7 +911,7 @@ def retriever_node(state: AgentState) -> dict:
     else:
         final_chunks = chunks[:10] # Default without Cohere
 
-    if top_confidence < 45.0:
+    if top_confidence < 45.0 and scope != "portfolio_only":
         logger.info(f"⚠️ Confidence too low ({top_confidence:.1f}%). Asking user for Web Search permission.")
         
         engaging_prompt = """⚠️ **LOW CONFIDENCE ALERT (RAG)**  
