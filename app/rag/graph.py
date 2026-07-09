@@ -460,6 +460,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 Intent Rules:
 - If query is about unrelated topics like cooking, sports, entertainment, current events, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: false, and set is_web_search: true.
 - If query is asking for REAL-TIME data, current market rates (like RBI Repo Rate, stock prices), or recent financial news -> set is_out_of_scope: false, and set is_web_search: true.
+- If query is general conversational chit-chat, small talk, or asking about your well-being (e.g. "how are you", "are you ok", "who are you") -> set is_out_of_scope: false, set is_web_search: false, and set search_scope: "system_only".
 - If query is related to STATIC Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
 - ONLY set is_out_of_scope: true if the query is extremely harmful or completely nonsensical where even a web search is inappropriate.
 - If about Income Tax Act sections, deductions, limits, slabs -> doc_type: "act".
