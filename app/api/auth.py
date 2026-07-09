@@ -115,7 +115,7 @@ async def logout(request: Request):
 
 
 @router.post("/auth/dev-login")
-async def dev_login():
+async def dev_login(request: Request):
     """
     Dev-only bypass: Creates a JWT without Google OAuth.
     ONLY works when ENVIRONMENT=development in .env.
@@ -126,6 +126,14 @@ async def dev_login():
     
     dev_email = "dev@test.com"
     dev_name = "Dev User"
+    
+    try:
+        body = await request.json()
+        if body and isinstance(body, dict):
+            dev_email = body.get("email", dev_email)
+            dev_name = body.get("name", dev_name)
+    except Exception:
+        pass
     
     token = create_access_token({"sub": dev_email, "name": dev_name})
     
