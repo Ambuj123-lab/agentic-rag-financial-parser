@@ -445,6 +445,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
   "is_vague": true/false,
   "is_out_of_scope": true/false,
   "is_web_search": true/false,
+  "is_greeting": true/false,
   "clarifying_question": "ask if vague, else null",
   "search_scope": "system_only" | "user_only" | "hybrid" | "portfolio_only",
   "search_intents": [
@@ -460,7 +461,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 Intent Rules:
 - If query is about unrelated topics like cooking, sports, entertainment, current events, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: false, and set is_web_search: true.
 - If query is asking for REAL-TIME data, current market rates (like RBI Repo Rate, stock prices), or recent financial news -> set is_out_of_scope: false, and set is_web_search: true.
-- If query is general conversational chit-chat, small talk, or asking about your well-being (e.g. "how are you", "are you ok", "who are you") -> set is_out_of_scope: false, set is_web_search: false, and set search_scope: "system_only".
+- If query is general conversational chit-chat, small talk, or asking about your well-being, or who you are (e.g. "how are you", "are you ok", "who are you", "what are you here for") -> set is_greeting: true, is_out_of_scope: false, is_web_search: false, and search_scope: "system_only".
 - If query is related to STATIC Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
 - ONLY set is_out_of_scope: true if the query is extremely harmful or completely nonsensical where even a web search is inappropriate.
 - If about Income Tax Act sections, deductions, limits, slabs -> doc_type: "act".
@@ -518,13 +519,17 @@ Default to "system_only" if unsure."""
         if search_scope not in ("system_only", "user_only", "hybrid", "portfolio_only"):
             search_scope = "system_only"
             
-        search_intents = result.get("search_intents", [{"search_query": query, "doc_type": "any", "year": "any"}])
+        search_intents = result.get("search_intents", [])
         
         # Log the Router's reasoning for Explainable AI (visible in terminal + Langfuse)
         routing_reason = result.get("reasoning", "No reasoning provided")
         logger.info(f"🧠 Router Reasoning: {routing_reason} | Out of Scope: {is_out_of_scope}")
 
         is_web_search = result.get("is_web_search", False)
+        is_greeting_llm = result.get("is_greeting", False)
+        
+        if is_greeting_llm:
+            return {"query_type": "greeting", "search_scope": "system_only"}
 
         if is_out_of_scope:
             return {
