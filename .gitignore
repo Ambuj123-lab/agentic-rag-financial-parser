@@ -116,4 +116,4 @@ sync_only_constitution.py
 docs/
 sync_one_file.py
 local_dry_run.py
-test_retrieval.py
+test_retrieval.pyingest_portfolio.py
