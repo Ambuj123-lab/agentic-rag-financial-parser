@@ -1014,7 +1014,7 @@ export default function Landing() {
 
           {/* Links */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
-            <a href="https://ambuj-portfolio-v2.netlify.app" target="_blank" rel="noreferrer"
+            <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer"
               className="btn-ghost" style={{ fontSize: '0.88rem' }}>
               <FiGlobe size={16} /> Portfolio
             </a>
@@ -1047,7 +1047,7 @@ export default function Landing() {
         
         <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
           © 2026 Agentic Financial Parser — Engineered by{' '}
-          <a href="https://ambuj-portfolio-v2.netlify.app" target="_blank" rel="noreferrer">
+          <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer">
             Ambuj Kumar Tripathi
           </a>
           . Production RAG, engineered for reality.
