@@ -54,11 +54,11 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 | Node | Purpose | Key Detail |
 |------|---------|------------|
-| **1. Classifier** | Intent detection | Categorizes: `abusive` · `greeting` · `vague` · `rag_query` |
-| **2. Reject** | Safety guard | Blocks abusive queries with firm, non-engaging response |
+| **1. Classifier** | Intent detection | Categorizes: `abusive` · `greeting` · `vague` · `rag_query` · `out_of_scope` |
+| **2. Reject** | Safety guard | Blocks abusive and anti-national queries with a strict blocklist guardrail |
 | **3. Greet** | Efficiency bypass | Handles greetings **without** hitting vector DB (zero cost) |
 | **4. CrossQuestioner** | HITL clarification | Asks clarifying questions for vague queries (max 2 rounds) |
-| **5. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads**. *V2 adds Parallel Retrieval & Cohere Neural Reranking.* |
+| **5. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads**. Falls back to Tavily Web Search for OOS queries. |
 | **6. Generator** | LLM synthesis | Dynamic OpenRouter fallback ensemble (Qwen/DeepSeek/Llama) with circuit breakers |
 | **7. HallucinationGuard** | Answer verification | Validates answer is **grounded** in retrieved context chunks |
 | **8. PostProcess** | Persistence | Saves to MongoDB chat history + Langfuse observability logging |
@@ -74,7 +74,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 <td><b>Purpose</b></td>
 </tr>
 <tr>
-<td rowspan="4"><b>RAG Engine</b></td>
+<td rowspan="5"><b>RAG Engine</b></td>
 <td>LangGraph StateGraph</td>
 <td>8-node autonomous state machine orchestration</td>
 </tr>
@@ -91,13 +91,21 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 <td>LLM-native 3-tier document parsing</td>
 </tr>
 <tr>
-<td rowspan="2"><b>Backend</b></td>
+<td>Tavily Search API</td>
+<td>Live Web Search fallback for Out-of-Scope queries</td>
+</tr>
+<tr>
+<td rowspan="3"><b>Backend & APIs</b></td>
 <td>FastAPI + Uvicorn</td>
 <td>Async REST API with SSE streaming</td>
 </tr>
 <tr>
 <td>Authlib + PyJWT</td>
 <td>Google OAuth 2.0 + JWT session management</td>
+</tr>
+<tr>
+<td>WhatsApp Meta Cloud API</td>
+<td>Real-time user bot interaction via Webhooks</td>
 </tr>
 <tr>
 <td><b>Frontend</b></td>
