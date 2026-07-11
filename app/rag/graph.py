@@ -538,14 +538,16 @@ Default to "system_only" if unsure."""
 
         if is_out_of_scope:
             return {
-                "query_type": "rag",
+                "query_type": "web_search",
                 "is_vague": False,
                 "is_out_of_scope": True,
-                "needs_cross_question": False,
+                "needs_cross_question": True,  # Ask permission first
+                "clarifying_question": "⚠️ **OUT OF SCOPE / LOW CONFIDENCE ALERT**\nI am strictly built to provide legal/financial suggestions, but as part of your learning and development, would you like me to switch to **Autonomous Web Search** to fetch real-time information for you?\n\n> 🟢 **[YES](#action:yes)** (Proceed to Web Search) &nbsp; &nbsp; &nbsp; 🔴 **[NO](#action:no)** (Cancel)",
                 "search_scope": "system_only",
-                "search_intents": [],
+                "search_intents": [{"search_query": query, "doc_type": "web", "year": "any"}],
                 "reasoning": routing_reason,
-                "is_web_search": False
+                "is_web_search": True,
+                "is_web_search_prompt": True
             }
             
         if is_web_search:
