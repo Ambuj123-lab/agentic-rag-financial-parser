@@ -426,7 +426,10 @@ def classifier_node(state: AgentState) -> dict:
                     "reasoning": "User denied web search prompt.",
                     "is_web_search": False
                 }
-
+            else:
+                # User replied with something other than Yes/No (e.g. "Maybe", or a new query)
+                # Treat it as a new query — fall through to normal classification
+                logger.info("🔄 HITL: User replied with neither Yes nor No. Treating as new query, previous web search offer cancelled.")
     if is_greeting(query):
         return {"query_type": "greeting", "search_scope": "system_only"}
 
@@ -434,7 +437,7 @@ def classifier_node(state: AgentState) -> dict:
     try:
         context_prefix = ""
         if history:
-            recent = history[-2:]
+            recent = history[-4:]
             context_prefix = "Recent Conversation Context:\n" + "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in recent]) + "\n\n"
             
         system_prompt = """You are an expert AI Router for a Financial and Legal Knowledge Base.
@@ -459,11 +462,11 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 }
 
 Intent Rules:
-- If query is about unrelated topics like cooking, sports, entertainment, current events, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: false, and set is_web_search: true.
-- If query is asking for REAL-TIME data, current market rates (like RBI Repo Rate, stock prices), or recent financial news -> set is_out_of_scope: false, and set is_web_search: true.
+- If query is about unrelated topics like cooking, sports, entertainment, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: true, and set is_web_search: false.
+- If query is asking for REAL-TIME data, current market rates (like RBI Repo Rate, stock prices), or recent financial/legal news -> set is_out_of_scope: false, and set is_web_search: true.
 - If query is general conversational chit-chat, small talk, or asking about your well-being, or who you are (e.g. "how are you", "are you ok", "who are you", "what are you here for") -> set is_greeting: true, is_out_of_scope: false, is_web_search: false, and search_scope: "system_only".
 - If query is related to STATIC Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
-- ONLY set is_out_of_scope: true if the query is extremely harmful or completely nonsensical where even a web search is inappropriate.
+- Set is_out_of_scope: true if the query is completely unrelated to Indian Finance, Tax, Law, or Budget.
 - If about Income Tax Act sections, deductions, limits, slabs -> doc_type: "act".
 - If about Finance Act amendments, surcharges, new tax changes -> doc_type: "finance_act".
 - If procedural ("how to file", "form format", "steps") -> doc_type: "rules".
