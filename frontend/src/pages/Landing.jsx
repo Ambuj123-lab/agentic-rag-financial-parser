@@ -1086,7 +1086,7 @@ export default function Landing() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       <h4 style={{ color: '#fff', fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.95rem' }}>Ecosystem</h4>
                       <a href="https://indian-legal-ai-expert.onrender.com/" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='var(--text-muted)'}>Indian Legal AI Expert</a>
-                      <a href="https://citizen-safety-ai.vercel.app/" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='var(--text-muted)'}>Citizen Safety AI</a>
+                      <a href="https://citizen-safety-ai-assistant.vercel.app/" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='var(--text-muted)'}>Citizen Safety AI</a>
                       <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='var(--text-muted)'}>AI Portfolio Hub</a>
                   </div>
 
