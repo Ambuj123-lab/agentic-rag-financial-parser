@@ -164,7 +164,7 @@ export default function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div style={{ minHeight: '100vh' }}>
       {/* ===== SCROLL PROGRESS BAR ===== */}
       <div style={{
           position: 'fixed',
