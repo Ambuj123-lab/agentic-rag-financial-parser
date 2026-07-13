@@ -128,6 +128,7 @@ export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [uptimeData, setUptimeData] = useState(null)
 
   useEffect(() => {
       const handleScroll = () => {
@@ -232,7 +233,7 @@ export default function Landing() {
       `}</style>
 
       {/* ===== TOP STATUS BANNER ===== */}
-      <div style={{ background: 'rgba(212,165,116,0.08)', borderBottom: '1px solid rgba(212,165,116,0.15)', padding: '8px 16px', textAlign: 'center', fontSize: '10px', fontWeight: 500, color: 'var(--accent)', letterSpacing: '0.02em', position: 'relative', zIndex: 100, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '4px', lineHeight: '1.5' }}>
+      <div style={{ background: 'rgba(255,51,51,0.08)', borderBottom: '1px solid rgba(255,51,51,0.15)', padding: '8px 16px', textAlign: 'center', fontSize: '10px', fontWeight: 500, color: 'var(--accent)', letterSpacing: '0.02em', position: 'relative', zIndex: 100, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '4px', lineHeight: '1.5' }}>
         <span style={{ fontSize: '13px' }}>⚠️</span>
         <span><strong>Disclaimer:</strong> Experimental AI platform by Ambuj Kumar Tripathi. Not financial advice.</span>
         <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noreferrer" className="afp-status-badge">
@@ -243,7 +244,7 @@ export default function Landing() {
           <svg width="28" height="12" viewBox="0 0 28 12" style={{ overflow: 'visible', marginLeft: '-2px' }}>
             <path d="M0,6 L6,6 L8,2 L10,10 L12,4 L14,8 L16,6 L28,6" fill="none" stroke="#dc2626" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: '30', strokeDashoffset: '0', animation: 'ecg-draw 2s linear infinite' }} />
           </svg>
-          System Status
+          {uptimeData ? `${uptimeData.uptime} • ${uptimeData.latency}` : 'System Status'}
         </a>
       </div>
 
@@ -269,7 +270,7 @@ export default function Landing() {
           <a href="#depth" className="nav-link">Engineering</a>
           <a href="#opensource" className="nav-link" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: '1.2', gap: '2px' }}>
             <span>qLoRA Fine-Tuned</span>
-            <span style={{ fontSize: '0.65rem', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.5px' }}>By Ambuj Kumar Tripathi</span>
+            <span style={{ fontSize: '0.65rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>By Ambuj Kumar Tripathi</span>
           </a>
           <a href="#engineer" className="nav-link">About</a>
           <a href={GOOGLE_AUTH_URL} className="btn-ghost" style={{ padding: '8px 18px', fontSize: '0.84rem' }}>Sign In</a>
@@ -299,7 +300,7 @@ export default function Landing() {
             <button onClick={() => { document.getElementById('opensource')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>qLoRA Fine-Tuned Models</button>
             <button onClick={() => { document.getElementById('engineer')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '15px', fontWeight: 500, textAlign: 'left', padding: '0' }}>About</button>
             <div style={{ height: '1px', background: 'var(--border, #222)' }} />
-            <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" style={{ color: 'var(--accent, #c9a84c)', textDecoration: 'none', fontSize: '15px' }}>📄 Documentation</a>
+            <a href="https://ambuj-rag-docs.netlify.app" target="_blank" rel="noreferrer" style={{ color: 'var(--accent, var(--accent))', textDecoration: 'none', fontSize: '15px' }}>📄 Documentation</a>
             <a href={GOOGLE_AUTH_URL} style={{ color: '#ccc', textDecoration: 'none', fontSize: '15px' }}>🔐 Sign In</a>
             <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#ef4444', cursor: 'pointer', fontSize: '14px', fontWeight: 600, padding: '12px', borderRadius: '8px', textAlign: 'center' }}>✕ Close Menu</button>
           </div>
@@ -308,75 +309,57 @@ export default function Landing() {
 
       {/* ===== HERO ===== */}
       <section style={{
-        padding: '100px 40px 60px',
+        padding: '120px 40px 100px',
         textAlign: 'center',
-        maxWidth: 920,
+        maxWidth: 1000,
         margin: '0 auto',
         position: 'relative',
       }}>
-        {/* Deep Red Black Spotlight Background */}
-        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', background: 'radial-gradient(circle at center, rgba(220, 38, 38, 0.28) 0%, transparent 65%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
+        {/* Deep Red Black Spotlight Background (Pexio Style) */}
+        <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: '900px', height: '700px', background: 'radial-gradient(circle at center, rgba(220, 10, 10, 0.25) 0%, rgba(150, 0, 0, 0.1) 40%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
 
+        {/* Top Banner (Simplify your workflow style) */}
         <div style={{
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 8,
-          padding: '6px 16px', borderRadius: 20,
-          background: 'var(--accent-glow)', border: '1px solid rgba(212,165,116,0.2)',
-          fontSize: '0.78rem', color: 'var(--accent)', fontWeight: 500,
-          marginBottom: 28, textAlign: 'center'
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 16,
+          marginBottom: 32, textAlign: 'center', position: 'relative', zIndex: 2
         }}>
-          <FiZap size={13} /> Adaptive ReAct • 9-Node LangGraph • Human-in-the-Loop • Live Web Search • WhatsApp Omnichannel
+          <div style={{ width: '40px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255,51,51,0.5))' }}></div>
+          <div style={{ 
+            padding: '6px 20px', borderRadius: '30px', 
+            background: 'rgba(255, 51, 51, 0.08)', 
+            border: '1px solid rgba(255, 51, 51, 0.15)',
+            fontSize: '0.8rem', color: '#e0e0e0', fontWeight: 500, letterSpacing: '0.5px'
+          }}>
+            <FiZap size={12} style={{ display: 'inline', marginRight: '6px', color: 'var(--accent)' }} />
+            Adaptive ReAct • 9-Node LangGraph • Live Web Search • WhatsApp Omnichannel
+          </div>
+          <div style={{ width: '40px', height: '1px', background: 'linear-gradient(270deg, transparent, rgba(255,51,51,0.5))' }}></div>
         </div>
 
         <h1 style={{
-          fontSize: 'clamp(2.2rem, 5vw, 3.4rem)',
-          fontWeight: 800,
-          lineHeight: 1.1,
-          letterSpacing: '-1.5px',
-          marginBottom: 20,
+          fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+          fontWeight: 700,
+          lineHeight: 1.15,
+          letterSpacing: '-1px',
+          marginBottom: 24,
+          position: 'relative',
+          zIndex: 2,
+          color: '#ffffff'
         }}>
-          Production-Grade Agentic AI for{' '}
-          <span style={{
-            background: 'linear-gradient(135deg, var(--accent), #e8c49a)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>Legal & Financial Intelligence</span>
+          Adaptive ReAct Agentic RAG for<br />
+          <span style={{ color: 'var(--accent)' }}>Legal & Financial Workflows</span>
         </h1>
-
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-          padding: '8px 20px', borderRadius: '30px',
-          background: 'linear-gradient(90deg, rgba(201, 168, 76, 0.05), rgba(201, 168, 76, 0.15), rgba(201, 168, 76, 0.05))',
-          border: '1px solid rgba(201, 168, 76, 0.3)',
-          boxShadow: '0 0 20px rgba(201, 168, 76, 0.15), inset 0 0 10px rgba(201, 168, 76, 0.05)',
-          marginBottom: '32px',
-          animation: 'pulseGlow 3s infinite alternate',
-        }}>
-          <span style={{ fontSize: '18px' }}>✨</span>
-          <span style={{
-            background: 'linear-gradient(90deg, #fff, var(--accent))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.5px'
-          }}>
-            Now with Real-Time Web Reasoning
-          </span>
-        </div>
-        <style>{`
-          @keyframes pulseGlow {
-            0% { box-shadow: 0 0 15px rgba(201, 168, 76, 0.1); border-color: rgba(201, 168, 76, 0.2); }
-            100% { box-shadow: 0 0 30px rgba(201, 168, 76, 0.3); border-color: rgba(201, 168, 76, 0.5); }
-          }
-        `}</style>
 
         <p style={{
           fontSize: '1.05rem', color: 'var(--text-secondary)',
-          maxWidth: 660, margin: '0 auto 36px', lineHeight: 1.7,
+          maxWidth: 600, margin: '0 auto 40px', lineHeight: 1.6,
+          position: 'relative', zIndex: 2
         }}>
           Parse Indian Constitution, Union Budgets, Finance Acts, and RBI KYC with a <strong>9-Node Agentic RAG</strong>. 
           Featuring parallel vector retrieval, Autonomous Web Search Fallback, multi-version synthesis, and a strict hallucination guard.
         </p>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, alignItems: 'center', position: 'relative', zIndex: 2 }}>
           <a href={GOOGLE_AUTH_URL} style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             padding: '14px 32px', borderRadius: 'var(--radius-sm)',
@@ -387,14 +370,14 @@ export default function Landing() {
           }}>
             <GoogleLogo size={20} /> Get Started with Google
           </a>
-          <button id="hero-docs" onClick={() => setDocsOpen(true)} className="btn-ghost hero-docs-btn" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
+          <button id="hero-docs" onClick={() => setDocsOpen(true)} className="btn-ghost hero-docs-btn" style={{ fontSize: '0.95rem', padding: '13px 28px', borderRadius: 'var(--radius-sm)' }}>
             View Architecture Docs
           </button>
-          <a href="#architecture" className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px' }}>
+          <a href="#architecture" className="btn-ghost" style={{ fontSize: '0.95rem', padding: '13px 28px', borderRadius: 'var(--radius-sm)' }}>
             Inside System
           </a>
           <a href="/architecture.html" target="_blank" rel="noreferrer" className="arch-btn-wrapper" style={{ textDecoration: 'none' }}>
-            <span className="arch-btn-inner">
+            <span className="arch-btn-inner" style={{ borderRadius: 'var(--radius-sm)' }}>
               <span style={{ fontSize: '16px' }}>🏗️</span>
               System Blueprint
             </span>
@@ -402,17 +385,17 @@ export default function Landing() {
         </div>
 
         {/* Model Badges */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '28px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '60px', flexWrap: 'wrap', position: 'relative', zIndex: 2 }}>
           <a href="https://tavily.com" target="_blank" rel="noreferrer" style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
             textDecoration: 'none', transition: 'transform 0.2s',
           }} onMouseOver={(e) => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}>
             <div style={{
               width: '52px', height: '52px', borderRadius: '14px',
-              background: '#111', border: '1px solid rgba(201, 168, 76, 0.3)',
+              background: '#0a0a0a', border: '1px solid var(--border)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '24px', transition: 'all 0.2s', boxShadow: '0 0 15px rgba(201, 168, 76, 0.15)'
-            }} onMouseOver={(e) => { e.currentTarget.style.borderColor='#c9a84c'; e.currentTarget.style.boxShadow='0 0 20px rgba(201, 168, 76, 0.3)' }} onMouseOut={(e) => { e.currentTarget.style.borderColor='rgba(201, 168, 76, 0.3)'; e.currentTarget.style.boxShadow='0 0 15px rgba(201, 168, 76, 0.15)' }}>
+              fontSize: '24px', transition: 'all 0.2s', boxShadow: '0 0 15px rgba(0,0,0,0.5)'
+            }} onMouseOver={(e) => { e.currentTarget.style.borderColor='var(--border-active)'; e.currentTarget.style.boxShadow='0 0 20px var(--accent-glow)' }} onMouseOut={(e) => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.boxShadow='0 0 15px rgba(0,0,0,0.5)' }}>
               🌐
             </div>
             <span style={{ color: 'var(--accent)', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px', fontWeight: 600 }}>Live Web Agent ›</span>
@@ -424,10 +407,10 @@ export default function Landing() {
           }} onMouseOver={(e) => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}>
             <div style={{
               width: '52px', height: '52px', borderRadius: '14px',
-              background: '#111', border: '1px solid #2a2a2a',
+              background: '#0a0a0a', border: '1px solid var(--border)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '24px', transition: 'border-color 0.2s',
-            }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#2a2a2a'}>
+            }} onMouseOver={(e) => e.currentTarget.style.borderColor='var(--border-active)'} onMouseOut={(e) => e.currentTarget.style.borderColor='var(--border)'}>
               🤗
             </div>
             <span style={{ color: '#888', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>Hugging Face ›</span>
@@ -439,10 +422,10 @@ export default function Landing() {
           }} onMouseOver={(e) => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}>
             <div style={{
               width: '52px', height: '52px', borderRadius: '14px',
-              background: '#111', border: '1px solid #2a2a2a',
+              background: '#0a0a0a', border: '1px solid var(--border)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '24px', transition: 'border-color 0.2s',
-            }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#2a2a2a'}>
+            }} onMouseOver={(e) => e.currentTarget.style.borderColor='var(--border-active)'} onMouseOut={(e) => e.currentTarget.style.borderColor='var(--border)'}>
               🖥️
             </div>
             <span style={{ color: '#888', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>LM Studio ›</span>
@@ -453,9 +436,9 @@ export default function Landing() {
       {/* ===== ANIMATED STATS STRIP ===== */}
       <section style={{
         padding: '60px 40px',
-        borderTop: '1px solid rgba(212, 165, 116, 0.1)',
-        borderBottom: '1px solid rgba(212, 165, 116, 0.1)',
-        background: 'linear-gradient(90deg, rgba(22,27,38,0.3) 0%, rgba(212,165,116,0.03) 50%, rgba(22,27,38,0.3) 100%)',
+        borderTop: '1px solid rgba(255,51,51, 0.1)',
+        borderBottom: '1px solid rgba(255,51,51, 0.1)',
+        background: 'linear-gradient(90deg, rgba(22,27,38,0.3) 0%, rgba(255,51,51,0.03) 50%, rgba(22,27,38,0.3) 100%)',
       }}>
         <div style={{
           maxWidth: 1040, margin: '0 auto', display: 'flex', flexWrap: 'wrap',
@@ -497,8 +480,8 @@ export default function Landing() {
           .marquee-wrapper {
               position: relative;
               background: var(--bg-primary);
-              border-top: 1px solid rgba(212, 165, 116, 0.05);
-              border-bottom: 1px solid rgba(212, 165, 116, 0.05);
+              border-top: 1px solid rgba(255,51,51, 0.05);
+              border-bottom: 1px solid rgba(255,51,51, 0.05);
               overflow: hidden;
           }
           .marquee-container {
@@ -657,10 +640,10 @@ export default function Landing() {
         <FadeIn delay={0}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--green)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'rgba(16,185,129,0.05)' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--accent)', border: '1px solid rgba(255,51,51,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'rgba(255,51,51,0.05)' }}>
               <FiGlobe size={12} /> Decoupled Architecture
             </span>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px' }}>Omnichannel <span style={{ color: 'var(--green)' }}>Deployment</span></h2>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px' }}>Omnichannel <span style={{ color: 'var(--accent)' }}>Deployment</span></h2>
             <p style={{ fontSize: '0.93rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>A single headless Agentic Brain serving users seamlessly across multiple interfaces.</p>
           </div>
           
@@ -692,14 +675,14 @@ export default function Landing() {
         <FadeIn delay={0}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--accent)', border: '1px solid rgba(212,165,116,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'var(--accent-glow)' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--accent)', border: '1px solid rgba(255,51,51,0.2)', borderRadius: '100px', marginBottom: '20px', background: 'var(--accent-glow)' }}>
               <span style={{ fontSize: '12px' }}>▶</span> Live Demo
             </span>
             <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px' }}>See It In <span style={{ color: 'var(--accent)' }}>Action</span></h2>
             <p style={{ fontSize: '0.93rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>Watch the AI parse legal and financial queries in real-time with streaming responses and source-grounded citations.</p>
           </div>
-          <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(212,165,116,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(212,165,116,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(212,165,116,0.3) 0%, transparent 100%)', zIndex: 2 }} />
+          <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(255,51,51,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(255,51,51,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(255,51,51,0.3) 0%, transparent 100%)', zIndex: 2 }} />
             <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', height: 0, borderRadius: '12px', overflow: 'hidden' }}>
               <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=bot_response_k79sbj" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', borderRadius: '12px', display: 'block' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="Live Bot Response Demo" />
             </div>
@@ -859,46 +842,46 @@ export default function Landing() {
       <section id="opensource" className="opensource-section" style={{ padding: '80px 40px', background: '#0a0a0a', borderTop: '1px solid #2a2a2a' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           
-          <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px' }}>qLoRA Fine-Tuned By Ambuj Kumar Tripathi</p>
+          <p style={{ color: 'var(--accent)', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px' }}>qLoRA Fine-Tuned By Ambuj Kumar Tripathi</p>
           <h2 style={{ color: '#ffffff', fontSize: '36px', fontWeight: '700', marginBottom: '8px' }}>Indian Legal LLM</h2>
-          <p style={{ color: '#a3a3a3', fontSize: '13px', marginBottom: '16px', letterSpacing: '1px' }}>Designed & Fine-tuned by <span style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</span> · invincibleambuj</p>
+          <p style={{ color: '#a3a3a3', fontSize: '13px', marginBottom: '16px', letterSpacing: '1px' }}>Designed & Fine-tuned by <span style={{ color: 'var(--accent)' }}>Ambuj Kumar Tripathi</span> · invincibleambuj</p>
           <p style={{ color: '#f3f4f6', fontSize: '15px', marginBottom: '48px', lineHeight: '1.6', maxWidth: '680px' }}>Fine-tuned a family of Llama 3 models (1B, 3B, and 8B) on 14,543 Indian Legal examples — IPC, CrPC & Constitution of India using 2x NVIDIA T4 GPUs. Open-source and highly optimized for consumer hardware.</p>
 
           <div className="opensource-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '32px' }}>
             
             <a href="https://huggingface.co/invincibleambuj" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='var(--accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span style={{ fontSize: '16px' }}>🤗</span>
-                  <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>Hugging Face</span>
+                  <span style={{ color: 'var(--accent)', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>Hugging Face</span>
                 </div>
                 <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Model Collection</h3>
                 <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Access all 1B, 3B, and 8B fine-tuned legal models directly.</p>
-                <span style={{ color: '#c9a84c', fontSize: '12px' }}>View on Hugging Face →</span>
+                <span style={{ color: 'var(--accent)', fontSize: '12px' }}>View on Hugging Face →</span>
               </div>
             </a>
 
             <a href="https://huggingface.co/invincibleambuj/Ambuj-Tripathi-Indian-Legal-Llama-GGUF" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='var(--accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span style={{ fontSize: '16px' }}>📦</span>
-                  <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>GGUF</span>
+                  <span style={{ color: 'var(--accent)', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>GGUF</span>
                 </div>
                 <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Run Locally</h3>
                 <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Download & run on CPU. No GPU needed. 807 MB.</p>
-                <span style={{ color: '#c9a84c', fontSize: '12px' }}>Download GGUF →</span>
+                <span style={{ color: 'var(--accent)', fontSize: '12px' }}>Download GGUF →</span>
               </div>
             </a>
 
             <a href="https://lmstudio.ai" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='#c9a84c'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
+              <div style={{ background: '#111', border: '1px solid #222', borderRadius: '12px', padding: '24px' }} onMouseOver={(e) => e.currentTarget.style.borderColor='var(--accent)'} onMouseOut={(e) => e.currentTarget.style.borderColor='#222'}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span style={{ fontSize: '16px' }}>🖥️</span>
-                  <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>LM Studio</span>
+                  <span style={{ color: 'var(--accent)', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase' }}>LM Studio</span>
                 </div>
                 <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Desktop App</h3>
                 <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.5' }}>Search & chat locally. No code required.</p>
-                <span style={{ color: '#c9a84c', fontSize: '12px' }}>Open in LM Studio →</span>
+                <span style={{ color: 'var(--accent)', fontSize: '12px' }}>Open in LM Studio →</span>
               </div>
             </a>
 
@@ -914,7 +897,7 @@ export default function Landing() {
             <TypewriterCodeBlock />
           </div>
 
-          <p style={{ color: '#aaa', fontSize: '12px', marginTop: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>Built with Llama 3.2 · Fine-tuned by <strong style={{ color: '#c9a84c' }}>Ambuj Kumar Tripathi</strong> · Llama 3.2 Community License</p>
+          <p style={{ color: '#aaa', fontSize: '12px', marginTop: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>Built with Llama 3.2 · Fine-tuned by <strong style={{ color: 'var(--accent)' }}>Ambuj Kumar Tripathi</strong> · Llama 3.2 Community License</p>
 
           <div style={{ marginTop: '60px', borderTop: '1px solid #1e1e1e', paddingTop: '40px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
@@ -930,28 +913,10 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ===== TRAINING PIPELINE VIDEO ===== */}
-      <section style={{ padding: '80px 40px', borderTop: '1px solid #2a2a2a', background: '#0a0a0a' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '100px', marginBottom: '20px', background: 'rgba(201,168,76,0.05)' }}>
-              <span style={{ fontSize: '12px' }}>▶</span> Training Process
-            </span>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '12px', color: '#fff' }}>Training <span style={{ color: '#c9a84c' }}>Pipeline</span></h2>
-            <p style={{ fontSize: '0.93rem', color: '#6B7280', maxWidth: '480px', margin: '0 auto', lineHeight: 1.6 }}>Watch the full qLoRA fine-tuning cycle — from training steps and loss convergence to GGUF quantization export.</p>
-          </div>
-          <div style={{ position: 'relative', borderRadius: '16px', border: '1px solid rgba(201,168,76,0.15)', background: 'linear-gradient(180deg, rgba(22,27,38,0.5) 0%, rgba(10,13,18,0.9) 100%)', padding: '6px', boxShadow: '0 0 60px rgba(201,168,76,0.06), 0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px', background: 'radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 100%)', zIndex: 2 }} />
-            <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', height: 0, borderRadius: '12px', overflow: 'hidden' }}>
-              <iframe src="https://player.cloudinary.com/embed/?cloud_name=dra6lzzb9&public_id=qlora_training_nsjd7g" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', borderRadius: '12px', display: 'block' }} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen frameBorder="0" title="qLoRA Fine-Tuning Training" />
-            </div>
-          </div>
-          <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.78rem', color: '#4B5563', letterSpacing: '0.5px' }}>qLoRA 4-bit training · Loss convergence · GGUF Q4_K_M quantization export</p>
-        </div>
-      </section>
+
       <section id="engineer" style={{
         padding: '80px 40px',
-        borderTop: '1px solid rgba(212, 165, 116, 0.1)',
+        borderTop: '1px solid rgba(255,51,51, 0.1)',
         textAlign: 'center',
         position: 'relative',
         background: '#0a0a0a',
@@ -963,7 +928,7 @@ export default function Landing() {
         <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{
             display: 'inline-block', padding: '6px 16px', borderRadius: 20,
-            background: 'var(--accent-glow)', border: '1px solid rgba(212,165,116,0.2)',
+            background: 'var(--accent-glow)', border: '1px solid rgba(255,51,51,0.2)',
             fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600,
             marginBottom: 20, letterSpacing: '1px', textTransform: 'uppercase',
           }}>
@@ -1037,15 +1002,18 @@ export default function Landing() {
       </section>
 
       {/* ══════════════════ FAT FOOTER ══════════════════ */}
-      <footer id="about" style={{ padding: '5rem 4rem 3rem 4rem', background: '#0a0a0a', borderTop: '1px solid rgba(212, 165, 116, 0.2)', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+      <footer id="about" style={{ padding: '5rem 4rem 3rem 4rem', background: '#0a0a0a', borderTop: '1px solid rgba(255,51,51, 0.2)', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: '3rem' }}>
               
               {/* Left Column: Logo & Copyright */}
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '300px', flex: 1.5, minWidth: '250px' }}>
                   <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
                           <span style={{ fontWeight: 700, fontSize: '1.4rem', color: '#fff', letterSpacing: '-0.5px' }}>FinancialParser<span style={{ color: 'var(--accent)' }}>AI</span></span>
                       </div>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem', letterSpacing: '0.5px' }}>
+                        Adaptive ReAct • LangGraph • LLMOps
+                      </p>
                       <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                           <a href="https://www.linkedin.com/in/ambuj-tripathi-042b4a118/" target="_blank" rel="noreferrer" style={{ color: '#a1a1aa', transition: 'color 0.2s' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='#a1a1aa'}><FaLinkedin size={22} /></a>
                           <a href="https://x.com/Ambuj_KTripathi" target="_blank" rel="noreferrer" style={{ color: '#a1a1aa', transition: 'color 0.2s' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='#a1a1aa'}><FaXTwitter size={22} /></a>
@@ -1059,8 +1027,9 @@ export default function Landing() {
                           <span style={{ color: 'var(--text-secondary)' }}>Version: <span style={{ color: '#fff' }}>v2.0</span></span>
                           <span style={{ color: 'var(--text-secondary)' }}>Deployment: <span style={{ color: '#fff' }}>Render / AWS</span></span>
                           <span style={{ color: 'var(--text-secondary)' }}>Last Updated: <span style={{ color: '#fff' }}>July 2026</span></span>
+                          <span style={{ color: 'var(--text-secondary)' }}>API Uptime: <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none' }} onMouseOver={e=>e.target.style.textDecoration='underline'} onMouseOut={e=>e.target.style.textDecoration='none'}>{uptimeData ? `${uptimeData.uptime} • ${uptimeData.latency}` : '--%'}</a></span>
                       </div>
-                      <p style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>&copy; {new Date().getFullYear()} Ambuj Kumar Tripathi.</p>
+                      <p style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>&copy; Designed & Engineered by Ambuj Kumar Tripathi</p>
                   </div>
               </div>
 
@@ -1110,7 +1079,7 @@ export default function Landing() {
       {/* ══════════════════ LEGAL MODALS ══════════════════ */}
       {legalModal && (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', backdropFilter: 'blur(5px)' }} onClick={() => setLegalModal(null)}>
-              <div className="legal-modal-container" style={{ background: '#0a0a0a', border: '1px solid rgba(212, 165, 116, 0.2)', borderRadius: '12px', padding: '0', width: '100%', maxWidth: '800px', maxHeight: '85vh', overflowY: 'auto', position: 'relative', color: '#e5e7eb', boxShadow: '0 20px 40px rgba(0,0,0,0.7)' }} onClick={(e) => e.stopPropagation()}>
+              <div className="legal-modal-container" style={{ background: '#0a0a0a', border: '1px solid rgba(255,51,51, 0.2)', borderRadius: '12px', padding: '0', width: '100%', maxWidth: '800px', maxHeight: '85vh', overflowY: 'auto', position: 'relative', color: '#e5e7eb', boxShadow: '0 20px 40px rgba(0,0,0,0.7)' }} onClick={(e) => e.stopPropagation()}>
                   
                   <div style={{ position: 'sticky', top: 0, right: 0, display: 'flex', justifyContent: 'flex-end', padding: '1rem', background: 'linear-gradient(to bottom, #0a0a0a 80%, transparent)', zIndex: 10 }}>
                       <button onClick={() => setLegalModal(null)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-muted)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }} onMouseOver={e=>{e.target.style.background='rgba(255,255,255,0.1)'; e.target.style.color='#fff'}} onMouseOut={e=>{e.target.style.background='rgba(255,255,255,0.05)'; e.target.style.color='var(--text-muted)'}}>
@@ -1189,7 +1158,7 @@ export default function Landing() {
         }
         @keyframes highlightBlink {
           0%, 100% { box-shadow: 0 0 0 0 transparent; }
-          20%, 60% { box-shadow: 0 0 0 8px rgba(212, 165, 116, 0.4); border-color: var(--accent); }
+          20%, 60% { box-shadow: 0 0 0 8px rgba(255,51,51, 0.4); border-color: var(--accent); }
         }
       `}</style>
       {/* ===== BACK TO TOP BUTTON ===== */}

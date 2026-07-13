@@ -7,7 +7,7 @@ import { useAuth } from './context/AuthContext'
    512MB RAM constraint: Pages load ONLY when navigated to.
    Vendor chunk (react/react-dom) is separated via vite.config.js.
    ============================================================ */
-const Landing = lazy(() => import('./pages/LandingPage/LandingPage'))
+const Landing = lazy(() => import('./pages/Landing'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Admin = lazy(() => import('./pages/Admin'))
 const AuthCallback = lazy(() => import('./pages/AuthCallback'))
