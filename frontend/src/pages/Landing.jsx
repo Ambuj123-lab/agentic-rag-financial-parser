@@ -1141,17 +1141,52 @@ export default function Landing() {
         .nav-link:hover { color: var(--text-primary); }
         .hamburger-btn { display: none !important; }
         
+        /* ═══ TABLET (max 768px) ═══ */
         @media (max-width: 768px) {
           nav { padding: 12px 16px !important; }
           .desktop-nav { display: none !important; }
           .hamburger-btn { display: block !important; }
+
+          /* Hero */
           section { padding-left: 16px !important; padding-right: 16px !important; }
-          h1 { font-size: 1.8rem !important; }
+          h1 { font-size: clamp(1.8rem, 6vw, 2.5rem) !important; line-height: 1.2 !important; }
+          h2 { font-size: 1.5rem !important; }
+
+          /* Grids → single column */
           div[style*='grid-template-columns: 1fr 1fr'] { grid-template-columns: 1fr !important; }
-          div[style*='repeat(auto-fit'] { grid-template-columns: 1fr 1fr !important; }
-        }
-        @media (max-width: 480px) {
           div[style*='repeat(auto-fit'] { grid-template-columns: 1fr !important; }
+          .opensource-grid { grid-template-columns: 1fr !important; }
+
+          /* Stats row */
+          div[style*='space-around'] { gap: 16px !important; }
+          div[style*='space-around'] > div > div:first-child { font-size: 1.8rem !important; }
+
+          /* Footer */
+          footer { padding: 2.5rem 1.2rem 2rem 1.2rem !important; }
+          footer > div { flex-direction: column !important; gap: 2rem !important; }
+
+          /* Top badge banner */
+          div[style*='inline-flex'][style*='gap: 16'] { flex-direction: column !important; gap: 8px !important; }
+          div[style*='width: 40px'][style*='height: 1px'] { display: none !important; }
+        }
+
+        /* ═══ SMALL PHONES (max 480px) ═══ */
+        @media (max-width: 480px) {
+          h1 { font-size: 1.6rem !important; letter-spacing: -0.5px !important; }
+          h2 { font-size: 1.3rem !important; }
+          section { padding-top: 48px !important; padding-bottom: 48px !important; }
+
+          /* Hero buttons stack */
+          div[style*='gap: 14'][style*='flex-wrap'] { flex-direction: column !important; width: 100% !important; }
+          div[style*='gap: 14'][style*='flex-wrap'] > a,
+          div[style*='gap: 14'][style*='flex-wrap'] > button { width: 100% !important; text-align: center !important; justify-content: center !important; }
+
+          /* Model badges row */
+          div[style*='gap: 16px'][style*='marginTop: 60px'] { gap: 12px !important; margin-top: 32px !important; }
+          div[style*='gap: 16px'][style*='marginTop: 60px'] > a > div:first-child { width: 40px !important; height: 40px !important; font-size: 18px !important; }
+
+          /* Stats */
+          div[style*='space-around'] { flex-direction: column !important; gap: 20px !important; }
         }
         .hero-docs-btn:target {
           animation: highlightBlink 2s ease-in-out;
