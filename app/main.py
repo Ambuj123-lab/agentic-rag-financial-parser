@@ -105,6 +105,54 @@ def health_check():
         "timestamp": datetime.now().isoformat()
     }
 
+# --- Uptime Robot Stats ---
+import httpx
+
+@app.get("/api/uptime", tags=["System"])
+async def get_uptime():
+    """Fetches Uptime Robot statistics using read-only API key."""
+    api_key = os.environ.get("UPTIME_ROBOT_API_KEY")
+    default_response = {"uptime": "--%", "latency": "--"}
+    
+    if not api_key:
+        return default_response
+        
+    url = "https://api.uptimerobot.com/v2/getMonitors"
+    payload = f"api_key={api_key}&format=json&custom_uptime_ratios=30&response_times=1"
+    headers = {
+        'cache-control': "no-cache",
+        'content-type': "application/x-www-form-urlencoded"
+    }
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, data=payload, headers=headers, timeout=10.0)
+            data = response.json()
+            
+            if data.get("stat") == "ok" and data.get("monitors"):
+                monitor = data["monitors"][0]
+                status = monitor.get("status")
+                
+                # UptimeRobot status: 2 is UP, 8 is SEEMS DOWN, 9 is DOWN
+                if status != 2:
+                    return default_response
+                
+                uptime_ratio = float(monitor.get("custom_uptime_ratio", "0"))
+                response_times = monitor.get("response_times", [])
+                
+                latency = "--"
+                if response_times:
+                    latency = f"{response_times[0].get('value', 0)}ms"
+                    
+                return {
+                    "uptime": f"{uptime_ratio:.2f}%",
+                    "latency": latency
+                }
+    except Exception as e:
+        logger.error(f"Error fetching Uptime Robot data: {e}")
+        
+    return default_response
+
 # --- Root ---
 @app.get("/")
 async def root():

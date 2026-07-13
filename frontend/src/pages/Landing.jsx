@@ -142,6 +142,22 @@ export default function Landing() {
       return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+      fetch('/api/uptime')
+          .then(res => res.json())
+          .then(data => {
+              if (data && data.uptime) {
+                  setUptimeData(data)
+              } else {
+                  setUptimeData({ uptime: '--%', latency: '--' })
+              }
+          })
+          .catch(err => {
+              console.error("Failed to fetch uptime:", err)
+              setUptimeData({ uptime: '--%', latency: '--' })
+          })
+  }, [])
+
   if (user) {
     navigate('/chat', { replace: true })
     return null
