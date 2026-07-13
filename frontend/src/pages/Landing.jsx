@@ -1043,7 +1043,7 @@ export default function Landing() {
                       </div>
 
                       {/* QR Code Section */}
-                      <div className="desktop-qr-code" style={{ marginTop: '2.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', display: 'inline-block', transition: 'border-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.borderColor='rgba(255,51,51,0.4)'} onMouseOut={(e) => e.currentTarget.style.borderColor='rgba(255,255,255,0.08)'}>
+                      <div className="desktop-qr-code" style={{ marginTop: '2.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', display: 'inline-block', maxWidth: '100%', transition: 'border-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.borderColor='rgba(255,51,51,0.4)'} onMouseOut={(e) => e.currentTarget.style.borderColor='rgba(255,255,255,0.08)'}>
                           <h4 style={{ fontSize: '0.85rem', color: '#fff', marginBottom: '12px', fontWeight: 600, letterSpacing: '0.5px' }}>Connect with the Architect</h4>
                           <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none' }}>
                               <img src="/qr-code-micro-portfolio.png" alt="Portfolio QR Code" style={{ width: '70px', height: '70px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: '#fff', padding: '2px' }} />
