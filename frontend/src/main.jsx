@@ -14,3 +14,17 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 )
+
+// Smoothly remove preloader after React mounts
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    // Let the animation run for a bit before fading out
+    setTimeout(() => {
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      setTimeout(() => preloader.remove(), 500);
+    }, 800);
+  }
+});
+

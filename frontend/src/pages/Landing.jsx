@@ -380,11 +380,15 @@ export default function Landing() {
           <a href={GOOGLE_AUTH_URL} style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             padding: '14px 32px', borderRadius: 'var(--radius-sm)',
-            background: '#fff', color: '#333', fontWeight: 500, fontSize: '1rem',
-            border: '1px solid rgba(0,0,0,0.1)',
-            transition: 'box-shadow 0.2s',
+            background: '#0a0a0a', color: '#ffffff', fontWeight: 500, fontSize: '1rem',
+            border: '1px solid rgba(255, 51, 51, 0.3)',
+            transition: 'all 0.3s ease',
             textDecoration: 'none',
-          }}>
+            boxShadow: '0 0 20px rgba(255, 51, 51, 0.08)',
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 51, 51, 0.6)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 51, 51, 0.15)'; e.currentTarget.style.background = '#111'; }}
+          onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 51, 51, 0.3)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 51, 51, 0.08)'; e.currentTarget.style.background = '#0a0a0a'; }}
+          >
             <GoogleLogo size={20} /> Get Started with Google
           </a>
           <button id="hero-docs" onClick={() => setDocsOpen(true)} className="btn-ghost hero-docs-btn" style={{ fontSize: '0.95rem', padding: '13px 28px', borderRadius: 'var(--radius-sm)' }}>
@@ -1037,6 +1041,18 @@ export default function Landing() {
                           <a href="https://github.com/Ambuj123-lab" target="_blank" rel="noreferrer" style={{ color: '#a1a1aa', transition: 'color 0.2s' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='#a1a1aa'}><FaGithub size={22} /></a>
                           <a href="https://medium.com/@ambuj_tripathi" target="_blank" rel="noreferrer" style={{ color: '#a1a1aa', transition: 'color 0.2s' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='#a1a1aa'}><FaMedium size={22} /></a>
                       </div>
+
+                      {/* QR Code Section */}
+                      <div className="desktop-qr-code" style={{ marginTop: '2.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', display: 'inline-block', transition: 'border-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.borderColor='rgba(255,51,51,0.4)'} onMouseOut={(e) => e.currentTarget.style.borderColor='rgba(255,255,255,0.08)'}>
+                          <h4 style={{ fontSize: '0.85rem', color: '#fff', marginBottom: '12px', fontWeight: 600, letterSpacing: '0.5px' }}>Connect with the Architect</h4>
+                          <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none' }}>
+                              <img src="/qr-code-micro-portfolio.png" alt="Portfolio QR Code" style={{ width: '70px', height: '70px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: '#fff', padding: '2px' }} />
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                                  Scan or click to view my <br/>
+                                  <strong style={{ color: 'var(--accent)' }}>Micro-Portfolio</strong> & Resume.
+                              </div>
+                          </a>
+                      </div>
                   </div>
 
                   <div style={{ marginTop: 'auto' }}>
@@ -1046,7 +1062,8 @@ export default function Landing() {
                           <span style={{ color: 'var(--text-secondary)' }}>Last Updated: <span style={{ color: '#fff' }}>July 2026</span></span>
                           <span style={{ color: 'var(--text-secondary)' }}>API Uptime: <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none' }} onMouseOver={e=>e.target.style.textDecoration='underline'} onMouseOut={e=>e.target.style.textDecoration='none'}>{uptimeData ? `${uptimeData.uptime} • ${uptimeData.latency}` : '--%'}</a></span>
                       </div>
-                      <p style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>&copy; Designed & Engineered by Ambuj Kumar Tripathi</p>
+                      <p style={{ marginBottom: '0.3rem', fontSize: '0.85rem' }}>&copy; 2026 Ambuj Kumar Tripathi</p>
+                      <p style={{ marginBottom: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', letterSpacing: '0.3px' }}>Designed & Engineered in India 🇮🇳</p>
                   </div>
               </div>
 
@@ -1160,6 +1177,7 @@ export default function Landing() {
         
         /* ═══ TABLET (max 768px) ═══ */
         @media (max-width: 768px) {
+          .desktop-qr-code { display: none !important; }
           nav { padding: 12px 16px !important; }
           .desktop-nav { display: none !important; }
           .hamburger-btn { display: block !important; }
