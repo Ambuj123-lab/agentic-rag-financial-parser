@@ -343,7 +343,8 @@ export default function Landing() {
           <div style={{ 
             padding: '6px 20px', borderRadius: '30px', 
             background: 'rgba(255, 51, 51, 0.08)', 
-            border: '1px solid rgba(255, 51, 51, 0.15)',
+            border: '1px solid rgba(255, 51, 51, 0.3)',
+            boxShadow: '0 0 20px rgba(255, 51, 51, 0.2), inset 0 0 10px rgba(255, 51, 51, 0.1)',
             fontSize: '0.8rem', color: '#e0e0e0', fontWeight: 500, letterSpacing: '0.5px'
           }}>
             <FiZap size={12} style={{ display: 'inline', marginRight: '6px', color: 'var(--accent)' }} />
