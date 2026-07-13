@@ -195,5 +195,11 @@ if os.path.exists(frontend_dist):
     async def serve_frontend(full_path: str):
         if full_path.startswith("api/") or full_path.startswith("auth/") or full_path.startswith("health") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
             return Response(status_code=404)
+            
+        file_path = os.path.join(frontend_dist, full_path)
+        if os.path.isfile(file_path):
+            from fastapi.responses import FileResponse
+            return FileResponse(file_path)
+            
         with open(os.path.join(frontend_dist, "index.html"), "rb") as f:
             return Response(content=f.read(), media_type="text/html")
