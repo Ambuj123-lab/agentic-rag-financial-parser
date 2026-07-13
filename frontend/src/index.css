@@ -41,6 +41,10 @@
   --radius: 12px;
   --radius-sm: 8px;
   --radius-lg: 20px;
+  
+  /* Subtle Background Grid */
+  --bg-grid: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
 /* --- Reset & Base --- */
@@ -57,7 +61,10 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background: var(--bg-primary);
+  background-color: var(--bg-primary);
+  background-image: var(--bg-grid);
+  background-size: 30px 30px;
+  background-position: center center;
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
