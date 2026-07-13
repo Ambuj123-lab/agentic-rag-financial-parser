@@ -1177,7 +1177,6 @@ export default function Landing() {
         
         /* ═══ TABLET (max 768px) ═══ */
         @media (max-width: 768px) {
-          .desktop-qr-code { display: none !important; }
           nav { padding: 12px 16px !important; }
           .desktop-nav { display: none !important; }
           .hamburger-btn { display: block !important; }
