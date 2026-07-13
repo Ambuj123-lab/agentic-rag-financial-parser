@@ -111,7 +111,7 @@ import httpx
 @app.get("/api/uptime", tags=["System"])
 async def get_uptime():
     """Fetches Uptime Robot statistics using read-only API key."""
-    api_key = os.environ.get("UPTIME_ROBOT_API_KEY")
+    api_key = os.environ.get("UPTIMEROBOT_API_KEY") or os.environ.get("UPTIME_ROBOT_API_KEY")
     default_response = {"uptime": "--%", "latency": "--"}
     
     if not api_key:
