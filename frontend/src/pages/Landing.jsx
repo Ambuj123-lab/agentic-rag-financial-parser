@@ -1042,17 +1042,6 @@ export default function Landing() {
                           <a href="https://medium.com/@ambuj_tripathi" target="_blank" rel="noreferrer" style={{ color: '#a1a1aa', transition: 'color 0.2s' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='#a1a1aa'}><FaMedium size={22} /></a>
                       </div>
 
-                      {/* QR Code Section */}
-                      <div className="desktop-qr-code" style={{ marginTop: '2.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', display: 'inline-block', maxWidth: '100%', transition: 'border-color 0.3s' }} onMouseOver={(e) => e.currentTarget.style.borderColor='rgba(255,51,51,0.4)'} onMouseOut={(e) => e.currentTarget.style.borderColor='rgba(255,255,255,0.08)'}>
-                          <h4 style={{ fontSize: '0.85rem', color: '#fff', marginBottom: '12px', fontWeight: 600, letterSpacing: '0.5px' }}>Connect with the Architect</h4>
-                          <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none' }}>
-                              <img src="/qr-code-micro-portfolio.png" alt="Portfolio QR Code" style={{ width: '70px', height: '70px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: '#fff', padding: '2px' }} />
-                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                                  Scan or click to view my <br/>
-                                  <strong style={{ color: 'var(--accent)' }}>Micro-Portfolio</strong> & Resume.
-                              </div>
-                          </a>
-                      </div>
                   </div>
 
                   <div style={{ marginTop: 'auto' }}>
@@ -1107,6 +1096,17 @@ export default function Landing() {
                       <a href="#legal" onClick={(e) => { e.preventDefault(); setLegalModal('TOS'); }} style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e=>e.target.style.color='#fff'} onMouseOut={e=>e.target.style.color='var(--text-muted)'}>Terms of Service</a>
                   </div>
               </div>
+          </div>
+
+          {/* QR Code Strip */}
+          <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'center' }}>
+              <a href="https://ambuj-ai-portfolio.vercel.app" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 24px', transition: 'border-color 0.3s, transform 0.2s', maxWidth: '380px', width: '100%' }} onMouseOver={(e) => { e.currentTarget.style.borderColor='rgba(255,51,51,0.4)'; e.currentTarget.style.transform='translateY(-2px)'; }} onMouseOut={(e) => { e.currentTarget.style.borderColor='rgba(255,255,255,0.08)'; e.currentTarget.style.transform='translateY(0)'; }}>
+                  <img src="/qr-code-micro-portfolio.png" alt="Portfolio QR Code" style={{ width: '64px', height: '64px', minWidth: '64px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)', background: '#fff', padding: '2px' }} />
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                      Scan to explore my<br/>
+                      <strong style={{ color: 'var(--accent)', fontSize: '0.85rem' }}>AI Portfolio & Resume</strong>
+                  </div>
+              </a>
           </div>
       </footer>
 
