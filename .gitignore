@@ -45,6 +45,7 @@ Thumbs.db
 # Test Scripts & Logs
 *.txt
 !requirements.txt
+!frontend/public/robots.txt
 analyze_pdfs.py
 check_const.py
 full_audit.py
