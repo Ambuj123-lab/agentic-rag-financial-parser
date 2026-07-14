@@ -52,70 +52,16 @@ full_audit.py
 run_sync.py
 scan_const.py
 test_dry_run.py
-# Environments
-.env
-.env.local
-.env.*.local
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
-node_modules/
-data/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-dist/
-build/
-*.egg-info/
-.pytest_cache/
-.coverage
-htmlcov/
-*.log
-
-# Node & Frontend
-frontend/node_modules/
-frontend/dist/
-frontend/.DS_Store
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# OS Files
-.DS_Store
-Thumbs.db
-
-# IDEs
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Test Scripts & Logs
-*.txt
-!requirements.txt
-analyze_pdfs.py
-check_const.py
-full_audit.py
-run_sync.py
-scan_const.py
-test_dry_run.py
 test_query.py
 test_stream.py
 verify_parse.py
 verify_quality.py
-c h e c k _ v e c t o r s . p y  
- 
- 
+check_vectors.py
 models.json
-sync_only_constitution.py  
-docs/
+sync_only_constitution.py
 sync_one_file.py
 local_dry_run.py
-test_retrieval.pyingest_portfolio.py
+test_retrieval.py
+ingest_portfolio.py
 cloudflared.exe
+docs/
