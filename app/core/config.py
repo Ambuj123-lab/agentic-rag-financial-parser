@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     COHERE_API_KEY: Optional[str] = None
     GEMINI_API_KEY: str = ""
     TAVILY_API_KEY: str = ""
-    RAPIDAPI_KEY: str = "3977787667msh27b2149288982f0p150e95jsnec99abfdfb90"
+    RAPIDAPI_KEY: str = ""
     
     # Vector DB (Pinecone)
     PINECONE_API_KEY: str
