@@ -35,7 +35,6 @@ def background_email_task():
 
 @router.get("/send-daily-fact")
 async def trigger_daily_email(
-    background_tasks: BackgroundTasks,
     token: str = Query(..., description="Secret token to trigger the cron job")
 ):
     """
@@ -47,8 +46,25 @@ async def trigger_daily_email(
     if token != secret_token:
         raise HTTPException(status_code=403, detail="Unauthorized cron trigger")
         
-    # Run the heavy LLM/Tavily search and email sending in the background
-    # so the cron-job.org HTTP request doesn't timeout.
-    background_tasks.add_task(background_email_task)
-    
-    return {"status": "success", "message": "Daily AI Insight generation started in the background."}
+    try:
+        print("Starting synchronous email task...")
+        insight_data = fetch_daily_insight()
+        
+        if not insight_data:
+            return {"status": "error", "message": "Failed to fetch insight data from LLM or Web."}
+            
+        success = send_daily_insight_email(
+            to_emails=SUBSCRIBERS,
+            subject=insight_data["insight_title"],
+            insight_title=insight_data["insight_title"],
+            insight_explanation=insight_data["insight_explanation"],
+            real_life_scenario=insight_data["real_life_scenario"],
+            sources=insight_data["sources"]
+        )
+        
+        if success:
+            return {"status": "success", "message": "Successfully generated and sent daily insight!"}
+        else:
+            return {"status": "error", "message": "Failed to send email via SMTP."}
+    except Exception as e:
+        return {"status": "error", "message": f"Server error: {str(e)}"}
