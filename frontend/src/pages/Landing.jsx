@@ -373,7 +373,7 @@ export default function Landing() {
           position: 'relative', zIndex: 2
         }}>
           Parse Indian Constitution, Union Budgets, Finance Acts, and RBI KYC with a <strong>10-Node Agentic RAG</strong>. 
-          Featuring parallel vector retrieval, LLM Tool Calling (Live APIs), Autonomous Web Search Fallback, and a strict hallucination guard.
+          Featuring parallel vector retrieval, LLM Tool Calling (Live APIs), Autonomous Web Search Fallback, and an <strong>Event-Driven CRON Agent</strong> for daily AI newsletters.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, alignItems: 'center', position: 'relative', zIndex: 2 }}>
