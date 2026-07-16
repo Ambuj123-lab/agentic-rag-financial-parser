@@ -65,3 +65,5 @@ test_retrieval.py
 ingest_portfolio.py
 cloudflared.exe
 docs/
+
+test_stock_api.py
