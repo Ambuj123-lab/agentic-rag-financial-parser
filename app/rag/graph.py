@@ -1156,6 +1156,7 @@ RULES:
 4. Do NOT say "Based on the web search" or "According to the internet". Just provide the answer.
 5. If the context does not contain the answer, say you couldn't find a reliable answer online.
 6. IF you are on WhatsApp, start your answer exactly with: "*(Live Web Search) 🌐*\n\n" so the user knows you fetched real-time data.
+7. **Data Formatting (CRITICAL):** Whenever you are comparing two or more entities OR providing statistical/financial breakdowns (like budget allocations), you MUST ALWAYS format the data using a Markdown Table. This is required for the frontend visual renderer to work.
 """
     elif state.get("is_stock_search"):
         system_prompt = f"""You are **Agentic Financial Parser AI** — built by **Ambuj Kumar Tripathi**.

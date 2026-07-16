@@ -106,14 +106,16 @@ function extractComparisonData(text) {
   if (!text) return null
 
   // Look for markdown table patterns with numeric data
-  const tableRegex = /\|(.+)\|\n\|[-:\s|]+\|\n((?:\|.+\|\n?)+)/g
+  const tableRegex = /\|(.+)\|\r?\n\|[-:\s|]+\|\r?\n((?:\|.+\|\r?\n?)+)/g
   const match = tableRegex.exec(text)
   if (!match) return null
 
   const headers = match[1].split('|').map(h => h.trim()).filter(Boolean)
-  const rows = match[2].trim().split('\n').map(row =>
-    row.split('|').map(c => c.trim()).filter(Boolean)
-  )
+  const rows = match[2].trim().split(/\r?\n/).flatMap(row => {
+    const r = row.trim()
+    if (!r) return []
+    return [r.split('|').map(c => c.trim()).filter(Boolean)]
+  })
 
   // Need at least 2 columns and 3 rows for a meaningful comparison
   if (headers.length < 2 || rows.length < 3) return null
