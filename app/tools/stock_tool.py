@@ -15,7 +15,7 @@ def get_stock_price(ticker: str) -> str:
     Args:
         ticker: The Yahoo Finance ticker symbol. For Indian stocks append .NS
                 (e.g. HDFCBANK.NS, TCS.NS, ZOMATO.NS). For US stocks use
-                standard tickers (e.g. AAPL, MSFT). For Nifty 50 use ^NSEI.
+                standard tickers (e.g. AAPL, MSFT). For Nifty 50 use ^NSEI. For Sensex use ^BSESN.
     """
     try:
         ticker = ticker.strip().upper()
