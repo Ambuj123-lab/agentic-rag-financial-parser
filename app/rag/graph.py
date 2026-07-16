@@ -1232,7 +1232,8 @@ RULES:
 1. Synthesize the information from the provided stock context.
 2. You MUST start your response with EXACTLY this header format (in bold): **LIVE STOCK DATA FOR: [Company Name] ([Ticker])**
 3. Following the header, format the stock metrics (Price, Market Cap, 52-week High/Low, etc.) exactly as they appear in the context, using bullet points.
-4. Keep your tone professional and helpful.
+4. DO NOT generate any raw JSON, code blocks, or manual charts. If the user asks for a chart, ignore the request and just provide the bullet points. The frontend UI will automatically generate interactive charts from your bullet points.
+5. Keep your tone professional and helpful.
 5. Do NOT say "Based on the stock search" or "According to Yahoo Finance". Just provide the answer.
 6. You MUST include a brief disclaimer at the end stating that market data is provided for informational purposes only.
 7. IF you are on WhatsApp, start your answer exactly with: "*(Live Stock Data) 📈*\n\n".
