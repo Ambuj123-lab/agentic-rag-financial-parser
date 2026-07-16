@@ -36,6 +36,7 @@ import pybreaker
 
 from app.core.config import get_settings
 from app.db.pinecone_client import get_index
+from app.tools.stock_tool import fetch_stock_data
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -317,7 +318,7 @@ class AgentState(TypedDict):
     chat_history: List[Dict[str, str]]
 
     # Classification
-    query_type: str  # "abusive" | "greeting" | "vague" | "rag"
+    query_type: str  # "abusive" | "greeting" | "vague" | "rag" | "stock" | "web_search"
     is_out_of_scope: bool
     search_scope: str  # "system_only" | "user_only" | "hybrid"
     search_intents: list[dict]  # Will hold {"search_query": "...", "doc_type": "...", "year": "..."}
@@ -343,6 +344,7 @@ class AgentState(TypedDict):
     # Control
     is_fallback: bool
     is_web_search: bool
+    is_stock_search: bool
     is_web_search_prompt: bool
     error: Optional[str]
     pii_detected: bool
@@ -455,8 +457,8 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
   "search_scope": "system_only" | "user_only" | "hybrid" | "portfolio_only",
   "search_intents": [
     {
-      "search_query": "specific context rich search query",
-      "doc_type": "act" | "rules" | "circular" | "scheme" | "budget" | "constitution" | "polity" | "bill" | "memorandum" | "reference" | "finance_act" | "any",
+      "search_query": "specific context rich search query or TICKER SYMBOL",
+      "doc_type": "act" | "rules" | "circular" | "scheme" | "budget" | "constitution" | "polity" | "bill" | "memorandum" | "reference" | "finance_act" | "stock" | "any",
       "year": "1952" | "1961" | "1962" | "1995" | "2022" | "2024" | "2025" | "2026" | "any",
       "article_number": "Extract exact article number if user asks for it (e.g., '19', '21A', '370'), else null"
     }
@@ -465,6 +467,7 @@ Analyze the user's query (and any provided Recent Conversation Context) and resp
 
 Intent Rules:
 - If query is about unrelated topics like cooking, sports, entertainment, technology, general knowledge, or non-Indian legal/financial systems -> set is_out_of_scope: true, and set is_web_search: false.
+- If query asks for LIVE stock market prices, market cap, or financial metrics of specific companies (e.g., "Reliance share price", "TCS market cap") -> set query_type: "stock", is_out_of_scope: false, is_web_search: false. Put the company name or ticker in "search_query" and set doc_type to "stock".
 - If query is asking for REAL-TIME data, current market rates (like RBI Repo Rate, stock prices), or recent financial/legal news -> set is_out_of_scope: false, and set is_web_search: true.
 - If query is general conversational chit-chat, small talk, or asking about your well-being, or who you are (e.g. "how are you", "are you ok", "who are you", "what are you here for") -> set is_greeting: true, is_out_of_scope: false, is_web_search: false, and search_scope: "system_only".
 - If query is related to STATIC Indian Law, Constitution, Finance, Tax, Budget, or EPF -> set is_web_search: false, and is_out_of_scope: false.
@@ -488,6 +491,9 @@ Few-Shot Examples:
 
 Query: "What is the tax slab?"
 {"reasoning": "User asked about tax slab without specifying year. Slabs are in Income Tax Acts. Searching both old (1961) and new (2025) Acts for comparison.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "income tax slab rates", "doc_type": "act", "year": "1961", "article_number": null}, {"search_query": "income tax slab rates new regime", "doc_type": "act", "year": "2025", "article_number": null}]}
+
+Query: "What is the share price of Reliance?"
+{"reasoning": "User is asking for live stock market data for Reliance Industries.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "RELIANCE.NS", "doc_type": "stock", "year": "any", "article_number": null}]}
 
 Query: "How to file ITR?"
 {"reasoning": "Procedural question about filing process. This is in IT Rules, checking latest 2026 rules first.", "is_vague": false, "clarifying_question": null, "search_scope": "system_only", "search_intents": [{"search_query": "procedure to file income tax return ITR", "doc_type": "rules", "year": "2026", "article_number": null}]}
@@ -535,6 +541,19 @@ Default to "system_only" if unsure."""
         
         if is_greeting_llm:
             return {"query_type": "greeting", "search_scope": "system_only"}
+            
+        # Check if the LLM explicitly classified this as a stock query based on the new intent rules
+        if result.get("query_type") == "stock" or any(i.get("doc_type") == "stock" for i in search_intents):
+            return {
+                "query_type": "stock",
+                "is_vague": False,
+                "is_out_of_scope": False,
+                "needs_cross_question": False,
+                "search_scope": "system_only",
+                "search_intents": search_intents,
+                "reasoning": routing_reason,
+                "is_web_search": False
+            }
 
         if is_out_of_scope:
             return {
@@ -719,6 +738,49 @@ def web_search_node(state: AgentState) -> dict:
             "latency": round(time.time() - start, 2),
             "is_fallback": True,
             "error": f"web_search_failed: {str(e)}"
+        }
+
+
+# ========== NODE 4.7: STOCK TOOL ==========
+
+def stock_tool_node(state: AgentState) -> dict:
+    """Fetches real-time stock data using yfinance without relying on web search."""
+    logger.info("📈 [4.7/10] Stock Tool: Fetching live market data")
+    start = time.time()
+    
+    intents = state.get("search_intents", [])
+    query = intents[0]["search_query"] if intents else state.get("user_query", "")
+    
+    try:
+        # fetch_stock_data will handle appending .NS if needed
+        stock_text = fetch_stock_data(query)
+        
+        chunks = [{
+            "score": 1.0,
+            "text": stock_text,
+            "parent_text": stock_text,
+            "source_file": "Yahoo Finance (Real-Time)",
+            "page": "Live Market Data",
+            "chunk_type": "stock_data",
+            "is_temporary": False
+        }]
+        
+        return {
+            "retrieved_chunks": chunks,
+            "confidence": 100.0,
+            "latency": round(time.time() - start, 2),
+            "is_fallback": False,
+            "is_stock_search": True,
+            "error": None
+        }
+    except Exception as e:
+        logger.error(f"Stock tool failed: {e}")
+        return {
+            "retrieved_chunks": [],
+            "confidence": 0,
+            "latency": round(time.time() - start, 2),
+            "is_fallback": True,
+            "error": f"stock_tool_failed: {str(e)}"
         }
 
 
@@ -1024,6 +1086,22 @@ RULES:
 4. Do NOT say "Based on the web search" or "According to the internet". Just provide the answer.
 5. If the context does not contain the answer, say you couldn't find a reliable answer online.
 6. IF you are on WhatsApp, start your answer exactly with: "*(Live Web Search) 🌐*\n\n" so the user knows you fetched real-time data.
+"""
+    elif state.get("is_stock_search"):
+        system_prompt = f"""You are **Agentic Financial Parser AI** — built by **Ambuj Kumar Tripathi**.
+You are currently helping **{user_name}**.
+Today's date: **{current_date}**
+
+You have performed a live Stock Market query to fetch real-time financial metrics for the user.
+Using the provided Stock Data Context, answer the user's question clearly and accurately.
+
+RULES:
+1. Synthesize the information from the provided stock context.
+2. Format the stock metrics (Price, Market Cap, 52-week High/Low, etc.) nicely using Markdown tables or bullet points for readability.
+3. Keep your tone professional and helpful.
+4. Do NOT say "Based on the stock search" or "According to Yahoo Finance". Just provide the answer.
+5. You MUST include a brief disclaimer at the end stating that market data is provided for informational purposes only.
+6. IF you are on WhatsApp, start your answer exactly with: "*(Live Stock Data) 📈*\n\n".
 """
     else:
         system_prompt = f"""CRITICAL BANNED PHRASES — NEVER USE THESE UNDER ANY CIRCUMSTANCE:
@@ -1367,6 +1445,8 @@ def route_after_classify(state: AgentState) -> str:
         return "cross_question"
     elif qt == "web_search":
         return "web_search"
+    elif qt == "stock":
+        return "stock_tool"
     return "retriever"
 
 def route_after_hallu_guard(state: AgentState) -> str:
@@ -1406,6 +1486,7 @@ def build_rag_graph():
     graph.add_node("cross_question", cross_question_node)
     graph.add_node("retriever", retriever_node)
     graph.add_node("web_search", web_search_node)
+    graph.add_node("stock_tool", stock_tool_node)
     graph.add_node("generator", generator_node)
     graph.add_node("hallucination_guard", hallucination_guard_node)
     graph.add_node("post_process", post_process_node)
@@ -1420,6 +1501,7 @@ def build_rag_graph():
         "greet": "greet",
         "cross_question": "cross_question",
         "web_search": "web_search",
+        "stock_tool": "stock_tool",
         "retriever": "retriever"
     })
 
@@ -1438,6 +1520,11 @@ def build_rag_graph():
         
     # Web Search → Generator (with fallback check)
     graph.add_conditional_edges("web_search",
+        lambda s: "fallback" if s.get("is_fallback") else "generator",
+        {"fallback": "fallback", "generator": "generator"})
+        
+    # Stock Tool → Generator (with fallback check)
+    graph.add_conditional_edges("stock_tool",
         lambda s: "fallback" if s.get("is_fallback") else "generator",
         {"fallback": "fallback", "generator": "generator"})
 
@@ -1503,6 +1590,7 @@ async def run_query(query: str, user_email: str, user_name: str = "User", chat_h
         "is_grounded": True,
         "is_fallback": False,
         "is_web_search": False,
+        "is_stock_search": False,
         "is_web_search_prompt": False,
         "error": None,
         "pii_detected": pii_detected,
