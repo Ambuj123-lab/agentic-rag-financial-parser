@@ -14,10 +14,7 @@ def fetch_stock_data(ticker_symbol: str) -> str:
         # If the LLM passed a full sentence, try to extract the company name.
         # Simple heuristic: remove common stopwords and pick the last/most prominent word.
         # Or even simpler, just ask the LLM to provide ONLY the ticker, but as a fallback here:
-        if " " in ticker_symbol:
-            words = [w for w in ticker_symbol.replace("?", "").split() if w.lower() not in 
-                     ["what", "is", "the", "current", "share", "price", "of", "market", "cap", "for", "tell", "me", "show"]]
-            ticker_symbol = words[-1] if words else ticker_symbol
+        
 
         original_ticker = ticker_symbol.upper().strip()
         if original_ticker in ['NIFTY 50', 'NIFTY50', 'NIFTY']: original_ticker = '^NSEI'
