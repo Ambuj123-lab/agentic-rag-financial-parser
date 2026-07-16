@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Query, HTTPException
 from app.rag.daily_insight_agent import fetch_daily_insight
 from app.utils.email_sender import send_daily_insight_email
 import os
