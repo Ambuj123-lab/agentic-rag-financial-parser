@@ -28,7 +28,7 @@ def fetch_daily_insight():
     ]
     selected_category = random.choice(categories)
     
-    search_query = f"lesser known but highly useful problem solving law about {selected_category} for common citizens 2026"
+    search_query = f"most essential and basic fundamental law or right about {selected_category} that every common citizen of India must know 2026"
 
     # Step 2: Fetch Data from Tavily
     print(f"Searching Tavily for: {search_query}")
