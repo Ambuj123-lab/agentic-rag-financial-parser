@@ -438,7 +438,7 @@ def classifier_node(state: AgentState) -> dict:
         is_clarification_prompt = "clarification required" in prev_bot_msg or "could you please provide a bit more detail" in prev_bot_msg
         if is_clarification_prompt:
             if any(user_reply.startswith(nr) or user_reply == nr for nr in negative_replies):
-                logger.info("🚫 User refused clarification. Aborting query.")
+                logger.info("🚫 User refused clarification. Graceful exit.")
                 return {
                     "query_type": "rag",
                     "is_vague": False,
@@ -449,6 +449,51 @@ def classifier_node(state: AgentState) -> dict:
                     "reasoning": "User refused to provide clarification.",
                     "is_web_search": False
                 }
+            elif any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies) and len(user_reply.split()) < 4:
+                # User said YES to clarification — find the original real query from history
+                logger.info("✅ User agreed to clarify. Forwarding original query to RAG.")
+                original_query = query
+                for msg in reversed(history):
+                    content = msg.get("content", "").strip()
+                    if msg.get("role") == "user" and content.lower() not in positive_replies and content.lower() not in negative_replies:
+                        original_query = content
+                        break
+                # Fall through to normal classification with the original query
+                query = original_query
+                logger.info(f"🔄 Re-routing original query to RAG: {query}")
+
+        # OOS / Web Search HITL: User said YES → proceed with web search, NO → graceful cancel
+        is_oos_prompt = "out of scope" in prev_bot_msg.lower() or "low confidence alert" in prev_bot_msg.lower()
+        if is_oos_prompt and not is_web_prompt:
+            if any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies):
+                logger.info("🌐 User approved OOS web search via HITL.")
+                original_query = query
+                for msg in reversed(history):
+                    content = msg.get("content", "").strip()
+                    if msg.get("role") == "user" and content.lower() not in positive_replies and content.lower() not in negative_replies:
+                        original_query = content
+                        break
+                return {
+                    "query_type": "web_search",
+                    "is_vague": False,
+                    "is_out_of_scope": False,
+                    "needs_cross_question": False,
+                    "search_scope": "system_only",
+                    "search_intents": [{"search_query": original_query, "doc_type": "web", "year": "any"}],
+                    "reasoning": "User approved web search for out-of-scope query.",
+                    "is_web_search": True
+                }
+            elif any(user_reply.startswith(nr) or user_reply == nr for nr in negative_replies):
+                logger.info("🚫 User denied OOS web search. Graceful exit.")
+                return {
+                    "query_type": "rag",
+                    "is_vague": False,
+                    "is_out_of_scope": True,
+                    "needs_cross_question": False,
+                    "search_scope": "system_only",
+                    "search_intents": [],
+                    "reasoning": "User denied OOS web search prompt.",
+                    "is_web_search": False
                 }
 
     if is_greeting(query):
