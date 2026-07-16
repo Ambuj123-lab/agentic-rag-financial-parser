@@ -129,6 +129,45 @@ function extractComparisonData(text) {
   return { headers, rows }
 }
 
+// ── Detect Budget/Allocation Pie Chart data ──
+function extractPieChartData(text) {
+  if (!text) return null
+
+  const tableRegex = /\|(.+)\|\r?\n\|[-:\s|]+\|\r?\n((?:\|.+\|\r?\n?)+)/g
+  const match = tableRegex.exec(text)
+  if (!match) return null
+
+  const headers = match[1].split('|').map(h => h.trim()).filter(Boolean)
+  const rows = match[2].trim().split(/\r?\n/).flatMap(row => {
+    const r = row.trim()
+    if (!r) return []
+    return [r.split('|').map(c => c.trim()).filter(Boolean)]
+  })
+
+  // Need exactly 2 columns for a clean Pie Chart (e.g., Sector | Percentage)
+  if (headers.length !== 2) return null
+
+  const data = []
+  for (const row of rows) {
+    if (row.length !== 2) continue
+    const [name, valStr] = row
+    
+    // Look for percentage or raw numbers in the second column
+    const numMatch = valStr.match(/([\d.]+)\s*%?/)
+    if (numMatch) {
+      data.push({ name: name.replace(/\*\*/g, '').trim(), value: parseFloat(numMatch[1]) })
+    }
+  }
+
+  // If we have at least 2 data points, it's a valid pie chart
+  if (data.length >= 2) {
+    // Check if values look like percentages (sum close to 100) or just random numbers
+    // Actually, recharts handles relative values fine, but let's just return it.
+    return data
+  }
+  return null
+}
+
 // ── Custom Tooltip ──
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -269,16 +308,18 @@ export default function ChartRenderer({ content }) {
     if (!content || typeof content !== 'string') return null
 
     const stockData = extractStockData(content)
-    const comparisonData = extractComparisonData(content)
+    const pieData = extractPieChartData(content)
+    // Only show comparison table if it's NOT a pie chart table (to avoid duplicates)
+    const comparisonData = !pieData ? extractComparisonData(content) : null
 
-    if (!stockData && !comparisonData) return null
+    if (!stockData && !comparisonData && !pieData) return null
 
-    return { stockData, comparisonData }
+    return { stockData, comparisonData, pieData }
   }, [content])
 
   if (!analysis) return null
 
-  const { stockData, comparisonData } = analysis
+  const { stockData, comparisonData, pieData } = analysis
 
   return (
     <div className="chart-renderer">
@@ -289,6 +330,9 @@ export default function ChartRenderer({ content }) {
           <StockRangeChart data={stockData} />
         </>
       )}
+
+      {/* Pie Chart (Budget/Allocation) */}
+      {pieData && <AllocationPieChart data={pieData} />}
 
       {/* Comparison Table Charts (future: tax slabs, etc.) */}
       {comparisonData && comparisonData.rows.length > 0 && (
