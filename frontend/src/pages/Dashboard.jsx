@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/client'
+import ChartRenderer from '../components/ChartRenderer'
 import {
   FiSend, FiMenu, FiLogOut, FiUploadCloud, FiTrash2,
   FiThumbsUp, FiThumbsDown, FiCpu, FiSettings, FiFile,
@@ -472,6 +473,9 @@ export default function Dashboard() {
                   >
                     {msg.content}
                   </ReactMarkdown>
+
+                  {/* Chart / Visual Renderer */}
+                  <ChartRenderer content={msg.content} />
 
                   {/* Source Citations (Expandable) */}
                   {msg.sources?.length > 0 && (

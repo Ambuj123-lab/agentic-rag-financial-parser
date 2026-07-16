@@ -904,3 +904,183 @@ a:hover {
 }
 
 
+/* ============================================================
+   CHART RENDERER — Visual Layer for Stock & Financial Data
+   ============================================================ */
+
+.chart-renderer {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Container card for each chart/table */
+.chart-container {
+  background: rgba(18, 18, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+/* Header row inside chart container */
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Badge labels */
+.chart-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.chart-badge-source {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+/* ── Metrics Card Grid ── */
+.chart-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.chart-metric-card {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.chart-metric-card:hover {
+  background: rgba(30, 30, 30, 0.9);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.chart-metric-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.chart-metric-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+
+.chart-metric-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  line-height: 1.2;
+}
+
+/* ── Styled Table ── */
+.chart-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 6px;
+}
+
+.chart-styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 320px;
+}
+
+.chart-styled-table thead tr {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.chart-styled-table th {
+  padding: 10px 14px;
+  text-align: left;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.chart-styled-table td {
+  padding: 9px 14px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.chart-styled-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.chart-styled-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 600px) {
+  .chart-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chart-metric-card {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .chart-metric-value {
+    font-size: 0.8rem;
+  }
+
+  .chart-container {
+    padding: 12px 10px;
+  }
+
+  .chart-badge {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .chart-metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .chart-metric-value {
+    font-size: 0.75rem;
+  }
+}
+
+
+
