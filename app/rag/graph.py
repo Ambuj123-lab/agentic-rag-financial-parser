@@ -753,7 +753,13 @@ def stock_tool_node(state: AgentState) -> dict:
     
     try:
         # fetch_stock_data will handle appending .NS if needed
-        sys_prompt = "You are a financial entity extractor. Extract ONLY the company name, stock ticker, or index from the user query. Output ONLY the exact entity name, absolutely nothing else. E.g. \'What is the P/E of HDFC Bank?\' -> \'HDFC Bank\', \'What is Nifty 50 today?\' -> \'Nifty 50\', \'AAPL price?\' -> \'AAPL\'."
+        sys_prompt = "You are a financial Ticker extractor for Yahoo Finance. Extract the exact Yahoo Finance ticker symbol from the user query.
+Rules:
+1. Indian stocks: append .NS (e.g. HDFC Bank -> HDFCBANK.NS, TCS -> TCS.NS)
+2. US stocks: use standard ticker (e.g. Apple -> AAPL)
+3. Nifty 50 -> ^NSEI
+4. Sensex -> ^BSESN
+Output ONLY the ticker string, absolutely nothing else."
         extracted_ticker = call_llm(sys_prompt, query).strip()
         logger.info(f"LLM Extracted Ticker/Entity: {extracted_ticker}")
         stock_text = fetch_stock_data(extracted_ticker)

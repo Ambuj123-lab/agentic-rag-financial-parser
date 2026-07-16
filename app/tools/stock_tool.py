@@ -17,9 +17,7 @@ def fetch_stock_data(ticker_symbol: str) -> str:
         
 
         original_ticker = ticker_symbol.upper().strip()
-        if original_ticker in ['NIFTY 50', 'NIFTY50', 'NIFTY']: original_ticker = '^NSEI'
-        if original_ticker in ['SENSEX', 'BSE SENSEX']: original_ticker = '^BSESN'
-        
+                
         # A simple heuristic: if it doesn't have a dot and is not a major US index/stock, assume NSE.
         # (The LLM should ideally extract with .NS, but this is a safety net).
         if "." not in original_ticker and original_ticker not in ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "META"]:
