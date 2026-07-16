@@ -7,7 +7,7 @@ WHATSAPP_GREETING_MENU = """👋 Welcome to *Ambuj Kumar Tripathi's Adaptive Age
 
 Designed & Engineered by *Ambuj Kumar Tripathi*.
 
-I'm an advanced AI Assistant powered by a *production-grade 9-Node Adaptive Agentic RAG Architecture*.
+I'm an advanced AI Assistant powered by a *production-grade 10-Node Adaptive Agentic RAG Architecture*.
 
 I can help you with:
 

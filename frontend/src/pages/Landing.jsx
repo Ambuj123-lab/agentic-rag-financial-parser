@@ -5,7 +5,7 @@ import {
   FiCpu, FiShield, FiZap, FiLayers, FiGitBranch,
   FiSearch, FiMessageSquare, FiUploadCloud, FiGithub,
   FiLinkedin, FiBookOpen, FiGlobe, FiArrowRight, FiCheck,
-  FiFileText, FiDatabase, FiLock, FiHash, FiGrid, FiActivity
+  FiFileText, FiDatabase, FiLock, FiHash, FiGrid, FiActivity, FiTrendingUp
 } from 'react-icons/fi'
 import { FaLinkedin, FaXTwitter, FaMedium, FaGithub } from 'react-icons/fa6'
 
@@ -348,7 +348,7 @@ export default function Landing() {
             fontSize: '0.8rem', color: '#e0e0e0', fontWeight: 500, letterSpacing: '0.5px'
           }}>
             <FiZap size={12} style={{ display: 'inline', marginRight: '6px', color: 'var(--accent)' }} />
-            Adaptive ReAct • 9-Node LangGraph • Live Web Search • WhatsApp Omnichannel
+            Adaptive ReAct • 10-Node LangGraph • Tool Calling • Live Web Search • WhatsApp
           </div>
           <div style={{ width: '40px', height: '1px', background: 'linear-gradient(270deg, transparent, rgba(255,51,51,0.5))' }}></div>
         </div>
@@ -372,8 +372,8 @@ export default function Landing() {
           maxWidth: 600, margin: '0 auto 40px', lineHeight: 1.6,
           position: 'relative', zIndex: 2
         }}>
-          Parse Indian Constitution, Union Budgets, Finance Acts, and RBI KYC with a <strong>9-Node Agentic RAG</strong>. 
-          Featuring parallel vector retrieval, Autonomous Web Search Fallback, multi-version synthesis, and a strict hallucination guard.
+          Parse Indian Constitution, Union Budgets, Finance Acts, and RBI KYC with a <strong>10-Node Agentic RAG</strong>. 
+          Featuring parallel vector retrieval, LLM Tool Calling (Live APIs), Autonomous Web Search Fallback, and a strict hallucination guard.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, alignItems: 'center', position: 'relative', zIndex: 2 }}>
@@ -605,7 +605,7 @@ export default function Landing() {
       }}>
         <div style={{ maxWidth: 1040, margin: '0 auto' }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>
-            9-Node <span style={{ color: 'var(--accent)' }}>LangGraph StateGraph</span>
+            10-Node <span style={{ color: 'var(--accent)' }}>LangGraph StateGraph</span>
           </h2>
           <p style={{
             textAlign: 'center', color: 'var(--text-secondary)',
@@ -626,6 +626,7 @@ export default function Landing() {
               { icon: FiShield, name: 'Reject Node', desc: 'Blocks abusive/harmful queries with professional response. PII masking applied before any processing.', color: 'var(--red)' },
               { icon: FiLayers, name: 'Retriever', desc: 'Parallel intent-based Pinecone search across multiple law versions. Cohere neural reranker filters top 10 golden chunks from 100+ candidates. Parent-Child Recursive Retrieval.', color: 'var(--accent)' },
               { icon: FiGlobe, name: 'Web Search Fallback', desc: 'Autonomous internet search via Tavily API for out-of-domain queries, triggered after Human-in-the-Loop permission.', color: '#38bdf8' },
+              { icon: FiTrendingUp, name: 'Tool Calling (Live APIs)', desc: 'Autonomously executes external Python tools (like yfinance) to fetch real-time market data, bypassing standard vector retrieval.', color: 'var(--green)' },
               { icon: FiCpu, name: 'Generator', desc: 'LLM with multi-version synthesis: compares 1961 vs 2025 Act provisions. Cautious RAG policy with banned-phrase guardrails. Confidence scoring.', color: 'var(--green)' },
               { icon: FiActivity, name: 'Hallucination Guard', desc: 'Post-generation check: is the answer grounded in retrieved chunks? If not → fallback. Confidence < 40% → reject.', color: 'var(--red)' },
               { icon: FiGitBranch, name: 'PostProcess', desc: 'Save Q&A to MongoDB (sliding window), log to Langfuse, cache response in Redis (1hr TTL). Feedback tracking.', color: 'var(--amber)' },
