@@ -51,64 +51,57 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <body style="margin: 0; padding: 0; background-color: #000000; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
       
       <!-- Outer Container -->
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #0f172a; padding: 30px 0;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #000000; padding: 40px 0;">
         <tr>
           <td align="center">
-            <table cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
+            <table cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; background-color: #121212; border: 1px solid #27272a; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.8);">
               
               <!-- ═══════ HEADER ═══════ -->
               <tr>
-                <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%); padding: 35px 30px; text-align: center;">
+                <td style="background: linear-gradient(135deg, #18181b 0%, #09090b 100%); padding: 35px 30px; text-align: center; border-bottom: 1px solid #27272a;">
                   <!-- AI Badge -->
-                  <div style="display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 14px; margin-bottom: 15px;">
-                    <span style="color: #a5b4fc; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;">⚡ AI-Powered Newsletter</span>
+                  <div style="display: inline-block; background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.3); border-radius: 20px; padding: 6px 16px; margin-bottom: 18px;">
+                    <span style="color: #22d3ee; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;">⚡ AI-Powered Newsletter</span>
                   </div>
-                  <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">Daily Legal &amp; Financial Insights</h1>
-                  <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px; font-weight: 500;">Curated autonomously by Ambuj's Agentic RAG AI</p>
-                  <div style="margin-top: 15px; height: 3px; background: linear-gradient(90deg, transparent, #6366f1, #a855f7, #6366f1, transparent); border-radius: 2px;"></div>
-                  <p style="color: #64748b; margin: 12px 0 0 0; font-size: 12px;">📅 {today_date}</p>
+                  <h1 style="color: #ffffff; margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.5px;">Daily Legal &amp; Financial Insights</h1>
+                  <p style="color: #a1a1aa; margin: 12px 0 0 0; font-size: 16px; font-weight: 500;">Curated autonomously by Ambuj's Agentic RAG AI</p>
+                  <div style="margin-top: 20px; height: 3px; background: linear-gradient(90deg, transparent, #22d3ee, #a78bfa, #22d3ee, transparent); border-radius: 2px;"></div>
+                  <p style="color: #cbd5e1; margin: 16px 0 0 0; font-size: 14px; font-weight: 600;">📅 {today_date}</p>
                 </td>
               </tr>
 
               <!-- ═══════ CATEGORY BADGE ═══════ -->
               <tr>
-                <td style="padding: 25px 30px 0 30px;">
-                  <div style="display: inline-block; background: linear-gradient(135deg, #eef2ff, #e0e7ff); border: 1px solid #c7d2fe; border-radius: 8px; padding: 6px 16px;">
-                    <span style="color: #4338ca; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">📂 {category}</span>
+                <td style="padding: 30px 30px 0 30px;">
+                  <div style="display: inline-block; background: #27272a; border: 1px solid #3f3f46; border-radius: 8px; padding: 8px 18px;">
+                    <span style="color: #a78bfa; font-size: 14px; font-weight: 700; letter-spacing: 0.5px;">📂 {category}</span>
                   </div>
                 </td>
               </tr>
 
               <!-- ═══════ TITLE ═══════ -->
               <tr>
-                <td style="padding: 15px 30px 5px 30px;">
-                  <h2 style="color: #0f172a; margin: 0; font-size: 22px; font-weight: 700; line-height: 1.3;">💡 {insight_title}</h2>
-                </td>
-              </tr>
-
-              <!-- ═══════ DIVIDER ═══════ -->
-              <tr>
-                <td style="padding: 10px 30px;">
-                  <div style="height: 2px; background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899); border-radius: 1px;"></div>
+                <td style="padding: 20px 30px 5px 30px;">
+                  <h2 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; line-height: 1.4;">💡 {insight_title}</h2>
                 </td>
               </tr>
 
               <!-- ═══════ THE LAW / FACT ═══════ -->
               <tr>
-                <td style="padding: 15px 30px;">
+                <td style="padding: 20px 30px;">
                   <table cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
-                      <td style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; padding: 20px 22px;">
+                      <td style="background: #18181b; border: 1px solid #27272a; border-left: 4px solid #22d3ee; border-radius: 0 12px 12px 0; padding: 25px;">
                         <table cellpadding="0" cellspacing="0" border="0" width="100%">
                           <tr>
                             <td>
-                              <div style="display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 8px; padding: 4px 12px; margin-bottom: 12px;">
-                                <span style="color: #ffffff; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">📜 The Law / Fact</span>
+                              <div style="display: inline-block; background: rgba(34,211,238,0.15); border-radius: 8px; padding: 6px 14px; margin-bottom: 15px;">
+                                <span style="color: #22d3ee; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">📜 The Law / Fact</span>
                               </div>
-                              <p style="color: #334155; margin: 0; font-size: 15px; line-height: 1.7;">{insight_explanation}</p>
+                              <p style="color: #e4e4e7; margin: 0; font-size: 16px; line-height: 1.8;">{insight_explanation}</p>
                             </td>
                           </tr>
                         </table>
@@ -120,17 +113,17 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
 
               <!-- ═══════ REAL-LIFE SCENARIO ═══════ -->
               <tr>
-                <td style="padding: 10px 30px;">
+                <td style="padding: 15px 30px;">
                   <table cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
-                      <td style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 20px 22px;">
+                      <td style="background-color: #1a1500; border: 1px solid #78350f; border-left: 4px solid #fbbf24; border-radius: 0 12px 12px 0; padding: 25px;">
                         <table cellpadding="0" cellspacing="0" border="0" width="100%">
                           <tr>
                             <td>
-                              <div style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 8px; padding: 4px 12px; margin-bottom: 12px;">
-                                <span style="color: #ffffff; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">🛡️ Real-Life Scenario</span>
+                              <div style="display: inline-block; background: rgba(251,191,36,0.15); border-radius: 8px; padding: 6px 14px; margin-bottom: 15px;">
+                                <span style="color: #fbbf24; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">🛡️ Real-Life Scenario</span>
                               </div>
-                              <p style="color: #78350f; margin: 0; font-size: 14px; line-height: 1.7;">{real_life_scenario}</p>
+                              <p style="color: #fef3c7; margin: 0; font-size: 16px; line-height: 1.8;">{real_life_scenario}</p>
                             </td>
                           </tr>
                         </table>
@@ -142,11 +135,11 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
 
               <!-- ═══════ SOURCES ═══════ -->
               <tr>
-                <td style="padding: 20px 30px 10px 30px;">
+                <td style="padding: 25px 30px 15px 30px;">
                   <table cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
-                      <td style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px;">
-                        <p style="color: #64748b; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 10px 0;">🔍 Sources Verified via Tavily AI</p>
+                      <td style="background-color: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 22px;">
+                        <p style="color: #a1a1aa; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 15px 0;">🔍 Sources Verified via Tavily AI</p>
                         <table cellpadding="0" cellspacing="0" border="0" width="100%">
                           {source_links_html}
                         </table>
@@ -158,17 +151,17 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
 
               <!-- ═══════ CTA BUTTON ═══════ -->
               <tr>
-                <td style="padding: 20px 30px; text-align: center;">
-                  <a href="https://agentic-rag-financial-parser.onrender.com" style="display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; text-decoration: none; padding: 12px 32px; border-radius: 10px; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(99,102,241,0.4);">🤖 Ask Ambuj AI →</a>
+                <td style="padding: 25px 30px; text-align: center;">
+                  <a href="https://agentic-rag-financial-parser.onrender.com" style="display: inline-block; background: linear-gradient(135deg, #22d3ee, #a78bfa); color: #000000; text-decoration: none; padding: 14px 36px; border-radius: 12px; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(34,211,238,0.3);">🤖 Ask Ambuj AI →</a>
                 </td>
               </tr>
 
               <!-- ═══════ DISCLAIMER ═══════ -->
               <tr>
-                <td style="padding: 0 30px 20px 30px;">
-                  <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 14px 16px;">
-                    <p style="color: #991b1b; font-size: 10px; margin: 0; line-height: 1.6; font-style: italic;">
-                      <strong>⚠️ Disclaimer:</strong> This email is automatically generated by an autonomous AI agent for educational and informational purposes only. It does not constitute formal legal, financial, or professional advice. While the AI verifies facts via web search, please consult a certified professional or refer to official government sources before making any decisions.
+                <td style="padding: 0 30px 25px 30px;">
+                  <div style="background-color: #2e1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 18px;">
+                    <p style="color: #fca5a5; font-size: 13px; margin: 0; line-height: 1.7; font-style: italic;">
+                      <strong>⚠️ Disclaimer:</strong> This email is automatically generated by an autonomous AI agent for educational and informational purposes only. It does not constitute formal legal, financial, or professional advice. Please consult a certified professional before making decisions.
                     </p>
                   </div>
                 </td>
@@ -176,15 +169,15 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
 
               <!-- ═══════ FOOTER ═══════ -->
               <tr>
-                <td style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 25px 30px; text-align: center;">
+                <td style="background: #09090b; padding: 30px; text-align: center; border-top: 1px solid #27272a;">
                   <!-- Tech Stack Badge -->
-                  <p style="color: #cbd5e1; font-size: 11px; margin: 0; line-height: 1.6;">
-                    Generated by <strong style="color: #c7d2fe;">Adaptive ReAct Agentic RAG</strong> &bull; Sources verified via <strong style="color: #c7d2fe;">Tavily</strong> &bull; Powered by <strong style="color: #c7d2fe;">LangGraph + Gemini</strong>
+                  <p style="color: #a1a1aa; font-size: 13px; margin: 0; line-height: 1.7;">
+                    Generated by <strong style="color: #e4e4e7;">Adaptive ReAct Agentic RAG</strong> &bull; Sources verified via <strong style="color: #e4e4e7;">Tavily</strong><br/>Powered by <strong style="color: #e4e4e7;">LangGraph + Gemini</strong>
                   </p>
-                  <p style="color: #cbd5e1; font-size: 11px; margin: 12px 0 0 0;">
-                    Developed by <a href="https://ambuj-ai-portfolio.vercel.app" style="color: #a5b4fc; text-decoration: none; font-weight: 600;">Ambuj Kumar Tripathi</a> — AI Engineer &amp; RAG Systems Architect
+                  <p style="color: #a1a1aa; font-size: 13px; margin: 16px 0 0 0;">
+                    Developed by <a href="https://ambuj-ai-portfolio.vercel.app" style="color: #22d3ee; text-decoration: none; font-weight: 700;">Ambuj Kumar Tripathi</a><br/>AI Engineer &amp; RAG Systems Architect
                   </p>
-                  <p style="color: #cbd5e1; font-size: 11px; margin: 8px 0 0 0; font-weight: 500;">📍 Gorakhpur, India</p>
+                  <p style="color: #a1a1aa; font-size: 13px; margin: 12px 0 0 0; font-weight: 600;">📍 Gorakhpur, India</p>
                 </td>
               </tr>
 
