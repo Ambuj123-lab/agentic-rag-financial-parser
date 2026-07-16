@@ -200,12 +200,10 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
     """
 
     try:
-        # Create SMTP session with 30s timeout (prevents infinite hang on Render)
-        print("  📧 SMTP: Connecting to smtp.gmail.com:587...")
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
-        
-        print("  📧 SMTP: Starting TLS...")
-        server.starttls()
+        # Create SMTP session with 30s timeout on port 465 (SSL)
+        # Port 587 is often blocked on Render free tier, but 465 sometimes works.
+        print("  📧 SMTP: Connecting to smtp.gmail.com:465 (SSL)...")
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30)
         
         print(f"  📧 SMTP: Logging in as {sender_email}...")
         server.login(sender_email, sender_password)
@@ -232,7 +230,7 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
         print(f"❌ SMTP AUTH FAILED: {e}. Check SENDER_EMAIL and SENDER_APP_PASSWORD.")
         return False
     except smtplib.SMTPConnectError as e:
-        print(f"❌ SMTP CONNECTION FAILED: {e}. Gmail port 587 might be blocked by Render.")
+        print(f"❌ SMTP CONNECTION FAILED: {e}. Gmail port 465 might be blocked by Render.")
         return False
     except TimeoutError as e:
         print(f"❌ SMTP TIMEOUT: {e}. Connection to Gmail hung for 30+ seconds.")

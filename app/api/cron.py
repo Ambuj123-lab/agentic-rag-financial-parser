@@ -124,8 +124,7 @@ async def test_smtp_connection(
         import smtplib
         from email.mime.text import MIMEText
         
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
-        server.starttls()
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30)
         server.login(sender_email, sender_password)
         
         msg = MIMEText("✅ SMTP Test from Agentic Financial Parser - Cron system is working!")
