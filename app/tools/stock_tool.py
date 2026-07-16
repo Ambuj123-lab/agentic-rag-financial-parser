@@ -1,4 +1,5 @@
 import logging
+import requests
 import yfinance as yf
 from langchain_core.tools import tool
 
@@ -22,7 +23,13 @@ def get_stock_price(ticker: str) -> str:
         ticker = ticker.strip().upper()
         logger.info(f"📈 [Tool Call] Fetching live stock data for: {ticker}")
 
-        stock = yf.Ticker(ticker)
+        # Use a custom session with a browser-like User-Agent to bypass Yahoo Finance rate limits on Render
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        })
+
+        stock = yf.Ticker(ticker, session=session)
         info = stock.info
 
         if not info or "regularMarketPrice" not in info and "currentPrice" not in info:
