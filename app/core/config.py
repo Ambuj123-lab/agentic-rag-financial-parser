@@ -20,7 +20,6 @@ class Settings(BaseSettings):
     COHERE_API_KEY: Optional[str] = None
     GEMINI_API_KEY: str = ""
     TAVILY_API_KEY: str = ""
-    FMP_API_KEY: Optional[str] = None
     
     # Vector DB (Pinecone)
     PINECONE_API_KEY: str
