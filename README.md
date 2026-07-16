@@ -1,7 +1,7 @@
 <div align="center">
 
 <!-- Animated Header -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=200&section=header&text=Agentic%20Financial%20Parser&fontSize=42&fontColor=ffffff&fontAlignY=35&desc=8-Node%20LangGraph%20StateGraph%20•%20Production-Grade%20Agentic%20RAG&descSize=16&descAlignY=55&animation=fadeIn" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=200&section=header&text=Agentic%20Financial%20Parser&fontSize=42&fontColor=ffffff&fontAlignY=35&desc=10-Node%20LangGraph%20StateGraph%20•%20Production-Grade%20Agentic%20RAG&descSize=16&descAlignY=55&animation=fadeIn" width="100%"/>
 
 <br/>
 
@@ -24,7 +24,7 @@
 
 ## ⚡ What Is This?
 
-An **autonomous, 8-node Agentic RAG pipeline** that parses and queries complex Indian financial & legal documents — Union Budget, Finance Bill, Tax Laws, PF/Pension Schemes, RBI KYC, and Constitution of India — using a purpose-built state machine that **thinks before it answers**.
+An **autonomous, 10-node Agentic RAG pipeline** that parses and queries complex Indian financial & legal documents — Union Budget, Finance Bill, Tax Laws, PF/Pension Schemes, RBI KYC, and Constitution of India — using a purpose-built state machine that **thinks before it answers**.
 
 Unlike traditional RAG (retrieve → generate), this system employs an **agentic flow** where each query passes through specialized nodes that classify intent, cross-question vague queries, guard against hallucinations, and verify answer grounding — all orchestrated via **LangGraph StateGraph**.
 
@@ -50,7 +50,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 ---
 
-## 🧠 The 8-Node Agentic RAG Pipeline
+## 🧠 The 10-Node Agentic RAG Pipeline
 
 | Node | Purpose | Key Detail |
 |------|---------|------------|
@@ -58,10 +58,12 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 | **2. Reject** | Safety guard | Blocks abusive and anti-national queries with a strict blocklist guardrail |
 | **3. Greet** | Efficiency bypass | Handles greetings **without** hitting vector DB (zero cost) |
 | **4. CrossQuestioner** | HITL clarification | Asks clarifying questions for vague queries (max 2 rounds) |
-| **5. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads**. Falls back to Tavily Web Search for OOS queries. |
-| **6. Generator** | LLM synthesis | Dynamic OpenRouter fallback ensemble (Qwen/DeepSeek/Llama) with circuit breakers |
-| **7. HallucinationGuard** | Answer verification | Validates answer is **grounded** in retrieved context chunks |
-| **8. PostProcess** | Persistence | Saves to MongoDB chat history + Langfuse observability logging |
+| **5. Tool Calling** | API execution | Executes native LLM tools (RapidAPI Yahoo Finance) for live market data |
+| **6. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads**. Falls back to Tavily Web Search for OOS queries. |
+| **7. Generator** | LLM synthesis | Dynamic OpenRouter fallback ensemble (Qwen/DeepSeek/Llama) with circuit breakers |
+| **8. HallucinationGuard** | Answer verification | Validates answer is **grounded** in retrieved context chunks |
+| **9. PostProcess** | Persistence | Saves to MongoDB chat history + Langfuse observability logging |
+| **10. Fallback** | Circuit breaker | pybreaker pattern: 3 API failures → graceful fallback message |
 
 ---
 
