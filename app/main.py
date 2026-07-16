@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, upload, whatsapp
+from app.api import auth, upload, whatsapp, cron
 from app.rag import routes as rag_routes
 from app.db.mongodb import connect_to_mongo, close_mongo_connection, ensure_indexes
 from app.core.config import get_settings
@@ -77,6 +77,7 @@ app.include_router(auth.router, prefix="/api", tags=["Authentication"])
 app.include_router(upload.router, prefix="/api", tags=["Upload Security"])
 app.include_router(rag_routes.router, prefix="/api", tags=["RAG & Chat"])
 app.include_router(whatsapp.router, prefix="/api", tags=["WhatsApp Webhook"])
+app.include_router(cron.router, prefix="/api/cron", tags=["Cron Jobs"])
 
 # --- Health Check + Supabase Keep-Alive ---
 @app.api_route("/health", methods=["GET", "HEAD"], tags=["System"])
