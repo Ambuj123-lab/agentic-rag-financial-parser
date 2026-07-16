@@ -122,7 +122,7 @@ async def test_smtp_connection(
     
     try:
         import httpx
-        gas_url = "https://script.google.com/macros/s/AKfycbxD1xUuye063G_z7SzLzNxZU7ljb3d7sZln7c9dMd8YNIeW0iQufN78IYE7Lcn-lcTbgg/exec"
+        gas_url = "https://script.google.com/macros/s/AKfycbxD1xUuye063G_z7SzLzNxZU7ljb3d7sZIn7c9dMd8YNIeW0iQufN78lYE7Lcn-lcTbgg/exec"
         
         payload = {
             "to_emails": [SUBSCRIBERS[0]],
@@ -130,7 +130,7 @@ async def test_smtp_connection(
             "html_content": "<h3>✅ API Test from Agentic Financial Parser - Cron system is working via GAS!</h3>"
         }
         
-        with httpx.Client(timeout=30.0) as client:
+        with httpx.Client(timeout=30.0, follow_redirects=True) as client:
             response = client.post(gas_url, json=payload)
             
         if response.status_code == 200:

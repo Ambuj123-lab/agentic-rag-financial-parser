@@ -204,7 +204,7 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
         import json
         
         # Hardcoding the GAS URL since this is safe (it only sends emails via user's account)
-        gas_url = "https://script.google.com/macros/s/AKfycbxD1xUuye063G_z7SzLzNxZU7ljb3d7sZln7c9dMd8YNIeW0iQufN78IYE7Lcn-lcTbgg/exec"
+        gas_url = "https://script.google.com/macros/s/AKfycbxD1xUuye063G_z7SzLzNxZU7ljb3d7sZIn7c9dMd8YNIeW0iQufN78lYE7Lcn-lcTbgg/exec"
         
         print(f"  🌐 HTTP: Sending email request to Google Apps Script...")
         
@@ -214,7 +214,7 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
             "html_content": html_content
         }
         
-        with httpx.Client(timeout=30.0) as client:
+        with httpx.Client(timeout=30.0, follow_redirects=True) as client:
             response = client.post(gas_url, json=payload)
             
         if response.status_code == 200:
