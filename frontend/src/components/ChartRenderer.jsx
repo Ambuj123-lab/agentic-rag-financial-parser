@@ -152,17 +152,21 @@ function extractPieChartData(text) {
     if (row.length !== 2) continue
     const [name, valStr] = row
     
-    // Look for percentage or raw numbers in the second column
-    const numMatch = valStr.match(/([\d.]+)\s*%?/)
+    // Ensure the value is somewhat short (not a full sentence)
+    if (valStr.trim().length > 20) continue;
+
+    // Look for actual digits
+    const numMatch = valStr.match(/([0-9]+(?:\.[0-9]+)?)/)
     if (numMatch) {
-      data.push({ name: name.replace(/\*\*/g, '').trim(), value: parseFloat(numMatch[1]) })
+      const val = parseFloat(numMatch[1])
+      if (!isNaN(val)) {
+        data.push({ name: name.replace(/\*\*/g, '').trim(), value: val })
+      }
     }
   }
 
-  // If we have at least 2 data points, it's a valid pie chart
-  if (data.length >= 2) {
-    // Check if values look like percentages (sum close to 100) or just random numbers
-    // Actually, recharts handles relative values fine, but let's just return it.
+  // If we have at least 2 data points and they cover at least half the rows
+  if (data.length >= 2 && data.length >= rows.length / 2) {
     return data
   }
   return null
