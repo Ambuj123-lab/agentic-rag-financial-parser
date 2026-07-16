@@ -36,7 +36,7 @@ import pybreaker
 
 from app.core.config import get_settings
 from app.db.pinecone_client import get_index
-from app.tools.stock_tool import fetch_stock_data
+from app.tools.stock_tool import get_stock_price
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -741,39 +741,100 @@ def web_search_node(state: AgentState) -> dict:
         }
 
 
-# ========== NODE 4.7: STOCK TOOL ==========
+# ========== NODE 4.7: STOCK TOOL (Proper LLM Tool Calling) ==========
 
 def stock_tool_node(state: AgentState) -> dict:
-    """Fetches real-time stock data using yfinance without relying on web search."""
-    logger.info("📈 [4.7/10] Stock Tool: Fetching live market data")
+    """
+    Proper Tool Calling Node:
+    1. LLM receives the tool schema via bind_tools()
+    2. LLM autonomously decides to invoke get_stock_price and extracts the ticker argument
+    3. We execute the tool with LLM-provided arguments
+    4. Tool result is passed back for synthesis
+    """
+    import httpx
+    logger.info("📈 [4.7/10] Stock Tool Node: LLM Tool Calling")
     start = time.time()
-    
+
     intents = state.get("search_intents", [])
     query = intents[0]["search_query"] if intents else state.get("user_query", "")
-    
+
     try:
-        # fetch_stock_data will handle appending .NS if needed
-        sys_prompt = """You are a financial Ticker extractor for Yahoo Finance. Extract the exact Yahoo Finance ticker symbol from the user query.
-Rules:
-1. Indian stocks: append .NS (e.g. HDFC Bank -> HDFCBANK.NS, TCS -> TCS.NS)
-2. US stocks: use standard ticker (e.g. Apple -> AAPL)
-3. Nifty 50 -> ^NSEI
-4. Sensex -> ^BSESN
-Output ONLY the ticker string, absolutely nothing else."""
-        extracted_ticker = call_llm(sys_prompt, query).strip()
-        logger.info(f"LLM Extracted Ticker/Entity: {extracted_ticker}")
-        stock_text = fetch_stock_data(extracted_ticker)
-        
+        # ── Step 1: Define the tool schema for the LLM (OpenAI-compatible function calling format) ──
+        tool_schema = {
+            "name": "get_stock_price",
+            "description": get_stock_price.description,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "ticker": {
+                        "type": "string",
+                        "description": "Yahoo Finance ticker symbol. Indian stocks: append .NS (e.g. HDFCBANK.NS). US stocks: standard ticker (e.g. AAPL). Nifty 50: ^NSEI. Sensex: ^BSESN."
+                    }
+                },
+                "required": ["ticker"]
+            }
+        }
+
+        # ── Step 2: Send query to LLM with tool binding (bind_tools equivalent via API) ──
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={settings.GEMINI_API_KEY}"
+
+        gemini_payload = {
+            "systemInstruction": {"parts": [{"text": "You are a financial assistant with access to a live stock market tool. When the user asks about stock prices, market cap, P/E ratio, or any live market data, you MUST use the get_stock_price tool. Extract the correct Yahoo Finance ticker from the user's query and call the tool."}]},
+            "contents": [{"parts": [{"text": query}]}],
+            "tools": [{
+                "functionDeclarations": [{
+                    "name": tool_schema["name"],
+                    "description": tool_schema["description"],
+                    "parameters": tool_schema["parameters"]
+                }]
+            }],
+            "generationConfig": {"temperature": 0.1}
+        }
+
+        with httpx.Client(timeout=30.0) as client:
+            resp = client.post(gemini_url, json=gemini_payload)
+            if resp.status_code != 200:
+                raise Exception(f"Gemini Tool Calling failed: {resp.status_code} - {resp.text}")
+
+        data = resp.json()
+        candidates = data.get("candidates", [{}])
+        parts = candidates[0].get("content", {}).get("parts", [])
+
+        # ── Step 3: Extract the tool call from LLM response ──
+        tool_call = None
+        for part in parts:
+            if "functionCall" in part:
+                tool_call = part["functionCall"]
+                break
+
+        if not tool_call:
+            # LLM didn't invoke the tool — fallback to direct extraction
+            logger.warning("⚠️ LLM did not produce a tool call. Falling back to text extraction.")
+            text_response = parts[0].get("text", query) if parts else query
+            stock_text = get_stock_price.invoke({"ticker": text_response.strip()})
+        else:
+            # ── Step 4: Execute the tool with LLM-extracted arguments ──
+            tool_name = tool_call.get("name", "")
+            tool_args = tool_call.get("args", {})
+            ticker = tool_args.get("ticker", query)
+
+            logger.info(f"🔧 LLM Tool Call: {tool_name}(ticker='{ticker}')")
+
+            # Execute the @tool decorated function
+            stock_text = get_stock_price.invoke({"ticker": ticker})
+
+        logger.info(f"✅ Tool Execution Complete. Result length: {len(stock_text)} chars")
+
         chunks = [{
             "score": 1.0,
             "text": stock_text,
             "parent_text": stock_text,
-            "source_file": "Yahoo Finance (Real-Time)",
+            "source_file": "Yahoo Finance (Real-Time) (p.Live Market Data)",
             "page": "Live Market Data",
             "chunk_type": "stock_data",
             "is_temporary": False
         }]
-        
+
         return {
             "retrieved_chunks": chunks,
             "confidence": 100.0,
@@ -783,13 +844,13 @@ Output ONLY the ticker string, absolutely nothing else."""
             "error": None
         }
     except Exception as e:
-        logger.error(f"Stock tool failed: {e}")
+        logger.error(f"Stock Tool Call failed: {e}")
         return {
             "retrieved_chunks": [],
             "confidence": 0,
             "latency": round(time.time() - start, 2),
             "is_fallback": True,
-            "error": f"stock_tool_failed: {str(e)}"
+            "error": f"stock_tool_call_failed: {str(e)}"
         }
 
 
