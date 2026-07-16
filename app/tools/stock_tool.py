@@ -1,62 +1,53 @@
 import logging
-import requests
-import yfinance as yf
 from langchain_core.tools import tool
+from yahooquery import Ticker
 
 logger = logging.getLogger(__name__)
 
-
 @tool
 def get_stock_price(ticker: str) -> str:
-    """Fetches real-time stock data from Yahoo Finance for the given ticker symbol.
+    """Fetches real-time stock data for the given ticker symbol.
 
     Use this tool when the user asks about live stock prices, market cap, P/E ratio,
-    52-week range, or sector information for any publicly listed company.
+    52-week range, EPS, or trading volume for any publicly listed company.
 
     Args:
         ticker: The Yahoo Finance ticker symbol. For Indian stocks append .NS
                 (e.g. HDFCBANK.NS, TCS.NS, RELIANCE.NS). For US stocks use
-                standard tickers (e.g. AAPL, MSFT). For Nifty 50 use ^NSEI,
-                for Sensex use ^BSESN.
+                standard tickers (e.g. AAPL, MSFT). For Nifty 50 use ^NSEI.
     """
     try:
         ticker = ticker.strip().upper()
-        logger.info(f"📈 [Tool Call] Fetching live stock data for: {ticker}")
-
-        # Use a custom session with a browser-like User-Agent to bypass Yahoo Finance rate limits on Render
-        session = requests.Session()
-        session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        })
-
-        stock = yf.Ticker(ticker, session=session)
-        info = stock.info
-
-        if not info or "regularMarketPrice" not in info and "currentPrice" not in info:
-            # Fallback: try fetching latest close from history
-            hist = stock.history(period="1d")
-            if hist.empty:
-                return f"Could not fetch real-time data for ticker '{ticker}'. Please verify the stock symbol."
-            current_price = hist['Close'].iloc[-1]
-            return f"Stock Data for {ticker}:\n- Current Price: ₹{current_price:.2f} (Estimated from latest close)"
-
-        # Extract key metrics
-        current_price = info.get("currentPrice") or info.get("regularMarketPrice") or "N/A"
-        currency = info.get("currency", "INR")
-
-        # Currency symbol
-        curr_sym = "₹" if currency == "INR" else "$" if currency == "USD" else currency + " "
-
-        day_high = info.get("dayHigh", "N/A")
-        day_low = info.get("dayLow", "N/A")
-        wk52_high = info.get("fiftyTwoWeekHigh", "N/A")
-        wk52_low = info.get("fiftyTwoWeekLow", "N/A")
-        market_cap = info.get("marketCap", "N/A")
-        pe_ratio = info.get("trailingPE", "N/A")
-        sector = info.get("sector", "N/A")
+        logger.info(f"📈 [Tool Call] Fetching live stock data for: {ticker} via yahooquery")
+        
+        stock = Ticker(ticker)
+        price_dict = stock.price
+        summary_dict = stock.summary_detail
+        
+        # yahooquery returns a dict with the ticker as the key, or an error string
+        if isinstance(price_dict, str) or ticker not in price_dict or isinstance(price_dict[ticker], str):
+             return f"Could not find real-time data for ticker '{ticker}'. Please verify the stock symbol."
+             
+        price_data = price_dict[ticker]
+        summary_data = summary_dict.get(ticker, {}) if isinstance(summary_dict, dict) else {}
+        
+        name = price_data.get("longName") or price_data.get("shortName") or ticker
+        current_price = price_data.get("regularMarketPrice", "N/A")
+        exchange = price_data.get("exchangeName", "Unknown")
+        curr_sym = price_data.get("currencySymbol", "₹")
+        
+        day_high = price_data.get("regularMarketDayHigh", "N/A")
+        day_low = price_data.get("regularMarketDayLow", "N/A")
+        
+        wk52_high = summary_data.get("fiftyTwoWeekHigh", "N/A")
+        wk52_low = summary_data.get("fiftyTwoWeekLow", "N/A")
+        
+        market_cap = price_data.get("marketCap") or summary_data.get("marketCap", "N/A")
+        pe_ratio = summary_data.get("trailingPE", "N/A")
+        volume = price_data.get("regularMarketVolume", "N/A")
 
         # Format Market Cap
-        if isinstance(market_cap, (int, float)):
+        if isinstance(market_cap, (int, float)) and market_cap > 0:
             if market_cap >= 1_000_000_000_000:
                 mc_str = f"{curr_sym}{market_cap / 1_000_000_000_000:.2f} Trillion"
             elif market_cap >= 1_000_000_000:
@@ -65,20 +56,25 @@ def get_stock_price(ticker: str) -> str:
                 mc_str = f"{curr_sym}{market_cap:,.2f}"
         else:
             mc_str = str(market_cap)
+            
+        # Format P/E
+        if isinstance(pe_ratio, (int, float)):
+            pe_ratio = f"{pe_ratio:.2f}"
 
         summary = (
-            f"LIVE STOCK DATA FOR: {info.get('longName', ticker)} ({ticker})\n"
-            f"Sector: {sector}\n"
+            f"LIVE STOCK DATA FOR: {name} ({ticker})\n"
+            f"Exchange: {exchange}\n"
             f"Current Price: {curr_sym}{current_price}\n"
             f"Today's Range: {curr_sym}{day_low} - {curr_sym}{day_high}\n"
             f"52-Week Range: {curr_sym}{wk52_low} - {curr_sym}{wk52_high}\n"
             f"Market Capitalization: {mc_str}\n"
             f"P/E Ratio: {pe_ratio}\n"
-            f"(Data fetched real-time via LLM Tool Call → yfinance)"
+            f"Volume: {volume:,}\n"
+            f"(Data fetched real-time via LLM Tool Call)"
         )
 
         return summary
 
     except Exception as e:
         logger.error(f"❌ Stock Tool failed for {ticker}: {e}")
-        return f"Failed to fetch live stock data for '{ticker}'. The market API might be temporarily unavailable."
+        return f"Failed to fetch live stock data for '{ticker}'. An unexpected error occurred."
