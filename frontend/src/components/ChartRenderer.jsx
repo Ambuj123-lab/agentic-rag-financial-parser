@@ -283,8 +283,7 @@ function AllocationPieChart({ data }) {
             paddingAngle={3}
             dataKey="value"
             nameKey="name"
-            label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-            labelLine={{ stroke: 'rgba(255,255,255,0.2)' }}
+            label={false} /* Removed overlapping labels, relying on Legend */
           >
             {data.map((_, i) => (
               <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
@@ -352,12 +351,15 @@ export default function ChartRenderer({ content }) {
               <tbody>
                 {comparisonData.rows.map((row, i) => (
                   <tr key={i}>
-                    {row.map((cell, j) => (
-                      <td key={j} style={{
-                        color: /[\d.]+%/.test(cell) ? COLORS.cyan : 'inherit',
-                        fontWeight: /[\d.]+%|₹/.test(cell) ? 600 : 400
-                      }}>{cell}</td>
-                    ))}
+                    {row.map((cell, j) => {
+                      const cleanCell = cell.replace(/\*\*/g, '').replace(/\*/g, '')
+                      return (
+                        <td key={j} style={{
+                          color: /[\d.]+%/.test(cleanCell) ? COLORS.cyan : 'inherit',
+                          fontWeight: /[\d.]+%|₹/.test(cleanCell) ? 600 : 400
+                        }}>{cleanCell}</td>
+                      )
+                    })}
                   </tr>
                 ))}
               </tbody>
