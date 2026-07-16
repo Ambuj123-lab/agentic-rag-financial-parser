@@ -124,7 +124,7 @@ async def test_smtp_connection(
         import smtplib
         from email.mime.text import MIMEText
         
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
         server.starttls()
         server.login(sender_email, sender_password)
         

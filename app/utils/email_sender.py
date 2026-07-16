@@ -71,10 +71,16 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
     """
 
     try:
-        # Create SMTP session
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls() # Enable security
+        # Create SMTP session with 30s timeout (prevents infinite hang on Render)
+        print("  📧 SMTP: Connecting to smtp.gmail.com:587...")
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
+        
+        print("  📧 SMTP: Starting TLS...")
+        server.starttls()
+        
+        print(f"  📧 SMTP: Logging in as {sender_email}...")
         server.login(sender_email, sender_password)
+        print("  📧 SMTP: Login successful!")
 
         # Loop and send (BCC approach or individual)
         for recipient in to_emails:
@@ -88,10 +94,20 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
             msg.attach(part)
 
             server.send_message(msg)
+            print(f"  ✅ SMTP: Sent to {recipient}")
 
         server.quit()
         print(f"Successfully sent AI Insight to {len(to_emails)} recipients.")
         return True
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"❌ SMTP AUTH FAILED: {e}. Check SENDER_EMAIL and SENDER_APP_PASSWORD.")
+        return False
+    except smtplib.SMTPConnectError as e:
+        print(f"❌ SMTP CONNECTION FAILED: {e}. Gmail port 587 might be blocked by Render.")
+        return False
+    except TimeoutError as e:
+        print(f"❌ SMTP TIMEOUT: {e}. Connection to Gmail hung for 30+ seconds.")
+        return False
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"❌ SMTP UNKNOWN ERROR: {type(e).__name__}: {e}")
         return False
