@@ -449,18 +449,6 @@ def classifier_node(state: AgentState) -> dict:
                     "reasoning": "User refused to provide clarification.",
                     "is_web_search": False
                 }
-            elif any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies) and len(user_reply.split()) < 4:
-                logger.info("🔄 User said 'yes' to clarification but didn't provide details. Asking again.")
-                return {
-                    "query_type": "vague",
-                    "is_vague": True,
-                    "is_out_of_scope": False,
-                    "needs_cross_question": True,
-                    "clarifying_question": "Great! Please type your specific question or topic below so I can search for it.",
-                    "search_scope": "system_only",
-                    "search_intents": [],
-                    "reasoning": "User agreed to clarify but provided no context.",
-                    "is_web_search": False
                 }
 
     if is_greeting(query):
