@@ -121,20 +121,21 @@ async def test_smtp_connection(
         return {"status": "error", "message": f"SENDER_EMAIL={bool(sender_email)}, SENDER_APP_PASSWORD={bool(sender_password)}"}
     
     try:
-        import smtplib
-        from email.mime.text import MIMEText
+        import httpx
+        gas_url = "https://script.google.com/macros/s/AKfycbxD1xUuye063G_z7SzLzNxZU7ljb3d7sZln7c9dMd8YNIeW0iQufN78IYE7Lcn-lcTbgg/exec"
         
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30)
-        server.login(sender_email, sender_password)
+        payload = {
+            "to_emails": [SUBSCRIBERS[0]],
+            "subject": "🧪 API Test - Agentic Financial Parser",
+            "html_content": "<h3>✅ API Test from Agentic Financial Parser - Cron system is working via GAS!</h3>"
+        }
         
-        msg = MIMEText("✅ SMTP Test from Agentic Financial Parser - Cron system is working!")
-        msg['Subject'] = "🧪 SMTP Test - Agentic Financial Parser"
-        msg['From'] = f"Ambuj's AI <{sender_email}>"
-        msg['To'] = SUBSCRIBERS[0]
-        
-        server.send_message(msg)
-        server.quit()
-        
-        return {"status": "success", "message": f"Test email sent to {SUBSCRIBERS[0]}!"}
+        with httpx.Client(timeout=30.0) as client:
+            response = client.post(gas_url, json=payload)
+            
+        if response.status_code == 200:
+            return {"status": "success", "message": f"Test email sent to {SUBSCRIBERS[0]} via Google Apps Script!"}
+        else:
+            return {"status": "error", "message": f"GAS failed with status {response.status_code}"}
     except Exception as e:
-        return {"status": "error", "message": f"SMTP failed: {str(e)}"}
+        return {"status": "error", "message": f"HTTP failed: {str(e)}"}

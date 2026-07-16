@@ -200,41 +200,33 @@ def send_daily_insight_email(to_emails: List[str], subject: str, insight_title: 
     """
 
     try:
-        # Create SMTP session with 30s timeout on port 465 (SSL)
-        # Port 587 is often blocked on Render free tier, but 465 sometimes works.
-        print("  📧 SMTP: Connecting to smtp.gmail.com:465 (SSL)...")
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30)
+        import httpx
+        import json
         
-        print(f"  📧 SMTP: Logging in as {sender_email}...")
-        server.login(sender_email, sender_password)
-        print("  📧 SMTP: Login successful!")
-
-        # Loop and send
-        for recipient in to_emails:
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"💡 {subject}"
-            msg['From'] = f"Ambuj's AI Insights <{sender_email}>"
-            msg['To'] = recipient
-
-            # Attach HTML content
-            part = MIMEText(html_content, 'html')
-            msg.attach(part)
-
-            server.send_message(msg)
-            print(f"  ✅ SMTP: Sent to {recipient}")
-
-        server.quit()
-        print(f"Successfully sent AI Insight to {len(to_emails)} recipients.")
-        return True
-    except smtplib.SMTPAuthenticationError as e:
-        print(f"❌ SMTP AUTH FAILED: {e}. Check SENDER_EMAIL and SENDER_APP_PASSWORD.")
-        return False
-    except smtplib.SMTPConnectError as e:
-        print(f"❌ SMTP CONNECTION FAILED: {e}. Gmail port 465 might be blocked by Render.")
-        return False
-    except TimeoutError as e:
-        print(f"❌ SMTP TIMEOUT: {e}. Connection to Gmail hung for 30+ seconds.")
+        # Hardcoding the GAS URL since this is safe (it only sends emails via user's account)
+        gas_url = "https://script.google.com/macros/s/AKfycbxD1xUuye063G_z7SzLzNxZU7ljb3d7sZln7c9dMd8YNIeW0iQufN78IYE7Lcn-lcTbgg/exec"
+        
+        print(f"  🌐 HTTP: Sending email request to Google Apps Script...")
+        
+        payload = {
+            "to_emails": to_emails,
+            "subject": f"💡 {subject}",
+            "html_content": html_content
+        }
+        
+        with httpx.Client(timeout=30.0) as client:
+            response = client.post(gas_url, json=payload)
+            
+        if response.status_code == 200:
+            print(f"  ✅ HTTP: Successfully sent AI Insight to {len(to_emails)} recipients via GAS!")
+            return True
+        else:
+            print(f"❌ HTTP ERROR: GAS returned status code {response.status_code}. Response: {response.text}")
+            return False
+            
+    except httpx.TimeoutException as e:
+        print(f"❌ HTTP TIMEOUT: Connection to Google Apps Script timed out.")
         return False
     except Exception as e:
-        print(f"❌ SMTP UNKNOWN ERROR: {type(e).__name__}: {e}")
+        print(f"❌ HTTP UNKNOWN ERROR: {type(e).__name__}: {e}")
         return False
