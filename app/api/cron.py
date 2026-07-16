@@ -8,8 +8,7 @@ router = APIRouter()
 # This is the list of emails that will receive the daily AI insights
 SUBSCRIBERS = [
     "ambujonly761@gmail.com",
-    # Add your friends' emails here:
-    # "friend1@gmail.com",
+    "tripathi.anku@outlook.com",
 ]
 
 def background_email_task():
