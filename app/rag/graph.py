@@ -1167,11 +1167,12 @@ Using the provided Stock Data Context, answer the user's question clearly and ac
 
 RULES:
 1. Synthesize the information from the provided stock context.
-2. Format the stock metrics (Price, Market Cap, 52-week High/Low, etc.) nicely using Markdown tables or bullet points for readability.
-3. Keep your tone professional and helpful.
-4. Do NOT say "Based on the stock search" or "According to Yahoo Finance". Just provide the answer.
-5. You MUST include a brief disclaimer at the end stating that market data is provided for informational purposes only.
-6. IF you are on WhatsApp, start your answer exactly with: "*(Live Stock Data) 📈*\n\n".
+2. You MUST start your response with EXACTLY this header format (in bold): **LIVE STOCK DATA FOR: [Company Name] ([Ticker])**
+3. Following the header, format the stock metrics (Price, Market Cap, 52-week High/Low, etc.) exactly as they appear in the context, using bullet points.
+4. Keep your tone professional and helpful.
+5. Do NOT say "Based on the stock search" or "According to Yahoo Finance". Just provide the answer.
+6. You MUST include a brief disclaimer at the end stating that market data is provided for informational purposes only.
+7. IF you are on WhatsApp, start your answer exactly with: "*(Live Stock Data) 📈*\n\n".
 """
     else:
         system_prompt = f"""CRITICAL BANNED PHRASES — NEVER USE THESE UNDER ANY CIRCUMSTANCE:
