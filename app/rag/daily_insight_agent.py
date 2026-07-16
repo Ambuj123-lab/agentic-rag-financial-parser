@@ -24,7 +24,10 @@ def fetch_daily_insight():
         "Traffic and Motor Vehicles Act rules in India",
         "RBI Banking and ATM rules for consumers",
         "Cyber Fraud and IT Act rules in India",
-        "Income Tax deductions for individuals in India"
+        "Income Tax deductions and rules for individuals in India",
+        "SEBI rules and Mutual Fund regulations for retail investors",
+        "IRDAI rules and Health/Term Insurance claim rights for citizens",
+        "Credit Score (CIBIL) and Loan rights for borrowers in India"
     ]
     selected_category = random.choice(categories)
     
