@@ -434,6 +434,35 @@ def classifier_node(state: AgentState) -> dict:
                 # User replied with something other than Yes/No (e.g. "Maybe", or a new query)
                 # Treat it as a new query — fall through to normal classification
                 logger.info("🔄 HITL: User replied with neither Yes nor No. Treating as new query, previous web search offer cancelled.")
+                
+        is_clarification_prompt = "clarification required" in prev_bot_msg or "could you please provide a bit more detail" in prev_bot_msg
+        if is_clarification_prompt:
+            if any(user_reply.startswith(nr) or user_reply == nr for nr in negative_replies):
+                logger.info("🚫 User refused clarification. Aborting query.")
+                return {
+                    "query_type": "rag",
+                    "is_vague": False,
+                    "is_out_of_scope": True,
+                    "needs_cross_question": False,
+                    "search_scope": "system_only",
+                    "search_intents": [],
+                    "reasoning": "User refused to provide clarification.",
+                    "is_web_search": False
+                }
+            elif any(user_reply.startswith(pr) or user_reply == pr for pr in positive_replies) and len(user_reply.split()) < 4:
+                logger.info("🔄 User said 'yes' to clarification but didn't provide details. Asking again.")
+                return {
+                    "query_type": "vague",
+                    "is_vague": True,
+                    "is_out_of_scope": False,
+                    "needs_cross_question": True,
+                    "clarifying_question": "Great! Please type your specific question or topic below so I can search for it.",
+                    "search_scope": "system_only",
+                    "search_intents": [],
+                    "reasoning": "User agreed to clarify but provided no context.",
+                    "is_web_search": False
+                }
+
     if is_greeting(query):
         return {"query_type": "greeting", "search_scope": "system_only"}
 
