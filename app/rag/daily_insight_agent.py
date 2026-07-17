@@ -2,6 +2,11 @@ import os
 import random
 import httpx
 import json
+from collections import deque
+
+# In-memory tracker to prevent repeating categories within the same server lifecycle.
+# Safe approach: No database/Supabase changes required.
+RECENT_CATEGORIES = deque(maxlen=7)
 
 def fetch_daily_insight():
     """
@@ -18,20 +23,49 @@ def fetch_daily_insight():
 
     # Step 1: Select Random Category
     categories = [
+        # Constitutional & Rights
         "Fundamental Rights and Articles of the Indian Constitution",
         "Important Amendments in the Indian Constitution",
         "Consumer Rights in India",
-        "Traffic and Motor Vehicles Act rules in India",
+        
+        # Financial & Tax
+        "New vs Old Income Tax Regime rules and deductions effective from April 1, 2026 in India",
         "RBI Banking and ATM rules for consumers",
-        "Cyber Fraud and IT Act rules in India",
-        "Income Tax deductions and rules for individuals in India",
         "SEBI rules and Mutual Fund regulations for retail investors",
+        "Credit Score (CIBIL) and Loan rights for borrowers in India",
         "IRDAI rules and Health/Term Insurance claim rights for citizens",
-        "Credit Score (CIBIL) and Loan rights for borrowers in India"
+        
+        # Digital & Cyber
+        "Cyber Fraud, Data Privacy, and IT Act rules in India",
+        
+        # Safety & Legal (New Additions)
+        "Women's safety rights and POSH Act (Prevention of Sexual Harassment) in India",
+        "Child protection laws and POCSO Act awareness in India",
+        "Citizen rights during police arrest, FIR filing, and bail in India",
+        "Traffic and Motor Vehicles Act rules in India",
+        "Tenant and Landlord legal rights and rent control in India",
+        "Domestic violence laws and protective rights for women in India",
+        "BNS (Bharatiya Nyaya Sanhita) basic citizen safety sections and rules"
     ]
-    selected_category = random.choice(categories)
     
-    search_query = f"most essential and basic fundamental law or right about {selected_category} that every common citizen of India must know 2026"
+    # Filter out categories that were sent recently to avoid repeats
+    available_categories = [c for c in categories if c not in RECENT_CATEGORIES]
+    if not available_categories:
+        available_categories = categories # Fallback if tracker fills up
+        
+    selected_category = random.choice(available_categories)
+    RECENT_CATEGORIES.append(selected_category)
+    
+    # Add randomness to the search angle to prevent LLM fatigue
+    search_angles = [
+        "most essential and basic fundamental law or right about",
+        "recent changes, penalties or rules regarding",
+        "common misconceptions and practical legal truth about",
+        "step-by-step rights and legal protection for citizens regarding"
+    ]
+    selected_angle = random.choice(search_angles)
+    
+    search_query = f"{selected_angle} {selected_category} that every common citizen of India must know 2026"
 
     # Step 2: Fetch Data from Tavily
     print(f"Searching Tavily for: {search_query}")
@@ -67,7 +101,7 @@ def fetch_daily_insight():
     
     Output a JSON object with exactly these 3 keys:
     1. "insight_title": A catchy title starting with "Did you know? - [Topic]"
-    2. "insight_explanation": A simple 2-3 sentence explanation of the law in Hinglish or English.
+    2. "insight_explanation": A simple 2-3 sentence explanation of the law in Hinglish or English. YOU MUST INCLUDE THE EXACT SECTION, ARTICLE, OR RULE NUMBER IF AVAILABLE.
     3. "real_life_scenario": A practical 2-3 sentence scenario showing how this law saves people from trouble.
     
     Do NOT output markdown blocks, just raw valid JSON.
