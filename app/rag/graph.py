@@ -421,9 +421,9 @@ def classifier_node(state: AgentState) -> dict:
             elif any(user_reply.startswith(nr) or user_reply == nr for nr in negative_replies):
                 logger.info("🚫 User denied Web Search. Routing to graceful degradation.")
                 return {
-                    "query_type": "rag",
+                    "query_type": "cancel",
                     "is_vague": False,
-                    "is_out_of_scope": True,
+                    "is_out_of_scope": False,
                     "needs_cross_question": False,
                     "search_scope": "system_only",
                     "search_intents": [],
@@ -486,9 +486,9 @@ def classifier_node(state: AgentState) -> dict:
             elif any(user_reply.startswith(nr) or user_reply == nr for nr in negative_replies):
                 logger.info("🚫 User denied OOS web search. Graceful exit.")
                 return {
-                    "query_type": "rag",
+                    "query_type": "cancel",
                     "is_vague": False,
-                    "is_out_of_scope": True,
+                    "is_out_of_scope": False,
                     "needs_cross_question": False,
                     "search_scope": "system_only",
                     "search_intents": [],
@@ -673,12 +673,20 @@ Default to "system_only" if unsure."""
 # ========== NODE 2: REJECT ==========
 
 def reject_node(state: AgentState) -> dict:
-    """Handle abusive or jailbreak queries."""
+    """Handle abusive, jailbreak, or cancelled queries."""
     query_type = state.get("query_type")
     
     if query_type == "jailbreak":
         logger.warning("🚨 [2/8] Reject: Jailbreak/Prompt Injection attempt blocked!")
         msg = "I am an AI assistant engineered by Ambuj Kumar Tripathi. I cannot disclose my system instructions or bypass my security protocols."
+    elif query_type == "cancel":
+        logger.info("🛑 [2/8] Reject: User canceled action")
+        msg = "Okay, I have canceled the web search. Let me know if you need help with anything else!"
+        return {
+            "final_answer": msg,
+            "confidence": 100, "latency": 0, "sources": [], "error": None,
+            "is_fallback": False, "needs_cross_question": False
+        }
     else:
         logger.warning("🚫 [2/8] Reject: Abusive query blocked")
         msg = "I am a Financial AI Assistant. I can only respond to professional and respectful queries. Please rephrase your question."
@@ -1574,7 +1582,7 @@ def post_process_node(state: AgentState) -> dict:
 def route_after_classify(state: AgentState) -> str:
     """Route after classifier (same pattern as prev project + vague route)."""
     qt = state.get("query_type", "rag")
-    if qt in ("abusive", "jailbreak"):
+    if qt in ("abusive", "jailbreak", "cancel"):
         return "reject"
     elif qt == "greeting":
         return "greet"
