@@ -133,11 +133,11 @@ def embed_query(query: str) -> List[float]:
 
 @llm_circuit
 def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) -> str:
-    """Call LLM via Nvidia Nemotron (primary) with Gemini 3.5 Flash fallback + Langfuse tracing."""
+    """Call LLM via Gemini 3.5 Flash Lite (primary) with Nvidia Nemotron fallback + Langfuse tracing."""
     import httpx
 
-    primary_model = "nvidia/nemotron-3-super-120b-a12b:free"
-    fallback_model = "gemini-3.5-flash"
+    primary_model = "gemini-3.5-flash-lite"
+    fallback_model = "nvidia/nemotron-3-super-120b-a12b:free"
 
     # --- Langfuse Trace ---
     langfuse_trace = None
@@ -151,7 +151,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
                 metadata={"model": primary_model, "temperature": temperature},
             )
             langfuse_gen = langfuse_trace.generation(
-                name="openrouter-completion",
+                name="gemini-completion",
                 model=primary_model,
                 input=[{"role": "system", "content": system_prompt[:200]},
                        {"role": "user", "content": user_message[:500]}],
@@ -163,41 +163,9 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     start = time.time()
     used_model = primary_model
 
-    # === PRIMARY: Nvidia Nemotron via OpenRouter ===
+    # === PRIMARY: Gemini 3.5 Flash Lite ===
     try:
-        openrouter_headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-        }
-        openrouter_payload = {
-            "model": primary_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature,
-            "max_tokens": 4096,
-        }
-
-        with httpx.Client(timeout=60.0) as client:
-            resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers)
-
-        if resp.status_code != 200:
-            raise Exception(f"Primary LLM call failed: {resp.status_code} — {resp.text}")
-
-        data = resp.json()
-        raw_content = data.get("choices", [{}])[0].get("message", {}).get("content")
-        answer = (raw_content or "").strip()
-
-        if not answer:
-            raise Exception("Primary LLM returned empty content")
-
-    except Exception as primary_e:
-        # === FALLBACK: Gemini 3.5 Flash (Google Generative Language API) ===
-        logger.warning(f"Primary model {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
-        used_model = fallback_model
-
-        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
         gemini_headers = {"Content-Type": "application/json"}
         gemini_payload = {
             "systemInstruction": {
@@ -213,15 +181,48 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         }
 
         with httpx.Client(timeout=60.0) as client:
-            fallback_resp = client.post(gemini_url, json=gemini_payload, headers=gemini_headers)
-            if fallback_resp.status_code != 200:
-                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} — {fallback_resp.text}")
+            resp = client.post(gemini_url, json=gemini_payload, headers=gemini_headers)
 
-        data = fallback_resp.json()
+        if resp.status_code != 200:
+            raise Exception(f"Primary LLM call failed: {resp.status_code} — {resp.text}")
+
+        data = resp.json()
         try:
             answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
         except (KeyError, IndexError):
             answer = ""
+
+        if not answer:
+            raise Exception("Primary LLM returned empty content")
+
+    except Exception as primary_e:
+        # === FALLBACK: Nvidia Nemotron via OpenRouter ===
+        logger.warning(f"Primary model {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
+        used_model = fallback_model
+
+        openrouter_headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        openrouter_payload = {
+            "model": fallback_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            "temperature": temperature,
+            "max_tokens": 4096,
+        }
+
+        with httpx.Client(timeout=60.0) as client:
+            fallback_resp = client.post("https://openrouter.ai/api/v1/chat/completions", json=openrouter_payload, headers=openrouter_headers)
+            
+            if fallback_resp.status_code != 200:
+                raise Exception(f"Fallback LLM call failed: {fallback_resp.status_code} — {fallback_resp.text}")
+
+        data = fallback_resp.json()
+        raw_content = data.get("choices", [{}])[0].get("message", {}).get("content")
+        answer = (raw_content or "").strip()
 
     # Strip <think>...</think> blocks if model outputs reasoning tokens
     if "<think>" in answer:
@@ -231,6 +232,7 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     if not answer:
         logger.warning("⚠️ LLM returned empty content — treating as generation failure")
         raise Exception("LLM returned empty content")
+
 
     latency = round(time.time() - start, 2)
 
@@ -264,40 +266,36 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 0.3):
     """
     Streaming version of call_llm — yields text chunks as they arrive.
-    Primary: OpenRouter Nvidia Nemotron SSE streaming.
-    Fallback: Gemini 3.5 Flash SSE streaming.
+    Primary: Gemini 3.5 Flash Lite SSE streaming.
+    Fallback: OpenRouter Nvidia Nemotron SSE streaming.
     """
     import httpx
+    import json
 
-    primary_model = "nvidia/nemotron-3-super-120b-a12b:free"
-    fallback_model = "gemini-3.5-flash"
+    primary_model = "gemini-3.5-flash-lite"
+    fallback_model = "nvidia/nemotron-3-super-120b-a12b:free"
 
-    # === PRIMARY: OpenRouter Nemotron Streaming ===
+    # === PRIMARY: Gemini 3.5 Flash Lite Streaming ===
     try:
-        openrouter_headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-        }
-        openrouter_payload = {
-            "model": primary_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature,
-            "max_tokens": 4096,
-            "stream": True,
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+        gemini_headers = {"Content-Type": "application/json"}
+        gemini_payload = {
+            "systemInstruction": {
+                "parts": [{"text": system_prompt}]
+            },
+            "contents": [{
+                "parts": [{"text": user_message}]
+            }],
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": 4096,
+            }
         }
 
         with httpx.Client(timeout=120.0) as client:
-            with client.stream(
-                "POST",
-                "https://openrouter.ai/api/v1/chat/completions",
-                json=openrouter_payload,
-                headers=openrouter_headers,
-            ) as resp:
+            with client.stream("POST", gemini_url, json=gemini_payload, headers=gemini_headers) as resp:
                 if resp.status_code != 200:
-                    raise Exception(f"Primary stream failed: {resp.status_code}")
+                    raise Exception(f"Primary Gemini stream failed: {resp.status_code}")
 
                 for line in resp.iter_lines():
                     if not line or not line.startswith("data: "):
@@ -307,12 +305,59 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
                         break
                     try:
                         chunk = json.loads(data_str)
-                        delta = chunk.get("choices", [{}])[0].get("delta", {})
-                        content = delta.get("content", "")
-                        if content:
-                            yield content
+                        parts = chunk.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+                        for part in parts:
+                            text = part.get("text", "")
+                            if text:
+                                yield text
                     except (json.JSONDecodeError, IndexError, KeyError):
                         continue
+        return  # Primary succeeded, exit
+
+    except Exception as e:
+        logger.warning(f"Primary stream {primary_model} failed ({e}). Switching to FALLBACK {fallback_model}")
+
+    # === FALLBACK: OpenRouter Nemotron Streaming ===
+    openrouter_headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    openrouter_payload = {
+        "model": fallback_model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message}
+        ],
+        "temperature": temperature,
+        "max_tokens": 4096,
+        "stream": True,
+    }
+
+    with httpx.Client(timeout=120.0) as client:
+        with client.stream(
+            "POST",
+            "https://openrouter.ai/api/v1/chat/completions",
+            json=openrouter_payload,
+            headers=openrouter_headers,
+        ) as resp:
+            if resp.status_code != 200:
+                raise Exception(f"Fallback stream failed: {resp.status_code}")
+
+            for line in resp.iter_lines():
+                if not line or not line.startswith("data: "):
+                    continue
+                data_str = line[6:]
+                if data_str.strip() == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(data_str)
+                    delta = chunk.get("choices", [{}])[0].get("delta", {})
+                    content = delta.get("content", "")
+                    if content:
+                        yield content
+                except (json.JSONDecodeError, IndexError, KeyError):
+                    continue
+
         return  # Primary succeeded, exit
 
     except Exception as e:
