@@ -890,7 +890,7 @@ def stock_tool_node(state: AgentState) -> dict:
         }
 
         # ── Step 2: Send query to LLM with tool binding (bind_tools equivalent via API) ──
-        gemini_url = ff"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
 
         gemini_payload = {
             "systemInstruction": {"parts": [{"text": "You are a financial assistant with access to a live stock market tool. When the user asks about stock prices, market cap, P/E ratio, or any live market data, you MUST use the get_stock_price tool. Extract the correct Yahoo Finance ticker from the user's query and call the tool."}]},
