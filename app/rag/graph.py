@@ -186,7 +186,8 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
     import httpx
     import time
 
-    primary_model = "gemini-3.1-flash-lite-preview"
+    primary_model = "gemini-3.5-flash-lite"
+    fallback_model = "gemini-3.1-flash-lite-preview"
 
     # --- Langfuse Trace ---
     langfuse_trace = None
@@ -211,19 +212,18 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
 
     start = time.time()
     
-    # === Google Gemini Flash Lite ===
+    # === PRIMARY: Google Gemini Flash Lite ===
+    gemini_payload = {
+        "systemInstruction": {"parts": [{"text": system_prompt}]},
+        "contents": [{"parts": [{"text": user_message}]}],
+        "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
+    }
     try:
         gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
-        gemini_payload = {
-            "systemInstruction": {"parts": [{"text": system_prompt}]},
-            "contents": [{"parts": [{"text": user_message}]}],
-            "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
-        }
-        
         with httpx.Client(timeout=60.0) as client:
             resp = client.post(gemini_url, json=gemini_payload)
             if resp.status_code != 200:
-                raise Exception(f"Gemini LLM call failed: {resp.status_code} - {resp.text}")
+                raise Exception(f"Primary Gemini LLM call failed: {resp.status_code} - {resp.text}")
             
         data = resp.json()
         try:
@@ -231,9 +231,24 @@ def call_llm(system_prompt: str, user_message: str, temperature: float = 0.3) ->
         except (KeyError, IndexError):
             answer = ""
             
-    except Exception as e:
-        logger.error(f"🆘 Gemini LLM failed: {e}")
-        answer = "I apologize, but I am currently facing technical difficulties. Please try again later."
+    except Exception as primary_e:
+        logger.warning(f"Primary model {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
+        
+        try:
+            fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={settings.GEMINI_API_KEY}"
+            with httpx.Client(timeout=60.0) as client:
+                fallback_resp = client.post(fallback_url, json=gemini_payload)
+                if fallback_resp.status_code != 200:
+                    raise Exception(f"Fallback Gemini LLM call failed: {fallback_resp.status_code} - {fallback_resp.text}")
+                
+            data = fallback_resp.json()
+            try:
+                answer = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+            except (KeyError, IndexError):
+                answer = ""
+        except Exception as e:
+            logger.error(f"🆘 Fallback Gemini LLM also failed: {e}")
+            answer = "I apologize, but I am currently facing technical difficulties. Please try again later."
 
     latency = round(time.time() - start, 2)
 
@@ -267,22 +282,23 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
     import httpx
     import json
 
-    primary_model = "gemini-3.1-flash-lite-preview"
+    primary_model = "gemini-3.5-flash-lite"
+    fallback_model = "gemini-3.1-flash-lite-preview"
 
-    # === Google Gemini Flash Lite ===
+    # === PRIMARY: Google Gemini Flash Lite Streaming ===
+    gemini_payload = {
+        "systemInstruction": {"parts": [{"text": system_prompt}]},
+        "contents": [{"parts": [{"text": user_message}]}],
+        "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
+    }
+    gemini_headers = {"Content-Type": "application/json"}
+    
     try:
         gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
-        gemini_payload = {
-            "systemInstruction": {"parts": [{"text": system_prompt}]},
-            "contents": [{"parts": [{"text": user_message}]}],
-            "generationConfig": {"temperature": temperature, "maxOutputTokens": 4096}
-        }
-        gemini_headers = {"Content-Type": "application/json"}
-        
         with httpx.Client(timeout=120.0) as client:
             with client.stream("POST", gemini_url, json=gemini_payload, headers=gemini_headers) as resp:
                 if resp.status_code != 200:
-                    raise Exception(f"Gemini Stream failed: {resp.status_code}")
+                    raise Exception(f"Primary Gemini Stream failed: {resp.status_code}")
 
                 for line in resp.iter_lines():
                     if not line or not line.startswith("data: "):
@@ -301,10 +317,38 @@ def call_llm_stream(system_prompt: str, user_message: str, temperature: float = 
                                     yield content
                     except (json.JSONDecodeError, IndexError, KeyError):
                         continue
+        return
                         
-    except Exception as e:
-        logger.error(f"🆘 Gemini LLM stream failed: {e}")
-        yield "I apologize, but I am currently facing technical difficulties. Please try again later."
+    except Exception as primary_e:
+        logger.warning(f"Primary stream {primary_model} failed ({primary_e}). Switching to FALLBACK {fallback_model}")
+        
+        try:
+            fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:streamGenerateContent?alt=sse&key={settings.GEMINI_API_KEY}"
+            with httpx.Client(timeout=120.0) as client:
+                with client.stream("POST", fallback_url, json=gemini_payload, headers=gemini_headers) as resp:
+                    if resp.status_code != 200:
+                        raise Exception(f"Fallback Gemini Stream failed: {resp.status_code}")
+
+                    for line in resp.iter_lines():
+                        if not line or not line.startswith("data: "):
+                            continue
+                        data_str = line[6:]
+                        if data_str.strip() == "[DONE]":
+                            break
+                        try:
+                            chunk = json.loads(data_str)
+                            candidates = chunk.get("candidates", [])
+                            if candidates:
+                                parts = candidates[0].get("content", {}).get("parts", [])
+                                if parts:
+                                    content = parts[0].get("text", "")
+                                    if content:
+                                        yield content
+                        except (json.JSONDecodeError, IndexError, KeyError):
+                            continue
+        except Exception as e:
+            logger.error(f"🆘 Fallback Gemini LLM stream also failed: {e}")
+            yield "I apologize, but I am currently facing technical difficulties. Please try again later."
 
 
 # ========== STATE DEFINITION ==========
@@ -846,7 +890,7 @@ def stock_tool_node(state: AgentState) -> dict:
         }
 
         # ── Step 2: Send query to LLM with tool binding (bind_tools equivalent via API) ──
-        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={settings.GEMINI_API_KEY}"
+        gemini_url = ff"https://generativelanguage.googleapis.com/v1beta/models/{primary_model}:generateContent?key={settings.GEMINI_API_KEY}"
 
         gemini_payload = {
             "systemInstruction": {"parts": [{"text": "You are a financial assistant with access to a live stock market tool. When the user asks about stock prices, market cap, P/E ratio, or any live market data, you MUST use the get_stock_price tool. Extract the correct Yahoo Finance ticker from the user's query and call the tool."}]},
