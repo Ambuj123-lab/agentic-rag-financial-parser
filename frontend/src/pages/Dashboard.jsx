@@ -424,10 +424,7 @@ export default function Dashboard() {
         </div>
 
         {/* Messages Area */}
-        <div style={{
-          flex: 1, overflowY: 'auto', padding: '24px 20px',
-          display: 'flex', flexDirection: 'column',
-        }}>
+        <div className="chat-area">
           {messages.length === 0 && !loading && (
             <EmptyState onQuestionClick={(q) => sendMessage(q)} />
           )}

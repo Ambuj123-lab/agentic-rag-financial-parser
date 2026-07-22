@@ -590,6 +590,8 @@ a:hover {
   padding: 12px 16px;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 .chat-input {
   flex: 1;
@@ -599,7 +601,7 @@ a:hover {
   padding: 12px 16px;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 16px; /* 16px prevents iOS zoom on focus */
   outline: none;
   transition: border-color 0.2s;
 }
@@ -652,6 +654,7 @@ a:hover {
 .app-layout {
   display: flex;
   height: 100dvh; /* Fix for mobile browser navigation bar obscuring the bottom input */
+  overflow: hidden;
 }
 .sidebar {
   width: 260px;
@@ -672,6 +675,17 @@ a:hover {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0; /* Essential for flexbox scrolling containment */
+}
+
+/* --- Chat Area Container --- */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* --- Scrollbar --- */
@@ -750,6 +764,11 @@ a:hover {
   .hide-mobile {
     display: none !important;
   }
+  
+  .chat-area {
+    padding: 16px 12px;
+  }
+  
   .mobile-overlay {
     display: block;
     position: fixed;
