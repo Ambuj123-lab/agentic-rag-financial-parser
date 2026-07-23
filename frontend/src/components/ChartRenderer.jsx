@@ -144,29 +144,43 @@ function extractPieChartData(text) {
     return [r.split('|').map(c => c.trim()).filter(Boolean)]
   })
 
-  // Need exactly 2 columns for a clean Pie Chart (e.g., Sector | Percentage)
-  if (headers.length !== 2) return null
+  // Support 2-column (Sector | Value) and 3-column (Sector | Value | Description) tables
+  if (headers.length < 2 || headers.length > 3) return null
+
+  // Find which column has numeric/currency values (for pie chart)
+  // Column 0 is always the label/name
+  let valueColIndex = 1
+  if (headers.length === 3 && rows.length > 0) {
+    // Check which of column 1 or 2 has more numeric values
+    let col1Nums = 0, col2Nums = 0
+    for (const row of rows) {
+      if (row[1] && /[0-9]/.test(row[1])) col1Nums++
+      if (row[2] && /[0-9]/.test(row[2])) col2Nums++
+    }
+    valueColIndex = col1Nums >= col2Nums ? 1 : 2
+  }
 
   const data = []
   for (const row of rows) {
-    if (row.length !== 2) continue
-    const [name, valStr] = row
+    if (row.length < 2) continue
+    const name = row[0]
+    const valStr = row[valueColIndex] || ''
     
-    // Ensure the value is somewhat short (not a full sentence)
-    if (valStr.trim().length > 20) continue;
+    // Skip if value column looks like a full sentence (not a number)
+    if (valStr.trim().length > 30 && !/[0-9]/.test(valStr)) continue;
 
-    // Look for actual digits
-    const numMatch = valStr.match(/([0-9]+(?:\.[0-9]+)?)/)
+    // Extract numeric value — supports ₹2.78 lakh crore, 12.5%, $1,234, etc.
+    const numMatch = valStr.match(/([0-9]+(?:[,.][0-9]+)*)/)
     if (numMatch) {
-      const val = parseFloat(numMatch[1])
-      if (!isNaN(val)) {
+      const val = parseFloat(numMatch[1].replace(/,/g, ''))
+      if (!isNaN(val) && val > 0) {
         data.push({ name: name.replace(/\*\*/g, '').trim(), value: val })
       }
     }
   }
 
-  // If we have at least 2 data points and they cover at least half the rows
-  if (data.length >= 2 && data.length >= rows.length / 2) {
+  // If we have at least 3 data points, render pie chart
+  if (data.length >= 3) {
     return data
   }
   return null
