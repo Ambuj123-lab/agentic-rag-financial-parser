@@ -67,3 +67,5 @@ cloudflared.exe
 docs/
 
 test_stock_api.py
+
+outputs/
