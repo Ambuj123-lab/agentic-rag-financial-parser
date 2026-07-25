@@ -869,6 +869,8 @@ def stock_tool_node(state: AgentState) -> dict:
     logger.info("📈 [4.7/10] Stock Tool Node: LLM Tool Calling")
     start = time.time()
 
+    primary_model = "gemini-3.5-flash-lite"
+
     intents = state.get("search_intents", [])
     query = intents[0]["search_query"] if intents else state.get("user_query", "")
 
