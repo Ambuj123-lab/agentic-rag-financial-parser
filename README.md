@@ -44,7 +44,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 <!-- Animated SVG Architecture Diagram -->
 <div align="center">
 <br/>
-<img src="assets/architecture.svg" width="100%" alt="Agentic Financial Parser Architecture"/>
+<img src="assets/rag_architecture_animated.webp" width="100%" alt="Agentic Financial Parser Architecture"/>
 <br/>
 </div>
 

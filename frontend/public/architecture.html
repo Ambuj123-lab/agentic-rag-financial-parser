@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Agentic Financial Parser V2 — Architecture</title>
+<title>Agentic Financial Parser — 11-Node Architecture</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{
   width:100%;min-height:100vh;
-  background:#05091a;
+  background:#000000;
   font-family:'Rajdhani',sans-serif;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
@@ -24,8 +24,8 @@ html,body{
 body::before{
   content:'';position:fixed;inset:0;
   background-image:
-    linear-gradient(rgba(20,50,120,.05)1px,transparent 1px),
-    linear-gradient(90deg,rgba(20,50,120,.05)1px,transparent 1px);
+    linear-gradient(rgba(30,60,130,.07)1px,transparent 1px),
+    linear-gradient(90deg,rgba(30,60,130,.07)1px,transparent 1px);
   background-size:44px 44px;
   pointer-events:none;z-index:0;
 }
@@ -39,7 +39,7 @@ body::before{
 
 .outer{
   position:relative;z-index:1;
-  width:100%;max-width:1320px;
+  width:100%;max-width:1360px;
   display:flex;flex-direction:column;
   align-items:center;justify-content:flex-start;
   padding:8px 6px 4px;
@@ -54,7 +54,7 @@ body::before{
 /* title row */
 .title-row{
   display:flex;align-items:center;justify-content:space-between;
-  width:100%;max-width:1300px;
+  width:100%;max-width:1340px;
   padding:0 4px 4px;
   border-bottom:1px solid rgba(251,191,36,.12);
   margin-bottom:4px;
@@ -92,7 +92,7 @@ body::before{
 
 /* SVG fills remaining height */
 .arch-wrap{
-  flex:1;width:100%;max-width:1300px;
+  flex:1;width:100%;max-width:1340px;
   display:flex;align-items:stretch;
   min-height:0;
 }
@@ -118,7 +118,7 @@ svg.arch{
   display:flex;gap:14px;align-items:center;flex-wrap:wrap;
   border-top:1px solid rgba(251,191,36,.1);
   padding:3px 8px 2px;
-  width:100%;max-width:1300px;
+  width:100%;max-width:1340px;
 }
 .metric{display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;}
 .metric .v{font-size:11px;font-weight:700;text-shadow:0 0 6px currentColor;}
@@ -177,8 +177,8 @@ svg.arch{
 <div class="title-row">
   <div class="left">
     <div class="sys">ENTERPRISE ARCHITECTURE 2026  ·  PRODUCTION SYSTEM  ·  ZERO-COST INFRASTRUCTURE</div>
-    <h1>Agentic Financial Parser V2 — 8-Node LangGraph StateGraph</h1>
-    <div class="sub">Jina AI v3 MRL 256d  ·  Pinecone Serverless  ·  Cohere Rerank v3.0  ·  Nvidia Nemotron 120B  ·  FastAPI  ·  SHA-256 Sync  ·  3-Layer Hallucination Guard</div>
+    <h1>Agentic Financial Parser — 11-Node LangGraph RAG</h1>
+    <div class="sub">PII Shield  ·  Jina AI v3 MRL 256d  ·  Pinecone Serverless  ·  Cohere Rerank v3.0  ·  Gemini Flash Lite  ·  Tavily Web  ·  yFinance  ·  WhatsApp  ·  Daily AI Insight Agent</div>
   </div>
   <div class="right">
     <span class="architect-name">Ambuj Kumar Tripathi</span>
@@ -189,7 +189,7 @@ svg.arch{
 
 <!-- MAIN SVG -->
 <div class="arch-wrap">
-<svg class="arch" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<svg class="arch" viewBox="0 0 1340 660" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
 <defs>
   <filter id="gA"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   <filter id="gB"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -210,6 +210,10 @@ svg.arch{
     <path d="M1,1 L5,3 L1,5" fill="none" stroke="#f43f5e" stroke-width="1.3"/></marker>
   <marker id="mW" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
     <path d="M1,1 L5,3 L1,5" fill="none" stroke="#94a3b8" stroke-width="1"/></marker>
+  <marker id="mO" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+    <path d="M1,1 L5,3 L1,5" fill="none" stroke="#f97316" stroke-width="1.3"/></marker>
+  <marker id="mC" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+    <path d="M1,1 L5,3 L1,5" fill="none" stroke="#06b6d4" stroke-width="1.3"/></marker>
 
   <style>
     @keyframes dash{to{stroke-dashoffset:-20}}
@@ -222,304 +226,409 @@ svg.arch{
     @keyframes gg{0%,100%{filter:drop-shadow(0 0 4px #10b981)}50%{filter:drop-shadow(0 0 14px #10b981)}}
     @keyframes gp{0%,100%{filter:drop-shadow(0 0 5px #8b5cf6)}50%{filter:drop-shadow(0 0 18px #8b5cf6)}}
     @keyframes gr{0%,100%{filter:drop-shadow(0 0 4px #f43f5e)}50%{filter:drop-shadow(0 0 14px #f43f5e)}}
+    @keyframes go{0%,100%{filter:drop-shadow(0 0 4px #f97316)}50%{filter:drop-shadow(0 0 14px #f97316)}}
+    @keyframes gc{0%,100%{filter:drop-shadow(0 0 4px #06b6d4)}50%{filter:drop-shadow(0 0 14px #06b6d4)}}
     .na{animation:ga 2.6s ease-in-out infinite;}
     .nb{animation:gb 2.8s ease-in-out infinite;}
     .ng{animation:gg 2.5s ease-in-out infinite;}
     .np{animation:gp 2.3s ease-in-out infinite;}
     .nr{animation:gr 2.7s ease-in-out infinite;}
+    .no{animation:go 2.5s ease-in-out infinite;}
+    .nc{animation:gc 2.4s ease-in-out infinite;}
   </style>
   <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
     <path d="M44 0L0 0 0 44" fill="none" stroke="rgba(20,50,120,.06)" stroke-width=".5"/></pattern>
 </defs>
 
 <!-- BG -->
-<rect width="1280" height="640" fill="#05091a"/>
-<rect width="1280" height="640" fill="url(#grid)"/>
+<rect width="1340" height="660" fill="#000000"/>
+<rect width="1340" height="660" fill="url(#grid)"/>
 <!-- Ambient glows -->
-<ellipse cx="180" cy="340" rx="180" ry="140" fill="rgba(59,130,246,.04)" filter="url(#sb)"/>
-<ellipse cx="620" cy="310" rx="260" ry="180" fill="rgba(251,191,36,.03)" filter="url(#sb)"/>
-<ellipse cx="1060" cy="340" rx="200" ry="160" fill="rgba(139,92,246,.04)" filter="url(#sb)"/>
+<ellipse cx="180" cy="340" rx="180" ry="140" fill="rgba(59,130,246,.06)" filter="url(#sb)"/>
+<ellipse cx="580" cy="310" rx="220" ry="180" fill="rgba(251,191,36,.04)" filter="url(#sb)"/>
+<ellipse cx="1020" cy="340" rx="200" ry="160" fill="rgba(139,92,246,.06)" filter="url(#sb)"/>
 
 <!-- ════════════════ PERSISTENCE ROW (top) ════════════════ -->
-<rect x="360" y="8" width="580" height="30" rx="7" fill="none" stroke="rgba(244,63,94,.18)" stroke-width="1" stroke-dasharray="5,4"/>
-<text x="368" y="19" font-family="'Share Tech Mono'" font-size="7.5" fill="#501020" letter-spacing="1.5">PERSISTENCE  &amp;  OBSERVABILITY</text>
+<rect x="330" y="8" width="620" height="30" rx="7" fill="none" stroke="rgba(244,63,94,.18)" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="338" y="19" font-family="'Share Tech Mono'" font-size="7.5" fill="#501020" letter-spacing="1.5">PERSISTENCE  &amp;  OBSERVABILITY</text>
 <!-- MongoDB -->
-<rect x="366" y="22" width="118" height="14" rx="4" fill="#1a0508" stroke="#f43f5e" stroke-width=".8"/>
-<text x="425" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#f43f5e">🗄 MongoDB Atlas · TTL 30d</text>
+<rect x="336" y="22" width="118" height="14" rx="4" fill="#1a0508" stroke="#f43f5e" stroke-width=".8"/>
+<text x="395" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#f43f5e">🗄 MongoDB Atlas · TTL 30d</text>
 <!-- Redis -->
-<rect x="492" y="22" width="110" height="14" rx="4" fill="#1a0508" stroke="#f43f5e" stroke-width=".8"/>
-<text x="547" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#f43f5e">⚡ Upstash Redis · 1hr</text>
+<rect x="462" y="22" width="110" height="14" rx="4" fill="#1a0508" stroke="#f43f5e" stroke-width=".8"/>
+<text x="517" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#f43f5e">⚡ Upstash Redis · 1hr</text>
 <!-- Langfuse -->
-<rect x="610" y="22" width="110" height="14" rx="4" fill="#0c1120" stroke="#64748b" stroke-width=".8"/>
-<text x="665" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#64748b">📊 Langfuse Traces</text>
+<rect x="580" y="22" width="110" height="14" rx="4" fill="#0c1120" stroke="#64748b" stroke-width=".8"/>
+<text x="635" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#64748b">📊 Langfuse Traces</text>
 <!-- Supabase -->
-<rect x="728" y="22" width="110" height="14" rx="4" fill="#011a0f" stroke="#10b981" stroke-width=".8"/>
-<text x="783" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#10b981">🗃 Supabase Registry</text>
+<rect x="698" y="22" width="110" height="14" rx="4" fill="#011a0f" stroke="#10b981" stroke-width=".8"/>
+<text x="753" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#10b981">🗃 Supabase Registry</text>
+<!-- Circuit Breaker -->
+<rect x="816" y="22" width="128" height="14" rx="4" fill="#1a0f00" stroke="#f97316" stroke-width=".8"/>
+<text x="880" y="32" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#f97316">⚡ pybreaker · 3 fails</text>
 
-<!-- Persistence dashed connects down to gateway -->
-<line x1="425" y1="36" x2="425" y2="80" stroke="rgba(244,63,94,.2)" stroke-width="1" class="fls"/>
-<line x1="547" y1="36" x2="547" y2="80" stroke="rgba(244,63,94,.15)" stroke-width="1" class="fls"/>
-<line x1="665" y1="36" x2="665" y2="80" stroke="rgba(100,116,139,.2)" stroke-width="1" class="fls"/>
-<line x1="783" y1="36" x2="783" y2="80" stroke="rgba(16,185,129,.15)" stroke-width="1" class="fls"/>
+<!-- Persistence connects down -->
+<line x1="395" y1="36" x2="395" y2="75" stroke="rgba(244,63,94,.2)" stroke-width="1" class="fls"/>
+<line x1="517" y1="36" x2="517" y2="75" stroke="rgba(244,63,94,.15)" stroke-width="1" class="fls"/>
+<line x1="635" y1="36" x2="635" y2="75" stroke="rgba(100,116,139,.2)" stroke-width="1" class="fls"/>
+<line x1="753" y1="36" x2="753" y2="75" stroke="rgba(16,185,129,.15)" stroke-width="1" class="fls"/>
 
-<!-- ════════════════ USER ════════════════ -->
+<!-- ════════════════ USER + WHATSAPP ════════════════ -->
 <g class="nb">
-  <circle cx="62" cy="100" r="38" fill="#0d1a2e" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="62" y="88" text-anchor="middle" font-family="'Rajdhani'" font-size="18" fill="#3b82f6">🙎</text>
-  <text x="62" y="104" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#3b82f6">User</text>
-  <text x="62" y="116" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#1e3a5f">React/Vite</text>
+  <circle cx="55" cy="95" r="34" fill="#0d1a2e" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="55" y="84" text-anchor="middle" font-family="'Rajdhani'" font-size="17" fill="#3b82f6">🙎</text>
+  <text x="55" y="100" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#3b82f6">User</text>
+  <text x="55" y="112" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#1e3a5f">React/Vite</text>
+</g>
+
+<!-- WhatsApp alternate -->
+<g class="ng" style="animation-delay:.5s">
+  <circle cx="55" cy="170" r="24" fill="#011a0f" stroke="#10b981" stroke-width="1.2"/>
+  <text x="55" y="165" text-anchor="middle" font-family="'Rajdhani'" font-size="14" fill="#10b981">📱</text>
+  <text x="55" y="178" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#064030">WhatsApp</text>
+  <text x="55" y="186" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#064030">Meta Webhook</text>
 </g>
 
 <!-- User → Gateway -->
-<line x1="100" y1="100" x2="162" y2="100" stroke="#3b82f6" stroke-width="1.3" class="fl" marker-end="url(#mB)"/>
-<text x="131" y="95" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#1e3a5f">REST/SSE</text>
+<line x1="89" y1="95" x2="148" y2="95" stroke="#3b82f6" stroke-width="1.3" class="fl" marker-end="url(#mB)"/>
+<text x="118" y="89" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#1e3a5f">REST/SSE</text>
+<!-- WhatsApp → Gateway -->
+<path d="M79,170 L120,170 L120,110 L148,110" stroke="#10b981" stroke-width="1" class="fls" fill="none" marker-end="url(#mG)"/>
+<text x="115" y="145" font-family="'Share Tech Mono'" font-size="5.5" fill="#064030">Webhook</text>
 
 <!-- ════════════════ FASTAPI GATEWAY ════════════════ -->
 <g class="nb" style="animation-delay:.2s">
-  <rect x="162" y="76" width="160" height="48" rx="9" fill="#080e1a" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="242" y="96" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#3b82f6">🚀 FastAPI</text>
-  <text x="242" y="109" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#1e3a5f">Async · Docker · Render</text>
-  <text x="242" y="119" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#1e3a5f">Circuit Breaker · pybreaker</text>
+  <rect x="148" y="72" width="145" height="50" rx="9" fill="#080e1a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="220" y="92" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#3b82f6">🚀 FastAPI</text>
+  <text x="220" y="104" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#1e3a5f">Async · Docker · Render</text>
+  <text x="220" y="114" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#1e3a5f">OAuth · JWT · PII Shield</text>
 </g>
 
-<!-- Gateway → LangGraph -->
-<line x1="322" y1="100" x2="370" y2="100" stroke="#fbbf24" stroke-width="1.4" class="fl" marker-end="url(#mA)"/>
-<text x="346" y="93" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#50400a">State Init</text>
+<!-- Gateway → PII Shield → Classifier -->
+<line x1="293" y1="97" x2="325" y2="97" stroke="#f97316" stroke-width="1.4" class="fl" marker-end="url(#mO)"/>
+
+<!-- ════════════════ PII SHIELD ════════════════ -->
+<g class="no" style="animation-delay:.3s">
+  <rect x="325" y="80" width="90" height="38" rx="8" fill="#1a0f00" stroke="#f97316" stroke-width="1.5"/>
+  <text x="370" y="96" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="700" fill="#f97316">🛡️ PII Shield</text>
+  <text x="370" y="108" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#7a3d00">Aadhaar·PAN·Mobile</text>
+</g>
+
+<!-- PII → Classifier -->
+<line x1="415" y1="99" x2="448" y2="99" stroke="#fbbf24" stroke-width="1.4" class="fl" marker-end="url(#mA)"/>
+<text x="432" y="93" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#50400a">masked</text>
 
 <!-- ════════════════ LANGGRAPH BOX ════════════════ -->
-<rect x="370" y="60" width="720" height="530" rx="12" fill="none" stroke="rgba(251,191,36,.18)" stroke-width="1" stroke-dasharray="6,4"/>
-<text x="380" y="57" font-family="'Share Tech Mono'" font-size="7.5" fill="#fbbf24" letter-spacing="2">LANGGRAPH  ·  8-NODE ORCHESTRATION</text>
+<rect x="440" y="55" width="870" height="555" rx="12" fill="none" stroke="rgba(251,191,36,.18)" stroke-width="1" stroke-dasharray="6,4"/>
+<text x="450" y="52" font-family="'Share Tech Mono'" font-size="7.5" fill="#fbbf24" letter-spacing="2">LANGGRAPH  ·  11-NODE ORCHESTRATION</text>
 
 <!-- ════ NODE 1: CLASSIFIER ════ -->
 <g class="na">
-  <rect x="400" y="76" width="156" height="58" rx="9" fill="#140f00" stroke="#fbbf24" stroke-width="2"/>
-  <text x="478" y="95" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010" letter-spacing="1">NODE 01</text>
-  <text x="478" y="111" text-anchor="middle" font-family="'Rajdhani'" font-size="14" font-weight="700" fill="#fbbf24">🧭 Classifier</text>
-  <text x="478" y="125" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010">1 LLM · 4-path routing</text>
+  <rect x="448" y="72" width="150" height="58" rx="9" fill="#140f00" stroke="#fbbf24" stroke-width="2"/>
+  <text x="523" y="91" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010" letter-spacing="1">NODE 01</text>
+  <text x="523" y="107" text-anchor="middle" font-family="'Rajdhani'" font-size="14" font-weight="700" fill="#fbbf24">🧭 Classifier</text>
+  <text x="523" y="121" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#806010">1 LLM · 6-path routing</text>
 </g>
 
-<!-- Classifier → Reject -->
-<path d="M400,95 L310,95 L310,215" stroke="#f43f5e" stroke-width="1.2" class="fl" fill="none" marker-end="url(#mR)"/>
-<text x="288" y="170" font-family="'Share Tech Mono'" font-size="7" fill="#501020" transform="rotate(-90,288,170)">abusive</text>
+<!-- Classifier → Reject (abusive/jailbreak) -->
+<path d="M448,90 L390,90 L390,210" stroke="#f43f5e" stroke-width="1.2" class="fl" fill="none" marker-end="url(#mR)"/>
+<text x="375" y="160" font-family="'Share Tech Mono'" font-size="6" fill="#501020" transform="rotate(-90,375,160)">abusive / jailbreak</text>
 
 <!-- Classifier → Greet -->
-<path d="M400,110 L350,110 L350,270" stroke="#10b981" stroke-width="1.2" class="fl" fill="none" marker-end="url(#mG)"/>
-<text x="334" y="200" font-family="'Share Tech Mono'" font-size="7" fill="#064030" transform="rotate(-90,334,200)">greeting</text>
+<path d="M448,105 L420,105 L420,278" stroke="#10b981" stroke-width="1.2" class="fl" fill="none" marker-end="url(#mG)"/>
+<text x="408" y="200" font-family="'Share Tech Mono'" font-size="6" fill="#064030" transform="rotate(-90,408,200)">greeting</text>
 
 <!-- Classifier → CrossQ -->
-<line x1="478" y1="134" x2="478" y2="220" stroke="#8b5cf6" stroke-width="1.2" class="fl" marker-end="url(#mP)"/>
-<text x="490" y="182" font-family="'Share Tech Mono'" font-size="7" fill="#3a1a6a">vague</text>
+<line x1="523" y1="130" x2="523" y2="215" stroke="#8b5cf6" stroke-width="1.2" class="fl" marker-end="url(#mP)"/>
+<text x="535" y="178" font-family="'Share Tech Mono'" font-size="6.5" fill="#3a1a6a">vague</text>
 
 <!-- Classifier → Retriever (RAG) -->
-<line x1="556" y1="105" x2="620" y2="105" stroke="#fbbf24" stroke-width="1.5" class="fl" marker-end="url(#mA)"/>
-<text x="588" y="98" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#50400a">RAG</text>
+<line x1="598" y1="100" x2="645" y2="100" stroke="#fbbf24" stroke-width="1.5" class="fl" marker-end="url(#mA)"/>
+<text x="621" y="93" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#50400a">RAG</text>
+
+<!-- Classifier → Web Search -->
+<path d="M570,130 L570,160 L605,160 L605,215" stroke="#06b6d4" stroke-width="1.2" class="fl" fill="none" marker-end="url(#mC)"/>
+<text x="616" y="190" font-family="'Share Tech Mono'" font-size="6" fill="#065a68">OOS/web</text>
+
+<!-- Classifier → Stock Tool -->
+<path d="M598,115 L625,115 L625,165 L628,165 L628,240" stroke="#f97316" stroke-width="1.2" class="fl" fill="none" marker-end="url(#mO)"/>
+<text x="640" y="208" font-family="'Share Tech Mono'" font-size="6" fill="#7a3d00">stock</text>
 
 <!-- ════ NODE 2: REJECT ════ -->
 <g>
-  <rect x="275" y="215" width="96" height="46" rx="7" fill="#1a0508" stroke="#f43f5e" stroke-width="1.2"/>
-  <text x="323" y="231" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#501020">NODE 02</text>
-  <text x="323" y="246" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="600" fill="#f43f5e">🚫 Reject</text>
-  <text x="323" y="257" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#501020">0 LLM · not saved</text>
+  <rect x="355" y="210" width="90" height="44" rx="7" fill="#1a0508" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="400" y="225" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#501020">NODE 02</text>
+  <text x="400" y="240" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#f43f5e">🚫 Reject</text>
+  <text x="400" y="250" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#501020">abusive · jailbreak</text>
 </g>
 
 <!-- ════ NODE 3: GREET ════ -->
 <g>
-  <rect x="318" y="270" width="96" height="46" rx="7" fill="#011a0f" stroke="#10b981" stroke-width="1.2"/>
-  <text x="366" y="286" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">NODE 03</text>
-  <text x="366" y="301" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="600" fill="#10b981">👋 Greet</text>
-  <text x="366" y="312" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">1 LLM · no VectorDB</text>
+  <rect x="375" y="278" width="90" height="44" rx="7" fill="#011a0f" stroke="#10b981" stroke-width="1.2"/>
+  <text x="420" y="293" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">NODE 03</text>
+  <text x="420" y="308" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#10b981">👋 Greet</text>
+  <text x="420" y="318" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#064030">1 LLM · no VectorDB</text>
 </g>
 
 <!-- ════ NODE 4: CROSSQ ════ -->
 <g>
-  <rect x="400" y="220" width="156" height="46" rx="7" fill="#0a0514" stroke="#8b5cf6" stroke-width="1.2"/>
-  <text x="478" y="236" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#3a1a6a">NODE 04</text>
-  <text x="478" y="251" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="600" fill="#8b5cf6">❓ CrossQuestioner</text>
-  <text x="478" y="262" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#3a1a6a">clarify vague · max 2 rounds</text>
+  <rect x="460" y="215" width="130" height="44" rx="7" fill="#0a0514" stroke="#8b5cf6" stroke-width="1.2"/>
+  <text x="525" y="230" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#3a1a6a">NODE 04</text>
+  <text x="525" y="245" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#8b5cf6">❓ CrossQuestioner</text>
+  <text x="525" y="255" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#3a1a6a">HITL · max 2 rounds</text>
 </g>
 
+<!-- ════ NODE 9: WEB SEARCH ════ -->
+<g class="nc" style="animation-delay:.6s">
+  <rect x="560" y="215" width="115" height="44" rx="7" fill="#021518" stroke="#06b6d4" stroke-width="1.3"/>
+  <text x="617" y="230" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#065a68">NODE 09</text>
+  <text x="617" y="245" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#06b6d4">🌐 Web Search</text>
+  <text x="617" y="255" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#065a68">Tavily API · ReAct</text>
+</g>
+
+<!-- ════ NODE 10: STOCK TOOL ════ -->
+<g class="no" style="animation-delay:.8s">
+  <rect x="560" y="270" width="115" height="44" rx="7" fill="#1a0f00" stroke="#f97316" stroke-width="1.3"/>
+  <text x="617" y="285" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#7a3d00">NODE 10</text>
+  <text x="617" y="300" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#f97316">📈 Stock Tool</text>
+  <text x="617" y="310" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#7a3d00">yfinance · LLM Tool Call</text>
+</g>
+
+<!-- HITL Badge -->
+<rect x="460" y="265" width="92" height="16" rx="3" fill="rgba(139,92,246,.15)" stroke="rgba(139,92,246,.5)" stroke-width=".8"/>
+<text x="506" y="276" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#8b5cf6">⚠️ HITL Permission</text>
+
 <!-- ════════════ VECTOR SEARCH SUBGRAPH ════════════ -->
-<rect x="600" y="70" width="460" height="370" rx="10" fill="none" stroke="rgba(16,185,129,.2)" stroke-width="1" stroke-dasharray="5,4"/>
-<text x="612" y="67" font-family="'Share Tech Mono'" font-size="7.5" fill="#10b981" letter-spacing="1.5">VECTOR SEARCH ENGINE</text>
+<rect x="640" y="66" width="440" height="375" rx="10" fill="none" stroke="rgba(16,185,129,.2)" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="652" y="63" font-family="'Share Tech Mono'" font-size="7.5" fill="#10b981" letter-spacing="1.5">VECTOR SEARCH ENGINE</text>
 
 <!-- ════ NODE 5: RETRIEVER ════ -->
 <g class="na" style="animation-delay:.5s">
-  <rect x="620" y="80" width="148" height="58" rx="9" fill="#140f00" stroke="#fbbf24" stroke-width="1.5"/>
-  <text x="694" y="99" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010">NODE 05</text>
-  <text x="694" y="114" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#fbbf24">🔍 Retriever</text>
-  <text x="694" y="128" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010">PII mask · namespace route</text>
+  <rect x="660" y="76" width="148" height="58" rx="9" fill="#140f00" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="734" y="95" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010">NODE 05</text>
+  <text x="734" y="110" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#fbbf24">🔍 Retriever</text>
+  <text x="734" y="124" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#806010">PII masked · namespace route</text>
 </g>
 
 <!-- Retriever → Jina -->
-<line x1="694" y1="138" x2="694" y2="175" stroke="#10b981" stroke-width="1.3" class="fl" marker-end="url(#mG)"/>
+<line x1="734" y1="134" x2="734" y2="168" stroke="#10b981" stroke-width="1.3" class="fl" marker-end="url(#mG)"/>
 
 <!-- JINA EMBED -->
 <g class="ng" style="animation-delay:.8s">
-  <rect x="618" y="175" width="152" height="50" rx="8" fill="#011a0f" stroke="#10b981" stroke-width="1.3"/>
-  <text x="694" y="193" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">EMBEDDING</text>
-  <text x="694" y="207" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#10b981">🧬 Jina AI v3 MRL</text>
-  <text x="694" y="220" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">256d · 75% storage saved · API</text>
+  <rect x="658" y="168" width="152" height="46" rx="8" fill="#011a0f" stroke="#10b981" stroke-width="1.3"/>
+  <text x="734" y="184" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">EMBEDDING</text>
+  <text x="734" y="198" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="700" fill="#10b981">🧬 Jina AI v3 MRL</text>
+  <text x="734" y="210" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#064030">256d · 75% saved · API</text>
 </g>
 
 <!-- Jina → Pinecone -->
-<line x1="694" y1="225" x2="694" y2="260" stroke="#10b981" stroke-width="1.3" class="fl" marker-end="url(#mG)"/>
+<line x1="734" y1="214" x2="734" y2="245" stroke="#10b981" stroke-width="1.3" class="fl" marker-end="url(#mG)"/>
 
 <!-- PINECONE -->
 <g>
-  <rect x="618" y="260" width="152" height="50" rx="8" fill="#011a0f" stroke="#10b981" stroke-width="1.3"/>
-  <text x="694" y="278" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">VECTOR DB</text>
-  <text x="694" y="292" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#10b981">🌲 Pinecone Serverless</text>
-  <text x="694" y="306" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">14,662 vectors · dual namespace</text>
+  <rect x="658" y="245" width="152" height="46" rx="8" fill="#011a0f" stroke="#10b981" stroke-width="1.3"/>
+  <text x="734" y="261" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">VECTOR DB</text>
+  <text x="734" y="275" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="700" fill="#10b981">🌲 Pinecone Serverless</text>
+  <text x="734" y="287" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#064030">14,662 vectors · dual NS + portfolio</text>
 </g>
 
 <!-- Pinecone → Parent-Child -->
-<line x1="694" y1="310" x2="694" y2="345" stroke="rgba(16,185,129,.5)" stroke-width="1" class="fls" marker-end="url(#mG)"/>
+<line x1="734" y1="291" x2="734" y2="320" stroke="rgba(16,185,129,.5)" stroke-width="1" class="fls" marker-end="url(#mG)"/>
 
 <!-- PARENT-CHILD -->
 <g>
-  <rect x="592" y="345" width="204" height="40" rx="7" fill="#011a0f" stroke="#10b981" stroke-width="1"/>
-  <text x="694" y="361" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#10b981">📑 Parent-Child Resolution</text>
-  <text x="694" y="376" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">dedup by parent_id · context density</text>
+  <rect x="640" y="320" width="188" height="36" rx="7" fill="#011a0f" stroke="#10b981" stroke-width="1"/>
+  <text x="734" y="335" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#10b981">📑 Parent-Child Resolution</text>
+  <text x="734" y="348" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#064030">dedup by parent_id · context density</text>
 </g>
 
 <!-- Parent-Child → Cohere -->
-<line x1="694" y1="385" x2="694" y2="415" stroke="#10b981" stroke-width="1.3" class="fl" marker-end="url(#mG)"/>
+<line x1="734" y1="356" x2="734" y2="380" stroke="#10b981" stroke-width="1.3" class="fl" marker-end="url(#mG)"/>
 
 <!-- COHERE RERANK -->
 <g class="ng" style="animation-delay:1.2s">
-  <rect x="592" y="415" width="204" height="50" rx="8" fill="#011a0f" stroke="#10b981" stroke-width="1.8"/>
-  <text x="694" y="432" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">RERANKER</text>
-  <text x="694" y="447" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#10b981">🥇 Cohere Rerank v3.0</text>
-  <text x="694" y="460" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">top-10 golden chunks to Generator</text>
+  <rect x="640" y="380" width="188" height="46" rx="8" fill="#011a0f" stroke="#10b981" stroke-width="1.8"/>
+  <text x="734" y="396" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">RERANKER</text>
+  <text x="734" y="410" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#10b981">🥇 Cohere Rerank v3.0</text>
+  <text x="734" y="422" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#064030">15→10 golden chunks · semantic</text>
 </g>
 
 <!-- Cohere → Generator -->
-<line x1="796" y1="440" x2="840" y2="390" stroke="#10b981" stroke-width="1.4" class="fl" marker-end="url(#mG)"/>
-<text x="826" y="418" font-family="'Share Tech Mono'" font-size="7" fill="#064030">Top 10</text>
+<line x1="828" y1="403" x2="870" y2="370" stroke="#10b981" stroke-width="1.4" class="fl" marker-end="url(#mG)"/>
+<text x="858" y="388" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">Top 10</text>
+
+<!-- Web Search → Generator -->
+<path d="M675,235 L730,235 L780,235 L860,350" stroke="#06b6d4" stroke-width="1" class="fls" fill="none" marker-end="url(#mC)"/>
+
+<!-- Stock Tool → Generator -->
+<path d="M675,292 L740,292 L812,292 L870,350" stroke="#f97316" stroke-width="1" class="fls" fill="none" marker-end="url(#mO)"/>
 
 <!-- ════════════ LLM + NODE 6,7,8 ════════════ -->
 
 <!-- ════ NODE 6: GENERATOR ════ -->
 <g class="na" style="animation-delay:.7s">
-  <rect x="836" y="340" width="172" height="62" rx="9" fill="#140f00" stroke="#fbbf24" stroke-width="1.8"/>
-  <text x="922" y="358" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010">NODE 06</text>
-  <text x="922" y="372" text-anchor="middle" font-family="'Rajdhani'" font-size="14" font-weight="700" fill="#fbbf24">🧠 Generator</text>
-  <text x="922" y="385" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#806010">temp=0.1 · strict context</text>
-  <text x="922" y="396" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#806010">conf &lt;40% → Fallback</text>
+  <rect x="868" y="320" width="165" height="62" rx="9" fill="#140f00" stroke="#fbbf24" stroke-width="1.8"/>
+  <text x="950" y="338" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#806010">NODE 06</text>
+  <text x="950" y="352" text-anchor="middle" font-family="'Rajdhani'" font-size="14" font-weight="700" fill="#fbbf24">🧠 Generator</text>
+  <text x="950" y="365" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#806010">temp=0.1 · strict context</text>
+  <text x="950" y="376" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#806010">conf &lt;30% → graceful degrade</text>
 </g>
 
 <!-- Generator → LLM -->
-<line x1="1008" y1="371" x2="1054" y2="371" stroke="#8b5cf6" stroke-width="1.8" class="fl" marker-end="url(#mP)"/>
-<text x="1031" y="365" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#3a1a6a">Prompt</text>
+<line x1="1033" y1="351" x2="1076" y2="351" stroke="#8b5cf6" stroke-width="1.8" class="fl" marker-end="url(#mP)"/>
+<text x="1055" y="344" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#3a1a6a">Prompt</text>
 
-<!-- LLM: NVIDIA NEMOTRON 120B via OpenRouter -->
+<!-- LLM: GEMINI FLASH LITE -->
 <g class="np">
-  <rect x="1054" y="290" width="188" height="130" rx="11" fill="#0a0114" stroke="#8b5cf6" stroke-width="2"/>
-  <text x="1148" y="312" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#4a2080" letter-spacing="1.5">LLM  ·  INFERENCE</text>
-  <text x="1148" y="330" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#8b5cf6">🔥 OpenRouter</text>
-  <text x="1148" y="347" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#a78bfa">Nvidia Nemotron 120B</text>
-  <text x="1148" y="362" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#4a2080">128K context window</text>
-  <text x="1148" y="376" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#4a2080">enterprise-grade reasoning</text>
-  <text x="1148" y="390" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#4a2080">sub-8s · free tier</text>
-  <text x="1148" y="408" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#4a2080">financial document specialist</text>
+  <rect x="1076" y="278" width="178" height="115" rx="11" fill="#0a0114" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="1165" y="298" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#4a2080" letter-spacing="1.5">LLM  ·  INFERENCE</text>
+  <text x="1165" y="316" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#8b5cf6">🔥 Google Gemini</text>
+  <text x="1165" y="333" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#a78bfa">Flash Lite (Primary)</text>
+  <text x="1165" y="348" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#4a2080">gemini-3.5-flash-lite</text>
+  <text x="1165" y="362" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#4a2080">fallback: 3.1-flash-lite-preview</text>
+  <text x="1165" y="376" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#4a2080">sub-8s · ₹0 free tier</text>
+  <text x="1165" y="388" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#4a2080">circuit breaker protected</text>
 </g>
 
 <!-- LLM response back -->
-<line x1="1054" y1="385" x2="1008" y2="385" stroke="#8b5cf6" stroke-width="1.3" class="flr" marker-end="url(#mP)"/>
+<line x1="1076" y1="365" x2="1033" y2="365" stroke="#8b5cf6" stroke-width="1.3" class="flr" marker-end="url(#mP)"/>
 
 <!-- Generator → Guard -->
-<line x1="922" y1="402" x2="922" y2="450" stroke="#fbbf24" stroke-width="1.4" class="fl" marker-end="url(#mA)"/>
+<line x1="950" y1="382" x2="950" y2="430" stroke="#fbbf24" stroke-width="1.4" class="fl" marker-end="url(#mA)"/>
 
 <!-- ════ NODE 7: HALLUCINATION GUARD ════ -->
 <g class="nr" style="animation-delay:.3s">
-  <rect x="824" y="450" width="196" height="58" rx="9" fill="#1a0508" stroke="#f43f5e" stroke-width="2"/>
-  <text x="922" y="468" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#501020" letter-spacing="1">NODE 07  ·  CRITICAL</text>
-  <text x="922" y="482" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#f43f5e">🛡️ Hallucination Guard</text>
-  <text x="922" y="497" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#501020">LLM-as-Judge · grounded→PostProcess</text>
+  <rect x="855" y="430" width="190" height="52" rx="9" fill="#1a0508" stroke="#f43f5e" stroke-width="2"/>
+  <text x="950" y="446" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#501020" letter-spacing="1">NODE 07  ·  CRITICAL</text>
+  <text x="950" y="460" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#f43f5e">🛡️ Hallucination Guard</text>
+  <text x="950" y="474" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#501020">LLM-as-Judge · grounded→PostProcess</text>
 </g>
-<rect x="932" y="500" width="80" height="16" rx="3" fill="rgba(244,63,94,.1)" stroke="rgba(244,63,94,.25)" stroke-width=".8"/>
-<text x="972" y="511" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#f43f5e">null &gt; wrong answer</text>
+<!-- Guard disclaimer badge -->
+<rect x="960" y="478" width="84" height="14" rx="3" fill="rgba(244,63,94,.1)" stroke="rgba(244,63,94,.25)" stroke-width=".8"/>
+<text x="1002" y="488" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#f43f5e">!grounded→disclaimer</text>
 
-<!-- Guard → PostProcess -->
-<line x1="922" y1="508" x2="922" y2="558" stroke="#fbbf24" stroke-width="1.4" class="fl" marker-end="url(#mA)"/>
+<!-- Guard → PostProcess (always) -->
+<line x1="950" y1="492" x2="950" y2="535" stroke="#fbbf24" stroke-width="1.4" class="fl" marker-end="url(#mA)"/>
 
 <!-- ════ NODE 8: POST PROCESS ════ -->
 <g class="ng" style="animation-delay:1.5s">
-  <rect x="824" y="558" width="196" height="56" rx="9" fill="#011a0f" stroke="#10b981" stroke-width="1.5"/>
-  <text x="922" y="575" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#064030">NODE 08  ·  ALWAYS FINAL</text>
-  <text x="922" y="590" text-anchor="middle" font-family="'Rajdhani'" font-size="13" font-weight="700" fill="#10b981">💾 Post-Process</text>
-  <text x="922" y="604" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">MongoDB · Redis · Langfuse · SSE Stream</text>
+  <rect x="855" y="535" width="190" height="52" rx="9" fill="#011a0f" stroke="#10b981" stroke-width="1.5"/>
+  <text x="950" y="551" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#064030">NODE 08  ·  ALWAYS FINAL</text>
+  <text x="950" y="565" text-anchor="middle" font-family="'Rajdhani'" font-size="12" font-weight="700" fill="#10b981">💾 Post-Process</text>
+  <text x="950" y="579" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#064030">MongoDB · Redis · Langfuse · SSE</text>
 </g>
 
+<!-- ════ NODE 11: FALLBACK ════ -->
+<g>
+  <rect x="1100" y="430" width="120" height="38" rx="7" fill="#1a0508" stroke="#f43f5e" stroke-width="1"/>
+  <text x="1160" y="446" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#501020">NODE 11</text>
+  <text x="1160" y="460" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#f43f5e">🆘 Fallback</text>
+</g>
+<!-- Fallback connects to PostProcess -->
+<path d="M1160,468 L1160,561 L1045,561" stroke="#f43f5e" stroke-width="1.3" class="fls" fill="none" marker-end="url(#mR)" opacity=".8"/>
+<text x="1170" y="520" font-family="'Share Tech Mono'" font-size="5.5" fill="#f43f5e">API fail</text>
+
 <!-- All branch paths converge to PostProcess -->
-<path d="M310,261 L280,261 L280,586 L824,586" stroke="rgba(244,63,94,.35)" stroke-width="1" class="fls" fill="none" marker-end="url(#mR)"/>
-<path d="M366,316 L340,316 L340,590 L824,590" stroke="rgba(16,185,129,.3)" stroke-width="1" class="fls" fill="none" marker-end="url(#mG)"/>
-<path d="M478,266 L460,266 L460,594 L824,594" stroke="rgba(139,92,246,.3)" stroke-width="1" class="fls" fill="none" marker-end="url(#mP)"/>
+<path d="M400,254 L370,254 L370,561 L855,561" stroke="#f43f5e" stroke-width="1.3" class="fls" fill="none" marker-end="url(#mR)" opacity=".85"/>
+<path d="M420,322 L405,322 L405,565 L855,565" stroke="#10b981" stroke-width="1.3" class="fls" fill="none" marker-end="url(#mG)" opacity=".85"/>
+<path d="M525,259 L510,259 L510,569 L855,569" stroke="#8b5cf6" stroke-width="1.3" class="fls" fill="none" marker-end="url(#mP)" opacity=".85"/>
 
 <!-- PostProcess → Gateway response back -->
-<path d="M824,586 L500,586 L500,620 L200,620 L200,124" stroke="#3b82f6" stroke-width="1.4" class="fl" fill="none" marker-end="url(#mB)"/>
-<text x="380" y="614" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#1e3a5f">JSON / SSE Final Answer</text>
+<path d="M855,565 L540,565 L540,600 L200,600 L200,122" stroke="#3b82f6" stroke-width="1.8" class="fl" fill="none" marker-end="url(#mB)"/>
+<text x="400" y="594" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7.5" fill="#60a5fa" font-weight="600">JSON / SSE Final Answer · grounded · cited · safe</text>
 
 <!-- ════ SECURITY BADGE ════ -->
-<rect x="1054" y="160" width="188" height="50" rx="8" fill="#080e1a" stroke="rgba(59,130,246,.4)" stroke-width="1"/>
-<text x="1148" y="178" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#1e3a5f" letter-spacing="1.5">SECURITY LAYER</text>
-<text x="1148" y="193" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#3b82f6">🔒 7-Layer Upload Shield</text>
-<text x="1148" y="206" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#1e3a5f">JWT · Google OAuth · PII Regex · SHA-256</text>
+<rect x="1076" y="150" width="178" height="48" rx="8" fill="#080e1a" stroke="rgba(59,130,246,.4)" stroke-width="1"/>
+<text x="1165" y="168" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#1e3a5f" letter-spacing="1.5">SECURITY LAYER</text>
+<text x="1165" y="182" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#3b82f6">🔒 7-Layer Upload Shield</text>
+<text x="1165" y="194" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#1e3a5f">JWT · OAuth · PII Regex · SHA-256</text>
 
 <!-- INGESTION BADGE -->
-<rect x="1054" y="220" width="188" height="48" rx="8" fill="#080e1a" stroke="rgba(251,191,36,.3)" stroke-width="1"/>
-<text x="1148" y="238" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#50400a" letter-spacing="1.5">INGESTION PIPELINE</text>
-<text x="1148" y="252" text-anchor="middle" font-family="'Rajdhani'" font-size="11" font-weight="600" fill="#fbbf24">📥 LlamaParse 3-Tier</text>
-<text x="1148" y="264" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6.5" fill="#50400a">45cr · 10cr · 3cr · PyMuPDF free</text>
+<rect x="1076" y="206" width="178" height="48" rx="8" fill="#080e1a" stroke="rgba(251,191,36,.3)" stroke-width="1"/>
+<text x="1165" y="224" text-anchor="middle" font-family="'Share Tech Mono'" font-size="7" fill="#50400a" letter-spacing="1.5">INGESTION PIPELINE</text>
+<text x="1165" y="238" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#fbbf24">📥 LlamaParse 3-Tier</text>
+<text x="1165" y="250" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#50400a">45cr · 10cr · 3cr · PyMuPDF free</text>
+
+<!-- ════ DAILY INSIGHT AGENT (Autonomous Pipeline) ════ -->
+<rect x="148" y="330" width="200" height="85" rx="9" fill="none" stroke="rgba(139,92,246,.25)" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="158" y="327" font-family="'Share Tech Mono'" font-size="6.5" fill="#8b5cf6" letter-spacing="1">AUTONOMOUS  AGENT</text>
+<g>
+  <rect x="158" y="340" width="180" height="32" rx="6" fill="#0a0514" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="248" y="353" text-anchor="middle" font-family="'Rajdhani'" font-size="10" font-weight="600" fill="#8b5cf6">🤖 Daily Insight Agent</text>
+  <text x="248" y="366" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#3a1a6a">Cron → Tavily → Gemini → Email</text>
+</g>
+<g>
+  <rect x="158" y="378" width="85" height="24" rx="5" fill="#021518" stroke="#06b6d4" stroke-width=".8"/>
+  <text x="200" y="393" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#06b6d4">🌐 Tavily Web</text>
+</g>
+<g>
+  <rect x="252" y="378" width="85" height="24" rx="5" fill="#1a0f00" stroke="#f97316" stroke-width=".8"/>
+  <text x="295" y="393" text-anchor="middle" font-family="'Share Tech Mono'" font-size="6" fill="#f97316">📧 SMTP Email</text>
+</g>
+<text x="248" y="412" text-anchor="middle" font-family="'Share Tech Mono'" font-size="5.5" fill="#a78bfa">subscribers · daily legal/finance tips</text>
 
 <!-- ════ ANIMATED PARTICLES ════ -->
 <circle r="3.5" fill="#3b82f6" opacity=".9" style="filter:drop-shadow(0 0 5px #3b82f6)">
-  <animateMotion dur="1.8s" repeatCount="indefinite" path="M100,100 L162,100"/></circle>
+  <animateMotion dur="1.8s" repeatCount="indefinite" path="M89,95 L148,95"/></circle>
+<circle r="3.5" fill="#f97316" opacity=".9" style="filter:drop-shadow(0 0 5px #f97316)">
+  <animateMotion dur="1.2s" repeatCount="indefinite" begin=".2s" path="M293,97 L325,97"/></circle>
 <circle r="3.5" fill="#fbbf24" opacity=".9" style="filter:drop-shadow(0 0 5px #fbbf24)">
-  <animateMotion dur="1.5s" repeatCount="indefinite" begin=".2s" path="M370,100 L400,100"/></circle>
+  <animateMotion dur="1.5s" repeatCount="indefinite" begin=".3s" path="M415,99 L448,99"/></circle>
 <circle r="3.5" fill="#fbbf24" opacity=".9" style="filter:drop-shadow(0 0 5px #fbbf24)">
-  <animateMotion dur="1.2s" repeatCount="indefinite" begin=".5s" path="M556,105 L620,105"/></circle>
+  <animateMotion dur="1.2s" repeatCount="indefinite" begin=".5s" path="M598,100 L645,100"/></circle>
 <circle r="3" fill="#10b981" opacity=".9" style="filter:drop-shadow(0 0 4px #10b981)">
-  <animateMotion dur="1.4s" repeatCount="indefinite" begin=".4s" path="M694,225 L694,260"/></circle>
+  <animateMotion dur="1.4s" repeatCount="indefinite" begin=".4s" path="M734,214 L734,245"/></circle>
 <circle r="3" fill="#10b981" opacity=".9" style="filter:drop-shadow(0 0 4px #10b981)">
-  <animateMotion dur="1.3s" repeatCount="indefinite" begin=".9s" path="M694,385 L694,415"/></circle>
+  <animateMotion dur="1.3s" repeatCount="indefinite" begin=".9s" path="M734,356 L734,380"/></circle>
 <circle r="3.5" fill="#10b981" opacity=".9" style="filter:drop-shadow(0 0 5px #10b981)">
-  <animateMotion dur="1.6s" repeatCount="indefinite" begin=".8s" path="M796,440 L840,390"/></circle>
+  <animateMotion dur="1.6s" repeatCount="indefinite" begin=".8s" path="M828,403 L870,370"/></circle>
 <circle r="4" fill="#8b5cf6" opacity=".9" style="filter:drop-shadow(0 0 6px #8b5cf6)">
-  <animateMotion dur="1.1s" repeatCount="indefinite" begin=".5s" path="M1008,371 L1054,371"/></circle>
+  <animateMotion dur="1.1s" repeatCount="indefinite" begin=".5s" path="M1033,351 L1076,351"/></circle>
 <circle r="3.5" fill="#fbbf24" opacity=".9" style="filter:drop-shadow(0 0 5px #fbbf24)">
-  <animateMotion dur="1.3s" repeatCount="indefinite" begin="1s" path="M922,508 L922,558"/></circle>
+  <animateMotion dur="1.3s" repeatCount="indefinite" begin="1s" path="M950,492 L950,535"/></circle>
 <circle r="3" fill="#3b82f6" opacity=".9" style="filter:drop-shadow(0 0 4px #3b82f6)">
-  <animateMotion dur="2.4s" repeatCount="indefinite" begin=".6s" path="M824,586 L500,586 L500,620 L200,620 L200,124"/></circle>
+  <animateMotion dur="2.4s" repeatCount="indefinite" begin=".6s" path="M855,565 L540,565 L540,600 L200,600 L200,122"/></circle>
 
 <!-- LEGEND -->
-<rect x="380" y="600" width="430" height="26" rx="6" fill="rgba(0,0,0,.35)" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
-<line x1="390" y1="613" x2="410" y2="613" stroke="#fbbf24" stroke-width="1.4" stroke-dasharray="5,3"/>
-<text x="414" y="617" font-family="'Share Tech Mono'" font-size="7" fill="#64748b">RAG Flow</text>
-<line x1="472" y1="613" x2="492" y2="613" stroke="#10b981" stroke-width="1.4" stroke-dasharray="5,3"/>
-<text x="496" y="617" font-family="'Share Tech Mono'" font-size="7" fill="#64748b">Vector/Retrieval</text>
-<line x1="576" y1="613" x2="596" y2="613" stroke="#8b5cf6" stroke-width="1.4" stroke-dasharray="5,3"/>
-<text x="600" y="617" font-family="'Share Tech Mono'" font-size="7" fill="#64748b">LLM Invoke</text>
-<line x1="664" y1="613" x2="684" y2="613" stroke="#f43f5e" stroke-width="1.4" stroke-dasharray="5,3"/>
-<text x="688" y="617" font-family="'Share Tech Mono'" font-size="7" fill="#64748b">Guard/Reject</text>
-<line x1="754" y1="613" x2="774" y2="613" stroke="#3b82f6" stroke-width="1.4" stroke-dasharray="5,3"/>
-<text x="778" y="617" font-family="'Share Tech Mono'" font-size="7" fill="#64748b">Response</text>
+<rect x="370" y="618" width="560" height="26" rx="6" fill="rgba(0,0,0,.35)" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+<line x1="380" y1="631" x2="398" y2="631" stroke="#fbbf24" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="402" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">RAG</text>
+<line x1="430" y1="631" x2="448" y2="631" stroke="#10b981" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="452" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">Vector</text>
+<line x1="488" y1="631" x2="506" y2="631" stroke="#8b5cf6" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="510" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">LLM</text>
+<line x1="538" y1="631" x2="556" y2="631" stroke="#f43f5e" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="560" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">Guard</text>
+<line x1="598" y1="631" x2="616" y2="631" stroke="#06b6d4" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="620" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">Web</text>
+<line x1="652" y1="631" x2="670" y2="631" stroke="#f97316" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="674" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">Stock/PII</text>
+<line x1="722" y1="631" x2="740" y2="631" stroke="#3b82f6" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="744" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">Response</text>
+<circle cx="795" cy="631" r="3" fill="#10b981"/>
+<text x="802" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">WhatsApp</text>
+<circle cx="855" cy="631" r="3" fill="#8b5cf6"/>
+<text x="862" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">Daily Agent</text>
+<circle cx="918" cy="631" r="3" fill="#f97316"/>
+<text x="925" y="635" font-family="'Share Tech Mono'" font-size="6.5" fill="#64748b">PII Shield</text>
 </svg>
 </div><!-- arch-wrap -->
 
 <!-- METRICS FOOTER -->
 <div class="metrics">
-  <div class="metric"><span class="v" style="color:#fbbf24"><span class="dot" style="background:#fbbf24"></span>8</span>&nbsp;<span class="l">NODES</span></div>
+  <div class="metric"><span class="v" style="color:#fbbf24"><span class="dot" style="background:#fbbf24"></span>11</span>&nbsp;<span class="l">NODES</span></div>
   <div class="sep">·</div>
   <div class="metric"><span class="v" style="color:#10b981"><span class="dot" style="background:#10b981;animation-delay:.4s"></span>14,662</span>&nbsp;<span class="l">VECTORS (AFP)</span></div>
   <div class="sep">·</div>
-  <div class="metric"><span class="v" style="color:#3b82f6"><span class="dot" style="background:#3b82f6;animation-delay:.7s"></span>28,352</span>&nbsp;<span class="l">TOTAL VECTORS (ALL PROJECTS)</span></div>
+  <div class="metric"><span class="v" style="color:#3b82f6"><span class="dot" style="background:#3b82f6;animation-delay:.7s"></span>28,352</span>&nbsp;<span class="l">TOTAL VECTORS</span></div>
   <div class="sep">·</div>
   <div class="metric"><span class="v" style="color:#10b981"><span class="dot" style="background:#10b981;animation-delay:.8s"></span>256d MRL</span>&nbsp;<span class="l">EMBED</span></div>
   <div class="sep">·</div>
-  <div class="metric"><span class="v" style="color:#8b5cf6"><span class="dot" style="background:#8b5cf6;animation-delay:1.1s"></span>120B</span>&nbsp;<span class="l">LLM PARAMS</span></div>
+  <div class="metric"><span class="v" style="color:#8b5cf6"><span class="dot" style="background:#8b5cf6;animation-delay:1.1s"></span>Gemini</span>&nbsp;<span class="l">FLASH LITE</span></div>
   <div class="sep">·</div>
-  <div class="metric"><span class="v" style="color:#f43f5e"><span class="dot" style="background:#f43f5e;animation-delay:1.5s"></span>75%</span>&nbsp;<span class="l">STORAGE SAVED</span></div>
+  <div class="metric"><span class="v" style="color:#f97316"><span class="dot" style="background:#f97316;animation-delay:1.3s"></span>yFinance</span>&nbsp;<span class="l">STOCK API</span></div>
+  <div class="sep">·</div>
+  <div class="metric"><span class="v" style="color:#06b6d4"><span class="dot" style="background:#06b6d4;animation-delay:1.5s"></span>Tavily</span>&nbsp;<span class="l">WEB SEARCH</span></div>
   <div class="sep">·</div>
   <div class="metric"><span class="v" style="color:#fbbf24"><span class="dot" style="background:#fbbf24;animation-delay:2s"></span>₹0</span>&nbsp;<span class="l">MONTHLY COST</span></div>
   <div class="sep">·</div>
