@@ -53,7 +53,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 > **🔮 11-Node LangGraph StateGraph — Animated Architecture**
 
-<img src="assets/rag_architecture_animated.gif" width="100%" alt="Agentic Financial Parser — 11-Node Architecture"/>
+<img src="assets/rag_architecture_diagram_dark.png" width="100%" alt="Agentic Financial Parser — 11-Node Architecture"/>
 <br/>
 <sub>✨ Classifier → 6-Path Routing → Retrieval → Rerank → Generate → Hallucination Guard → Post-Process</sub>
 </div>
