@@ -1,7 +1,11 @@
 <div align="center">
 
 <!-- Animated Header -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=200&section=header&text=Agentic%20Financial%20Parser&fontSize=42&fontColor=ffffff&fontAlignY=35&desc=10-Node%20LangGraph%20StateGraph%20•%20Production-Grade%20Agentic%20RAG&descSize=16&descAlignY=55&animation=fadeIn" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=200&section=header&text=Agentic%20Financial%20Parser&fontSize=42&fontColor=ffffff&fontAlignY=35&desc=11-Node%20LangGraph%20StateGraph%20•%20WhatsApp%20Bot%20•%20Daily%20AI%20Newsletter&descSize=16&descAlignY=55&animation=fadeIn" width="100%"/>
+
+<br/>
+
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=D4A574&background=00000000&center=true&vCenter=true&repeat=true&width=700&height=70&lines=11-Node+LangGraph+StateGraph+%7C+Agentic+RAG;WhatsApp+Bot+%7C+Gemini+Tool+Calling+%7C+HITL+Guards;Jina+MRL+%2B+Cohere+Rerank+%7C+%E2%82%B90%2Fmonth+Infra" alt="Typing SVG" /></a>
 
 <br/>
 
@@ -10,6 +14,9 @@
 [![Portfolio](https://img.shields.io/badge/👤_PORTFOLIO-Ambuj_Tripathi-34A853?style=for-the-badge)](https://ambuj-ai-portfolio.vercel.app/)
 
 <br/>
+
+[![GitHub Stars](https://img.shields.io/github/stars/Ambuj123-lab/agentic-rag-financial-parser?style=flat-square&logo=github&color=D4A574&logoColor=white)](https://github.com/Ambuj123-lab/agentic-rag-financial-parser/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Ambuj123-lab/agentic-rag-financial-parser?style=flat-square&logo=github&color=4A90D9&logoColor=white)](https://github.com/Ambuj123-lab/agentic-rag-financial-parser/network)
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -24,7 +31,7 @@
 
 ## ⚡ What Is This?
 
-An **autonomous, 10-node Agentic RAG pipeline** that parses and queries complex Indian financial & legal documents — Union Budget, Finance Bill, Tax Laws, PF/Pension Schemes, RBI KYC, and Constitution of India — using a purpose-built state machine that **thinks before it answers**.
+An **autonomous, 11-node Agentic RAG pipeline** that parses and queries complex Indian financial & legal documents — Union Budget, Finance Bill, Tax Laws, PF/Pension Schemes, RBI KYC, and Constitution of India — using a purpose-built state machine that **thinks before it answers**.
 
 Unlike traditional RAG (retrieve → generate), this system employs an **agentic flow** where each query passes through specialized nodes that classify intent, cross-question vague queries, guard against hallucinations, and verify answer grounding — all orchestrated via **LangGraph StateGraph**.
 
@@ -41,29 +48,33 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 
 ## 🏗️ System Architecture
 
-<!-- Animated SVG Architecture Diagram -->
 <div align="center">
 <br/>
-<img src="assets/rag_architecture_animated.webp" width="100%" alt="Agentic Financial Parser Architecture"/>
+
+> **🔮 11-Node LangGraph StateGraph — Animated Architecture**
+
+<img src="assets/rag_architecture_animated.webp" width="100%" alt="Agentic Financial Parser — 11-Node Architecture"/>
 <br/>
+<sub>✨ Classifier → 6-Path Routing → Retrieval → Rerank → Generate → Hallucination Guard → Post-Process</sub>
 </div>
 
 ---
 
-## 🧠 The 10-Node Agentic RAG Pipeline
+## 🧠 The 11-Node Agentic RAG Pipeline
 
 | Node | Purpose | Key Detail |
 |------|---------|------------|
-| **1. Classifier** | Intent detection | Categorizes: `abusive` · `greeting` · `vague` · `rag_query` · `out_of_scope` |
-| **2. Reject** | Safety guard | Blocks abusive and anti-national queries with a strict blocklist guardrail |
+| **1. Classifier** | Intent detection + 6-path routing | Returns structured JSON: `intent` · `doc_type` · `confidence` · `search_intents` |
+| **2. Reject** | Safety guard | Blocks abusive + jailbreak queries with regex blocklist guardrail |
 | **3. Greet** | Efficiency bypass | Handles greetings **without** hitting vector DB (zero cost) |
 | **4. CrossQuestioner** | HITL clarification | Asks clarifying questions for vague queries (max 2 rounds) |
-| **5. Tool Calling** | API execution | Executes native LLM tools (RapidAPI Yahoo Finance) for live market data |
-| **6. Retriever** | Dual vector search | Searches **Core Brain** + **Temp User Uploads**. Falls back to Tavily Web Search for OOS queries. |
-| **7. Generator** | LLM synthesis | Dynamic OpenRouter fallback ensemble (Qwen/DeepSeek/Llama) with circuit breakers |
-| **8. HallucinationGuard** | Answer verification | Validates answer is **grounded** in retrieved context chunks |
-| **9. PostProcess** | Persistence | Saves to MongoDB chat history + Langfuse observability logging |
-| **10. Fallback** | Circuit breaker | pybreaker pattern: 3 API failures → graceful fallback message |
+| **5. Retriever** | Dual vector search | Jina MRL → Pinecone → Parent-Child Resolution → Cohere Rerank Top 10 |
+| **6. Web Search** | Out-of-scope fallback | Tavily API — only fires after HITL user permission |
+| **7. Stock Tool** | Native LLM tool calling | Gemini `functionDeclarations` + yfinance for live market data |
+| **8. Generator** | LLM synthesis | Gemini 3.5 Flash Lite (primary) with `pybreaker` circuit breakers |
+| **9. HallucinationGuard** | Answer verification | LLM-as-Judge — advisory mode (appends disclaimer, doesn't block) |
+| **10. PostProcess** | Persistence + streaming | MongoDB + Redis cache + Langfuse tracing + SSE stream |
+| **11. Fallback** | Circuit breaker recovery | pybreaker pattern: 3 API failures → graceful fallback message |
 
 ---
 
@@ -78,7 +89,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 <tr>
 <td rowspan="5"><b>RAG Engine</b></td>
 <td>LangGraph StateGraph</td>
-<td>8-node autonomous state machine orchestration</td>
+<td>11-node autonomous state machine orchestration</td>
 </tr>
 <tr>
 <td>Jina v3 (MRL)</td>
@@ -117,7 +128,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 <tr>
 <td rowspan="4"><b>Data Layer</b></td>
 <td>Pinecone Serverless</td>
-<td>3,854 vectors — core brain + ephemeral user uploads</td>
+<td>14,662 vectors — core brain + ephemeral user uploads</td>
 </tr>
 <tr>
 <td>Supabase (PostgreSQL)</td>
@@ -158,7 +169,7 @@ Unlike traditional RAG (retrieve → generate), this system employs an **agentic
 | Metric | Value |
 |--------|-------|
 | **Total Chunks** | 15,408 (Financial Parser Portfolio) |
-| **Live Vectors** | 13,453 high-dimensional vectors in Pinecone |
+| **Live Vectors** | 14,662 high-dimensional vectors in Pinecone (256d MRL) |
 | **Documents Indexed** | 20+ Indian Government Acts & Financial Frameworks |
 | **Parent Chunks** | Stored in Supabase for full-context retrieval |
 | **Cache Latency** | <100ms (Upstash Redis semantic cache) |
@@ -245,7 +256,7 @@ agentic-rag-financial-parser/
 │   │   ├── pinecone_client.py # Pinecone Serverless init
 │   │   └── supabase_client.py # Supabase PostgreSQL client
 │   └── rag/
-│       ├── graph.py          # ⭐ 8-Node LangGraph StateGraph
+│       ├── graph.py          # ⭐ 11-Node LangGraph StateGraph
 │       ├── routes.py         # Chat endpoints + SSE streaming
 │       ├── embedder.py       # Jina v3 MRL embeddings
 │       └── chunker.py        # Markdown + recursive splitting
