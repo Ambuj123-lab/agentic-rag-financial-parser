@@ -295,6 +295,13 @@ GenAI Engineer & RAG Systems Specialist | LLMOps
 
 ---
 
+## 📜 License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.  
+Due to the integration of **PyMuPDF** (which is licensed under AGPL-3.0) for high-performance PDF parsing, this repository inherits the AGPL-3.0 license to comply with open-source copyleft requirements.
+
+---
+
 <div align="center">
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=100&section=footer" width="100%"/>
