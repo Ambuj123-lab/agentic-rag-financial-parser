@@ -5,8 +5,8 @@ import json
 from collections import deque
 
 # In-memory tracker to prevent repeating categories within the same server lifecycle.
-# Safe approach: No database/Supabase changes required.
-RECENT_CATEGORIES = deque(maxlen=7)
+# With 50+ categories and maxlen=40, topics won't repeat for ~5 days even at 8 emails/day.
+RECENT_CATEGORIES = deque(maxlen=40)
 
 def fetch_daily_insight():
     """
@@ -21,31 +21,74 @@ def fetch_daily_insight():
         print("Missing API keys for Tavily or Gemini")
         return None
 
-    # Step 1: Select Random Category
+    # Step 1: Select Random Category (50+ topics for maximum variety)
     categories = [
-        # Constitutional & Rights
+        # ── Constitutional & Rights ──
         "Fundamental Rights and Articles of the Indian Constitution",
         "Important Amendments in the Indian Constitution",
         "Consumer Rights in India",
+        "RTI (Right to Information) filing process and citizen power in India",
+        "PIL (Public Interest Litigation) how common citizens can file in India",
+        "Directive Principles of State Policy and their real-world impact in India",
         
-        # Financial & Tax
+        # ── Financial & Tax ──
         "New vs Old Income Tax Regime rules and deductions effective from April 1, 2026 in India",
         "RBI Banking and ATM rules for consumers",
         "SEBI rules and Mutual Fund regulations for retail investors",
         "Credit Score (CIBIL) and Loan rights for borrowers in India",
         "IRDAI rules and Health/Term Insurance claim rights for citizens",
+        "GST rules and input tax credit for small businesses in India",
+        "HRA, LTA and salary tax exemptions for salaried employees in India",
+        "Capital gains tax on property, gold and mutual funds in India",
+        "Startup India tax benefits under Section 80-IAC and angel tax rules",
+        "EPF and PPF withdrawal rules and tax implications in India",
+        "NPS (National Pension System) tax benefits under Section 80CCD in India",
+        "TDS rules on freelance income and professional services in India",
+        "Sukanya Samriddhi Yojana and girl child savings scheme rules in India",
         
-        # Digital & Cyber
+        # ── Digital & Cyber ──
         "Cyber Fraud, Data Privacy, and IT Act rules in India",
+        "Digital Personal Data Protection Act (DPDP) 2023 citizen rights in India",
+        "UPI fraud prevention and RBI refund rules for digital payments in India",
+        "Right to be forgotten and data erasure under Indian law",
+        "OTT and social media content regulation rules in India",
         
-        # Safety & Legal (New Additions)
+        # ── Safety & Legal ──
         "Women's safety rights and POSH Act (Prevention of Sexual Harassment) in India",
         "Child protection laws and POCSO Act awareness in India",
         "Citizen rights during police arrest, FIR filing, and bail in India",
         "Traffic and Motor Vehicles Act rules in India",
         "Tenant and Landlord legal rights and rent control in India",
         "Domestic violence laws and protective rights for women in India",
-        "BNS (Bharatiya Nyaya Sanhita) basic citizen safety sections and rules"
+        "BNS (Bharatiya Nyaya Sanhita) basic citizen safety sections and rules",
+        "Anti-ragging laws and UGC regulations in Indian colleges",
+        "Senior citizen rights and Maintenance and Welfare Act protections in India",
+        "Disability rights and RPWD Act benefits in India",
+        "Noise pollution and environment protection citizen rights in India",
+        
+        # ── Property & Real Estate ──
+        "RERA Act rights for homebuyers against builders in India",
+        "Property registration and stamp duty rules across Indian states",
+        "Inheritance and succession laws for ancestral property in India",
+        "Will drafting and probate process in India",
+        
+        # ── Employment & Labour ──
+        "Employee rights under new Labour Codes 2025 in India",
+        "Gratuity and severance pay calculation rules in India",
+        "Maternity and paternity leave entitlements in India",
+        "Wrongful termination and notice period laws in India",
+        "Gig worker and freelancer legal protections in India",
+        
+        # ── Healthcare ──
+        "Ayushman Bharat scheme eligibility and hospital rights in India",
+        "Medical negligence and patient rights in Indian hospitals",
+        "Organ donation laws and living will (advance directive) in India",
+        "Food safety and FSSAI consumer complaint rights in India",
+        
+        # ── Everyday Legal ──
+        "Cheque bounce penalties and process under Section 138 NI Act in India",
+        "Defamation laws (civil vs criminal) in India",
+        "Election laws and Model Code of Conduct awareness in India",
     ]
     
     # Filter out categories that were sent recently to avoid repeats
