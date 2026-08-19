@@ -10,6 +10,7 @@
 <br/>
 
 [![Live Demo](https://img.shields.io/badge/🚀_LIVE_DEMO-Visit_App-D4A574?style=for-the-badge&logoColor=white)](https://agentic-rag-financial-parser.onrender.com)
+[![Featured on UptimeRobot](https://img.shields.io/badge/FEATURED_IN-UptimeRobot_Official_Blog-047857?style=for-the-badge&logo=uptimerobot&logoColor=3BD671)](https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/)
 [![RAG Docs](https://img.shields.io/badge/📖_RAG_DOCS-Technical_Docs-4A90D9?style=for-the-badge)](https://ambuj-rag-docs.netlify.app/)
 [![Portfolio](https://img.shields.io/badge/👤_PORTFOLIO-Ambuj_Tripathi-34A853?style=for-the-badge)](https://ambuj-ai-portfolio.vercel.app/)
 
@@ -26,6 +27,15 @@
 [![Render](https://img.shields.io/badge/Deployed_on-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://render.com)
 
 </div>
+
+---
+
+> [!TIP]
+> ### 🏆 Featured in UptimeRobot's Global Case Study
+> **"How Ambuj Kumar Tripathi built an 11-Node Agentic RAG system with 99.9% uptime on $0 infrastructure"**
+> This project was officially featured by **UptimeRobot** for its resilient production architecture on 512MB RAM, dual-purpose cold-start elimination, and hallucination-resistant document retrieval.
+> 
+> 📖 **[Read the Full Published Spotlight on UptimeRobot Blog →](https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/)**
 
 ---
 
