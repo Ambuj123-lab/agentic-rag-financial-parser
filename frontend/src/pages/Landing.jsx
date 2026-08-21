@@ -264,6 +264,54 @@ export default function Landing() {
         </a>
       </div>
 
+      {/* ===== UPTIMEROBOT FEATURED BANNER ===== */}
+      <a
+        href="https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="uptimerobot-banner"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          padding: '6px 16px',
+          background: 'linear-gradient(90deg, rgba(220, 38, 38, 0.06) 0%, rgba(220, 38, 38, 0.12) 50%, rgba(220, 38, 38, 0.06) 100%)',
+          borderBottom: '1px solid rgba(220, 38, 38, 0.2)',
+          textDecoration: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          flexWrap: 'wrap',
+          textAlign: 'center',
+          lineHeight: '1.5',
+        }}
+      >
+        <span style={{
+          background: '#dc2626',
+          color: '#fff',
+          fontSize: '9px',
+          fontWeight: 800,
+          padding: '2px 8px',
+          borderRadius: '4px',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}>
+          FEATURED
+        </span>
+        <span style={{
+          color: 'rgba(255, 255, 255, 0.8)',
+          fontSize: 'clamp(10px, 2.5vw, 12px)',
+          fontWeight: 500,
+        }}>
+          This system's architecture was independently featured in{' '}
+          <span style={{ color: '#ff6666', fontWeight: 700 }}>UptimeRobot's</span>{' '}
+          official Community Spotlight
+        </span>
+        <FiArrowRight size={12} color="#ff6666" style={{ flexShrink: 0 }} />
+      </a>
+
       {/* ===== NAVBAR ===== */}
       <nav style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
