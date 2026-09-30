@@ -1409,42 +1409,6 @@ export default function Landing() {
           </div>
 
           <p style={{ color: '#aaa', fontSize: '12px', marginTop: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>Built with Llama 3.2 · Fine-tuned by <strong style={{ color: 'var(--accent)' }}>Ambuj Kumar Tripathi</strong> · Llama 3.2 Community License</p>
-
-          <div style={{ marginTop: '36px', textAlign: 'center' }}>
-            <a
-              href="https://x.com/HuggingModels/status/2044027666324697451?s=20"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 22px',
-                borderRadius: '30px',
-                background: 'rgba(245, 158, 11, 0.08)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                color: '#FCD34D',
-                fontSize: '12px',
-                fontWeight: 600,
-                textDecoration: 'none',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseOver={e => {
-                e.currentTarget.style.borderColor = '#F59E0B';
-                e.currentTarget.style.background = 'rgba(245, 158, 11, 0.16)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseOut={e => {
-                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.25)';
-                e.currentTarget.style.background = 'rgba(245, 158, 11, 0.08)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <span style={{ fontSize: '15px' }}>🤗</span>
-              <span>Official Recognition: Featured by @HuggingModels on 𝕏</span>
-              <FiArrowRight size={13} color="#FCD34D" />
-            </a>
-          </div>
         </div>
       </section>
 
