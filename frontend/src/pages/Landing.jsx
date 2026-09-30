@@ -164,7 +164,7 @@ export default function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       {/* ===== SCROLL PROGRESS BAR ===== */}
       <div style={{
           position: 'fixed',
@@ -416,14 +416,15 @@ export default function Landing() {
 
       {/* ===== HERO ===== */}
       <section style={{
-        padding: '120px 40px 100px',
+        padding: '120px 20px 100px',
         textAlign: 'center',
         maxWidth: 1000,
         margin: '0 auto',
         position: 'relative',
+        overflow: 'hidden',
       }}>
         {/* Deep Red Black Spotlight Background (Pexio Style) */}
-        <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: '900px', height: '700px', background: 'radial-gradient(circle at center, rgba(220, 10, 10, 0.25) 0%, rgba(150, 0, 0, 0.1) 40%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
+        <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: 'min(900px, 95vw)', height: '700px', background: 'radial-gradient(circle at center, rgba(220, 10, 10, 0.25) 0%, rgba(150, 0, 0, 0.1) 40%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
 
         {/* Top Banner (Simplify your workflow style) */}
         <div style={{
@@ -673,7 +674,7 @@ export default function Landing() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
             gap: '18px',
             alignItems: 'stretch',
           }}>
@@ -995,6 +996,9 @@ export default function Landing() {
               align-items: center;
               padding: 18px 0;
               position: relative;
+              overflow: hidden;
+              width: 100%;
+              max-width: 100vw;
           }
           .marquee-label-box {
               position: absolute;
