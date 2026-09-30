@@ -15,13 +15,11 @@
 [![RAG Docs](https://img.shields.io/badge/📖_RAG_DOCS-Technical_Docs-4A90D9?style=for-the-badge)](https://ambuj-rag-docs.netlify.app/)
 [![Portfolio](https://img.shields.io/badge/👤_PORTFOLIO-Ambuj_Tripathi-34A853?style=for-the-badge)](https://ambuj-ai-portfolio.vercel.app/)
 
-<br/><br/>
-
-<a href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge">
-  <img src="https://onesvibe.app/badge/agentic-rag-financial-parser-onrender.svg" alt="Live & checked on One's Vibe" height="34" />
-</a>
-
-<br/>
+<p align="center">
+  <a href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge">
+    <img src="https://onesvibe.app/badge/agentic-rag-financial-parser-onrender.svg" alt="Live & checked on One's Vibe" height="32" />
+  </a>
+</p>
 
 [![GitHub Stars](https://img.shields.io/github/stars/Ambuj123-lab/agentic-rag-financial-parser?style=flat-square&logo=github&color=D4A574&logoColor=white)](https://github.com/Ambuj123-lab/agentic-rag-financial-parser/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Ambuj123-lab/agentic-rag-financial-parser?style=flat-square&logo=github&color=4A90D9&logoColor=white)](https://github.com/Ambuj123-lab/agentic-rag-financial-parser/network)
