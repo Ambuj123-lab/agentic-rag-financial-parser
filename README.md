@@ -11,8 +11,15 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀_LIVE_DEMO-Visit_App-D4A574?style=for-the-badge&logoColor=white)](https://agentic-rag-financial-parser.onrender.com)
 [![Featured on UptimeRobot](https://img.shields.io/badge/FEATURED_IN-UptimeRobot_Official_Blog-047857?style=for-the-badge&logo=uptimerobot&logoColor=3BD671)](https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/)
+[![Verified on One's Vibe](https://img.shields.io/badge/VERIFIED_ON-One's_Vibe-FBF7EE?style=for-the-badge&logoColor=111111)](https://onesvibe.app/projects/agentic-rag-financial-parser-onrender)
 [![RAG Docs](https://img.shields.io/badge/📖_RAG_DOCS-Technical_Docs-4A90D9?style=for-the-badge)](https://ambuj-rag-docs.netlify.app/)
 [![Portfolio](https://img.shields.io/badge/👤_PORTFOLIO-Ambuj_Tripathi-34A853?style=for-the-badge)](https://ambuj-ai-portfolio.vercel.app/)
+
+<br/><br/>
+
+<a href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge">
+  <img src="https://onesvibe.app/badge/agentic-rag-financial-parser-onrender.svg" alt="Live & checked on One's Vibe" height="34" />
+</a>
 
 <br/>
 
@@ -31,11 +38,9 @@
 ---
 
 > [!TIP]
-> ### 🏆 Featured in UptimeRobot's Global Case Study
-> **"How Ambuj Kumar Tripathi built an 11-Node Agentic RAG system with 99.9% uptime on $0 infrastructure"**
-> This project was officially featured by **UptimeRobot** for its resilient production architecture on 512MB RAM, dual-purpose cold-start elimination, and hallucination-resistant document retrieval.
-> 
-> 📖 **[Read the Full Published Spotlight on UptimeRobot Blog →](https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/)**
+> ### 🏆 Industry Recognition & Third-Party Audits
+> * **Featured in UptimeRobot's Global Case Study:** *"How Ambuj Kumar Tripathi built an 11-Node Agentic RAG system with 99.9% uptime on $0 infrastructure"* — Officially featured for resilient production architecture on 512MB RAM and cold-start elimination. 👉 **[Read Full Spotlight on UptimeRobot Blog →](https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/)**
+> * **Verified & Showcased on One's Vibe:** Discovered and verified on the global maker platform under **Finance & Business** with automated daily live checks, SSRF-guarded verification, and public try-count logging. 👉 **[View Live Project Wall on One's Vibe →](https://onesvibe.app/projects/agentic-rag-financial-parser-onrender)**
 
 ---
 
