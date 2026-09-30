@@ -311,9 +311,9 @@ export default function Landing() {
             fontSize: 'clamp(10px, 2.5vw, 12px)',
             fontWeight: 500,
           }}>
-            Featured in <strong style={{ color: '#ff6666' }}>UptimeRobot</strong> Community Spotlight
+            Featured in <strong style={{ color: '#3BD671' }}>UptimeRobot</strong> Community Spotlight
           </span>
-          <FiArrowRight size={12} color="#ff6666" style={{ flexShrink: 0 }} />
+          <FiArrowRight size={12} color="#3BD671" style={{ flexShrink: 0 }} />
         </a>
 
         <span style={{ color: 'rgba(255, 255, 255, 0.25)', fontSize: '12px', display: 'inline-block' }}>•</span>
@@ -496,12 +496,12 @@ export default function Landing() {
           </a>
         </div>
 
-        {/* ===== HERO CREDIBILITY: ONE'S VIBE & UPTIME STATUS ===== */}
+        {/* ===== HERO CREDIBILITY: ONE'S VIBE, UPTIME & HUGGING FACE ===== */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '14px',
+          gap: '12px',
           marginTop: '28px',
           flexWrap: 'wrap',
           position: 'relative',
@@ -542,7 +542,7 @@ export default function Landing() {
               padding: '0 14px',
               height: '32px',
               background: '#0a0a0a',
-              border: '1px solid rgba(255, 255, 255, 0.14)',
+              border: '1px solid rgba(59, 214, 113, 0.3)',
               borderRadius: '6px',
               color: '#ffffff',
               fontSize: '11px',
@@ -552,17 +552,52 @@ export default function Landing() {
               transition: 'all 0.2s ease',
             }}
             onMouseOver={e => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)'
+              e.currentTarget.style.borderColor = '#3BD671'
               e.currentTarget.style.transform = 'translateY(-2px)'
             }}
             onMouseOut={e => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.14)'
+              e.currentTarget.style.borderColor = 'rgba(59, 214, 113, 0.3)'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#3BD671', boxShadow: '0 0 6px #3BD671' }} />
             <span style={{ color: 'var(--text-secondary)' }}>Uptime:</span>
-            <span style={{ color: '#22c55e' }}>{uptimeData ? uptimeData.uptime : '100%'}</span>
+            <span style={{ color: '#3BD671' }}>{uptimeData ? uptimeData.uptime : '100%'}</span>
+          </a>
+
+          {/* Hugging Face Recognition Pill */}
+          <a
+            href="https://x.com/HuggingModels/status/2044027666324697451?s=20"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0 12px',
+              height: '32px',
+              background: '#0a0a0a',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              borderRadius: '6px',
+              color: '#ffffff',
+              fontSize: '11px',
+              fontWeight: 500,
+              textDecoration: 'none',
+              boxSizing: 'border-box',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.borderColor = '#F59E0B'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            <span style={{ fontSize: '13px' }}>🤗</span>
+            <span>Featured by <strong style={{ color: '#F59E0B' }}>@HuggingModels</strong></span>
+            <FiArrowRight size={11} color="#F59E0B" />
           </a>
         </div>
 
@@ -617,13 +652,13 @@ export default function Landing() {
 
       {/* ===== AS SEEN & FEATURED IN (CREDIBILITY CARDS) ===== */}
       <section style={{
-        padding: '36px 24px',
+        padding: '40px 24px',
         borderTop: '1px solid rgba(255, 51, 51, 0.1)',
         background: 'linear-gradient(180deg, rgba(12, 12, 18, 0.85) 0%, rgba(8, 8, 12, 0.95) 100%)',
         position: 'relative',
         zIndex: 5,
       }}>
-        <div style={{ maxWidth: 1040, margin: '0 auto' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{
             fontSize: '11px',
             textTransform: 'uppercase',
@@ -631,16 +666,16 @@ export default function Landing() {
             color: 'var(--text-secondary)',
             fontWeight: 700,
             textAlign: 'center',
-            marginBottom: '22px',
+            marginBottom: '24px',
           }}>
             Independently Recognized & Verified By
           </div>
 
           <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
             gap: '18px',
+            alignItems: 'stretch',
           }}>
             {/* Card 1: UptimeRobot Spotlight */}
             <a
@@ -649,26 +684,24 @@ export default function Landing() {
               rel="noopener noreferrer"
               style={{
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 gap: '14px',
-                padding: '16px 20px',
+                padding: '18px 20px',
                 borderRadius: '12px',
-                background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(15, 15, 20, 0.9) 100%)',
-                border: '1px solid rgba(220, 38, 38, 0.25)',
+                background: 'linear-gradient(135deg, rgba(59, 214, 113, 0.08) 0%, rgba(15, 15, 20, 0.9) 100%)',
+                border: '1px solid rgba(59, 214, 113, 0.25)',
                 textDecoration: 'none',
                 color: '#ffffff',
                 transition: 'all 0.25s ease',
-                flex: '1 1 300px',
-                maxWidth: '460px',
                 boxSizing: 'border-box',
               }}
               onMouseOver={e => {
-                e.currentTarget.style.borderColor = 'rgba(220, 38, 38, 0.6)';
-                e.currentTarget.style.boxShadow = '0 0 25px rgba(220, 38, 38, 0.15)';
+                e.currentTarget.style.borderColor = '#3BD671';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(59, 214, 113, 0.2)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseOut={e => {
-                e.currentTarget.style.borderColor = 'rgba(220, 38, 38, 0.25)';
+                e.currentTarget.style.borderColor = 'rgba(59, 214, 113, 0.25)';
                 e.currentTarget.style.boxShadow = 'none';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
@@ -677,21 +710,21 @@ export default function Landing() {
                 width: '42px',
                 height: '42px',
                 borderRadius: '10px',
-                background: 'rgba(220, 38, 38, 0.12)',
-                border: '1px solid rgba(220, 38, 38, 0.3)',
+                background: 'rgba(59, 214, 113, 0.12)',
+                border: '1px solid rgba(59, 214, 113, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '20px',
                 flexShrink: 0,
               }}>
-                🏆
+                🟢
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                   <span style={{
-                    background: '#dc2626',
-                    color: '#fff',
+                    background: '#3BD671',
+                    color: '#000',
                     fontSize: '9px',
                     fontWeight: 800,
                     padding: '2px 6px',
@@ -701,35 +734,101 @@ export default function Landing() {
                   }}>
                     Featured
                   </span>
-                  <span style={{ fontSize: '11px', color: '#ff8888', fontWeight: 700 }}>UptimeRobot Community Spotlight</span>
+                  <span style={{ fontSize: '11px', color: '#3BD671', fontWeight: 700 }}>UptimeRobot Spotlight</span>
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff', lineHeight: 1.35 }}>
-                  11-Node Agentic RAG Architecture on $0 Infra
+                  11-Node Agentic RAG on $0 Infra
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px', lineHeight: 1.4 }}>
                   Official Case Study on 99.9% Production Uptime on 512MB RAM ›
                 </div>
               </div>
             </a>
 
-            {/* Card 2: One's Vibe Verified */}
+            {/* Card 2: Hugging Face / Hugging Models */}
+            <a
+              href="https://x.com/HuggingModels/status/2044027666324697451?s=20"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '14px',
+                padding: '18px 20px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 15, 20, 0.9) 100%)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                textDecoration: 'none',
+                color: '#ffffff',
+                transition: 'all 0.25s ease',
+                boxSizing: 'border-box',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.borderColor = '#F59E0B';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(245, 158, 11, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.25)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '10px',
+                background: 'rgba(245, 158, 11, 0.12)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                flexShrink: 0,
+              }}>
+                🤗
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    background: '#F59E0B',
+                    color: '#000',
+                    fontSize: '9px',
+                    fontWeight: 800,
+                    padding: '2px 6px',
+                    borderRadius: '3px',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}>
+                    Recognized
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#FCD34D', fontWeight: 700 }}>Hugging Models (@HuggingModels)</span>
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff', lineHeight: 1.35 }}>
+                  Ambuj-Tripathi-Indian-Legal-Llama
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px', lineHeight: 1.4 }}>
+                  “Specialized AI model & game-changer for legal tech in India” ›
+                </div>
+              </div>
+            </a>
+
+            {/* Card 3: One's Vibe Verified */}
             <a
               href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge&ov=ov-86da4749-a414-4896-b132-763d5f4dccbf"
               target="_blank"
               rel="noopener noreferrer"
               style={{
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 gap: '14px',
-                padding: '16px 20px',
+                padding: '18px 20px',
                 borderRadius: '12px',
                 background: 'linear-gradient(135deg, rgba(251, 247, 238, 0.05) 0%, rgba(15, 15, 20, 0.9) 100%)',
                 border: '1px solid rgba(255, 255, 255, 0.15)',
                 textDecoration: 'none',
                 color: '#ffffff',
                 transition: 'all 0.25s ease',
-                flex: '1 1 300px',
-                maxWidth: '460px',
                 boxSizing: 'border-box',
               }}
               onMouseOver={e => {
@@ -758,7 +857,7 @@ export default function Landing() {
                 🌐
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                   <span style={{
                     background: '#fbf7ee',
                     color: '#1a1a1a',
@@ -776,10 +875,65 @@ export default function Landing() {
                 <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff', lineHeight: 1.35 }}>
                   Finance & Business Live Showcase
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px', lineHeight: 1.4 }}>
                   Audited Daily Live Status & Verified Maker Receipt ›
                 </div>
               </div>
+            </a>
+          </div>
+
+          {/* ===== SPOTLIGHT QUOTE STRIP ===== */}
+          <div style={{
+            marginTop: '20px',
+            padding: '16px 22px',
+            borderRadius: '12px',
+            background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.05) 0%, rgba(20, 20, 25, 0.8) 50%, rgba(59, 214, 113, 0.05) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            flexWrap: 'wrap',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: '1 1 320px' }}>
+              <span style={{ fontSize: '24px', flexShrink: 0 }}>💬</span>
+              <p style={{ margin: 0, fontSize: '12.5px', color: '#e5e5e5', fontStyle: 'italic', lineHeight: 1.5 }}>
+                “Meet Ambuj-Tripathi-Indian-Legal-Llama-GGUF: a specialized AI model fine-tuned for Indian law. A game-changer for legal tech in India.”
+                <span style={{ display: 'block', fontStyle: 'normal', color: 'var(--text-secondary)', fontSize: '11px', marginTop: '3px' }}>
+                  — <strong>Hugging Models (@HuggingModels)</strong> on 𝕏 (formerly Twitter)
+                </span>
+              </p>
+            </div>
+            <a
+              href="https://x.com/HuggingModels/status/2044027666324697451?s=20"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                background: 'rgba(245, 158, 11, 0.12)',
+                border: '1px solid rgba(245, 158, 11, 0.35)',
+                borderRadius: '8px',
+                color: '#FCD34D',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = 'rgba(245, 158, 11, 0.22)';
+                e.currentTarget.style.borderColor = '#F59E0B';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = 'rgba(245, 158, 11, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+              }}
+            >
+              <span>View Official Post on 𝕏</span>
+              <FiArrowRight size={12} color="#FCD34D" />
             </a>
           </div>
         </div>
@@ -1252,16 +1406,40 @@ export default function Landing() {
 
           <p style={{ color: '#aaa', fontSize: '12px', marginTop: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>Built with Llama 3.2 · Fine-tuned by <strong style={{ color: 'var(--accent)' }}>Ambuj Kumar Tripathi</strong> · Llama 3.2 Community License</p>
 
-          <div style={{ marginTop: '60px', borderTop: '1px solid #1e1e1e', paddingTop: '40px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
-              <span style={{ fontSize: '20px' }}>🐦</span>
-              <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '600', letterSpacing: '1px' }}>Recognized by Hugging Face</h3>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <blockquote className="twitter-tweet" data-theme="dark">
-                <p lang="en" dir="ltr">Meet Ambuj-Tripathi-Indian-Legal-Llama-GGUF: a specialized AI model fine-tuned for Indian law. This isn&#39;t just another chatbot. It&#39;s a legal assistant trained to understand the nuances of Indian statutes, case law, and legal language. A game-changer for legal tech in India. <a href="https://t.co/SkLzeaDgpE">pic.twitter.com/SkLzeaDgpE</a></p>&mdash; Hugging Models (@HuggingModels) <a href="https://x.com/HuggingModels/status/2044027666324697451?ref_src=twsrc%5Etfw">April 14, 2026</a>
-              </blockquote>
-            </div>
+          <div style={{ marginTop: '36px', textAlign: 'center' }}>
+            <a
+              href="https://x.com/HuggingModels/status/2044027666324697451?s=20"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 22px',
+                borderRadius: '30px',
+                background: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                color: '#FCD34D',
+                fontSize: '12px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.borderColor = '#F59E0B';
+                e.currentTarget.style.background = 'rgba(245, 158, 11, 0.16)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.25)';
+                e.currentTarget.style.background = 'rgba(245, 158, 11, 0.08)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <span style={{ fontSize: '15px' }}>🤗</span>
+              <span>Official Recognition: Featured by @HuggingModels on 𝕏</span>
+              <FiArrowRight size={13} color="#FCD34D" />
+            </a>
           </div>
         </div>
       </section>
