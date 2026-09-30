@@ -264,53 +264,96 @@ export default function Landing() {
         </a>
       </div>
 
-      {/* ===== UPTIMEROBOT FEATURED BANNER ===== */}
-      <a
-        href="https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/"
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* ===== FEATURED & VERIFIED TOP BANNER ===== */}
+      <div
         className="uptimerobot-banner"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '8px',
+          gap: '12px',
           padding: '6px 16px',
           background: 'linear-gradient(90deg, rgba(220, 38, 38, 0.06) 0%, rgba(220, 38, 38, 0.12) 50%, rgba(220, 38, 38, 0.06) 100%)',
           borderBottom: '1px solid rgba(220, 38, 38, 0.2)',
-          textDecoration: 'none',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
           flexWrap: 'wrap',
           textAlign: 'center',
           lineHeight: '1.5',
         }}
       >
-        <span style={{
-          background: '#dc2626',
-          color: '#fff',
-          fontSize: '9px',
-          fontWeight: 800,
-          padding: '2px 8px',
-          borderRadius: '4px',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-        }}>
-          FEATURED
-        </span>
-        <span style={{
-          color: 'rgba(255, 255, 255, 0.8)',
-          fontSize: 'clamp(10px, 2.5vw, 12px)',
-          fontWeight: 500,
-        }}>
-          This system's architecture was independently featured in{' '}
-          <span style={{ color: '#ff6666', fontWeight: 700 }}>UptimeRobot's</span>{' '}
-          official Community Spotlight
-        </span>
-        <FiArrowRight size={12} color="#ff6666" style={{ flexShrink: 0 }} />
-      </a>
+        <a
+          href="https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            textDecoration: 'none',
+            color: 'inherit',
+          }}
+        >
+          <span style={{
+            background: '#dc2626',
+            color: '#fff',
+            fontSize: '9px',
+            fontWeight: 800,
+            padding: '2px 8px',
+            borderRadius: '4px',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}>
+            FEATURED
+          </span>
+          <span style={{
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: 'clamp(10px, 2.5vw, 12px)',
+            fontWeight: 500,
+          }}>
+            Featured in <strong style={{ color: '#ff6666' }}>UptimeRobot</strong> Community Spotlight
+          </span>
+          <FiArrowRight size={12} color="#ff6666" style={{ flexShrink: 0 }} />
+        </a>
+
+        <span style={{ color: 'rgba(255, 255, 255, 0.25)', fontSize: '12px', display: 'inline-block' }}>•</span>
+
+        <a
+          href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge&ov=ov-86da4749-a414-4896-b132-763d5f4dccbf"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            textDecoration: 'none',
+            color: 'inherit',
+          }}
+        >
+          <span style={{
+            background: '#fbf7ee',
+            color: '#1a1a1a',
+            fontSize: '9px',
+            fontWeight: 800,
+            padding: '2px 8px',
+            borderRadius: '4px',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}>
+            VERIFIED
+          </span>
+          <span style={{
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: 'clamp(10px, 2.5vw, 12px)',
+            fontWeight: 500,
+          }}>
+            Live & Checked on <strong style={{ color: '#fbf7ee' }}>One's Vibe</strong>
+          </span>
+          <FiArrowRight size={12} color="#fbf7ee" style={{ flexShrink: 0 }} />
+        </a>
+      </div>
 
       {/* ===== NAVBAR ===== */}
       <nav style={{
@@ -453,8 +496,78 @@ export default function Landing() {
           </a>
         </div>
 
+        {/* ===== HERO CREDIBILITY: ONE'S VIBE & UPTIME STATUS ===== */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '14px',
+          marginTop: '28px',
+          flexWrap: 'wrap',
+          position: 'relative',
+          zIndex: 2,
+        }}>
+          {/* One's Vibe Verified Plaque */}
+          <a
+            href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge&ov=ov-86da4749-a414-4896-b132-763d5f4dccbf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease',
+            }}
+            onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+            title="Live & checked on One's Vibe"
+          >
+            <img
+              src="https://onesvibe.app/badge/agentic-rag-financial-parser-onrender.svg"
+              alt="Live & checked on One's Vibe"
+              height="32"
+              style={{ height: '32px', width: 'auto', display: 'block', borderRadius: '6px' }}
+            />
+          </a>
+
+          {/* Uptime Status Badge */}
+          <a
+            href="https://stats.uptimerobot.com/4tYmSQnuBE"
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0 14px',
+              height: '32px',
+              background: '#0a0a0a',
+              border: '1px solid rgba(255, 255, 255, 0.14)',
+              borderRadius: '6px',
+              color: '#ffffff',
+              fontSize: '11px',
+              fontWeight: 600,
+              textDecoration: 'none',
+              boxSizing: 'border-box',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.14)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
+            <span style={{ color: 'var(--text-secondary)' }}>Uptime:</span>
+            <span style={{ color: '#22c55e' }}>{uptimeData ? uptimeData.uptime : '100%'}</span>
+          </a>
+        </div>
+
         {/* Model Badges */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '60px', flexWrap: 'wrap', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '48px', flexWrap: 'wrap', position: 'relative', zIndex: 2 }}>
           <a href="https://tavily.com" target="_blank" rel="noreferrer" style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
             textDecoration: 'none', transition: 'transform 0.2s',
@@ -499,6 +612,176 @@ export default function Landing() {
             </div>
             <span style={{ color: '#888', fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.5px' }}>LM Studio ›</span>
           </a>
+        </div>
+      </section>
+
+      {/* ===== AS SEEN & FEATURED IN (CREDIBILITY CARDS) ===== */}
+      <section style={{
+        padding: '36px 24px',
+        borderTop: '1px solid rgba(255, 51, 51, 0.1)',
+        background: 'linear-gradient(180deg, rgba(12, 12, 18, 0.85) 0%, rgba(8, 8, 12, 0.95) 100%)',
+        position: 'relative',
+        zIndex: 5,
+      }}>
+        <div style={{ maxWidth: 1040, margin: '0 auto' }}>
+          <div style={{
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.22em',
+            color: 'var(--text-secondary)',
+            fontWeight: 700,
+            textAlign: 'center',
+            marginBottom: '22px',
+          }}>
+            Independently Recognized & Verified By
+          </div>
+
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '18px',
+          }}>
+            {/* Card 1: UptimeRobot Spotlight */}
+            <a
+              href="https://uptimerobot.com/blog/community-spotlight-ambuj-kumar-tripathi/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                padding: '16px 20px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(15, 15, 20, 0.9) 100%)',
+                border: '1px solid rgba(220, 38, 38, 0.25)',
+                textDecoration: 'none',
+                color: '#ffffff',
+                transition: 'all 0.25s ease',
+                flex: '1 1 300px',
+                maxWidth: '460px',
+                boxSizing: 'border-box',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.borderColor = 'rgba(220, 38, 38, 0.6)';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(220, 38, 38, 0.15)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.borderColor = 'rgba(220, 38, 38, 0.25)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '10px',
+                background: 'rgba(220, 38, 38, 0.12)',
+                border: '1px solid rgba(220, 38, 38, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                flexShrink: 0,
+              }}>
+                🏆
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    background: '#dc2626',
+                    color: '#fff',
+                    fontSize: '9px',
+                    fontWeight: 800,
+                    padding: '2px 6px',
+                    borderRadius: '3px',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}>
+                    Featured
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#ff8888', fontWeight: 700 }}>UptimeRobot Community Spotlight</span>
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff', lineHeight: 1.35 }}>
+                  11-Node Agentic RAG Architecture on $0 Infra
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
+                  Official Case Study on 99.9% Production Uptime on 512MB RAM ›
+                </div>
+              </div>
+            </a>
+
+            {/* Card 2: One's Vibe Verified */}
+            <a
+              href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge&ov=ov-86da4749-a414-4896-b132-763d5f4dccbf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                padding: '16px 20px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, rgba(251, 247, 238, 0.05) 0%, rgba(15, 15, 20, 0.9) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                textDecoration: 'none',
+                color: '#ffffff',
+                transition: 'all 0.25s ease',
+                flex: '1 1 300px',
+                maxWidth: '460px',
+                boxSizing: 'border-box',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '10px',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                flexShrink: 0,
+              }}>
+                🌐
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    background: '#fbf7ee',
+                    color: '#1a1a1a',
+                    fontSize: '9px',
+                    fontWeight: 800,
+                    padding: '2px 6px',
+                    borderRadius: '3px',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}>
+                    Verified
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#e5e5e5', fontWeight: 700 }}>One's Vibe Global Directory</span>
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff', lineHeight: 1.35 }}>
+                  Finance & Business Live Showcase
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
+                  Audited Daily Live Status & Verified Maker Receipt ›
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
       </section>
 
