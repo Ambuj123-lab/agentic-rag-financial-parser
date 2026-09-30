@@ -46,6 +46,7 @@ Thumbs.db
 *.txt
 !requirements.txt
 !frontend/public/robots.txt
+!frontend/public/.well-known/onesvibe.txt
 analyze_pdfs.py
 check_const.py
 full_audit.py

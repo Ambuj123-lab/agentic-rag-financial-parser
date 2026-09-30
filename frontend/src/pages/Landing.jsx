@@ -1111,6 +1111,26 @@ export default function Landing() {
                           <span style={{ color: 'var(--text-secondary)' }}>Last Updated: <span style={{ color: '#fff' }}>July 2026</span></span>
                           <span style={{ color: 'var(--text-secondary)' }}>API Uptime: <a href="https://stats.uptimerobot.com/4tYmSQnuBE" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none' }} onMouseOver={e=>e.target.style.textDecoration='underline'} onMouseOut={e=>e.target.style.textDecoration='none'}>{uptimeData ? `${uptimeData.uptime} • ${uptimeData.latency}` : '--%'}</a></span>
                       </div>
+                      {/* One's Vibe Verified Plaque */}
+                      <div style={{ marginBottom: '1.2rem' }}>
+                          <a 
+                              href="https://onesvibe.app/projects/agentic-rag-financial-parser-onrender?ref=badge&ov=ov-86da4749-a414-4896-b132-763d5f4dccbf" 
+                              target="_blank" 
+                              rel="noreferrer"
+                              style={{ display: 'inline-block', transition: 'opacity 0.2s ease', opacity: 0.95 }}
+                              onMouseOver={e => e.currentTarget.style.opacity = '1'}
+                              onMouseOut={e => e.currentTarget.style.opacity = '0.95'}
+                              title="Live & checked on One's Vibe"
+                          >
+                              <img 
+                                  src="https://onesvibe.app/badge/agentic-rag-financial-parser-onrender.svg" 
+                                  alt="Live & checked on One's Vibe" 
+                                  height="38" 
+                                  style={{ height: '38px', width: 'auto', display: 'block', borderRadius: '6px' }}
+                              />
+                          </a>
+                      </div>
+
                       <p style={{ marginBottom: '0.3rem', fontSize: '0.85rem' }}>&copy; 2026 Ambuj Kumar Tripathi</p>
                       <p style={{ marginBottom: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', letterSpacing: '0.3px' }}>Designed & Engineered in India 🇮🇳</p>
                   </div>
